@@ -1,0 +1,4 @@
+void example(void)
+{
+  return;
+}
