@@ -54,3 +54,22 @@ install_manifest.txt
 *.out
 *.app
 *.hex
+
+##
+## KDevelop 4 files
+#################################
+apidocs
+.kdev4
+*.kdev4
+*~
+*.orig
+*.rej
+doxygen.log
+Doxyfile
+*.kdevelop
+*.kdevelop.filelist
+*.kdevelop.pcs
+*.kdevses
+.*kate-swp
+#build
+#build/

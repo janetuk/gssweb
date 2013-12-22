@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <embed type="application/gss-web">
+    <script>
+      var embed = document.embeds[0];
+      embed.nativeMethod();
+      alert(embed.nativeProperty);
+      embed.nativeProperty.anotherNativeMethod();
+    </script>
+  </body>
+</html>
