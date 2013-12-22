@@ -57,7 +57,7 @@ gss_construct_sec_context(
 	    mech_type->length,
 	    (char *)(mech_type->elements));
   }
-  
+  mech_type = GSS_C_NO_OID;
   
   /* Main processing */
   

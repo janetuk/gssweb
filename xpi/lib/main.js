@@ -103,6 +103,7 @@ function str_to_oid(oid_str)
 
 function import_name(name)
 {
+    myDump("Entering import_name(" + name + ")");
     var name_buffer     = generate_gss_buffer(name);
     var input_name_type = new gss_OID();
     var oid             = str_to_oid("1.2.840.113554.1.2.1.4");
@@ -117,6 +118,7 @@ function import_name(name)
 	oid.address(),
 	output_name_ptr.address()
     );
+    myDump("Finished the gss_import_name: " + major + "/" + minor);
     
     return(output_name_ptr);
 }
