@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stddef.h>
 #include <firefox/npapi.h>
 #include <firefox/nptypes.h>
 #include <firefox/npfunctions.h>
@@ -7,8 +8,27 @@
 /*
  * Loading and unloading the library 
  */
-NPError NP_Initialize(NPNetscapeFuncs *aNPNFuncs, NPPluginFuncs *aNPPFuncs)
+NPError NP_Initialize(NPNetscapeFuncs *aNPNFuncs, NPPluginFuncs *pFuncs)
 {
+  
+  /*
+   * Setup - Ensure a sane environment
+   */  
+  if( pFuncs == NULL || 
+      pFuncs->size < sizeof(NPNetscapeFuncs) )
+    return NPERR_INVALID_FUNCTABLE_ERROR;
+
+  if(HIBYTE(pFuncs->version) > NP_VERSION_MAJOR)
+    return NPERR_INCOMPATIBLE_VERSION_ERROR;
+
+  /*
+   * Main body:
+   *   Tell the browser about the API functions we implement
+   */
+  pFuncs->newp = NPP_New;
+  pFuncs->destroy = NPP_Destroy;
+  pFuncs->getvalue = NPP_GetValue;
+
   return NPERR_NO_ERROR;
 }
 
@@ -38,7 +58,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 /*
  * Register the plugin for MIME type, and name, etc.
  */
-#define MIME_TYPES_DESCRIPTION "application/web-shot:wsht:Web plugin for the Moonshot libraries"
+#define MIME_TYPES_DESCRIPTION "application/gss-web:gssw:Web plugin for the Moonshot GSS-EAP libraries"
 const char* NP_GetMIMEDescription(void)
 {
   return(MIME_TYPES_DESCRIPTION);
@@ -48,6 +68,8 @@ NPError NP_GetValue(void *instance,
                     NPPVariable variable, 
                     void *value)
 {
+  // fprintf(stderr, "Called NP_GetValue with variable: %i\n", variable);
+  
   switch(variable)
   {
   case NPPVpluginNameString:
@@ -60,5 +82,20 @@ NPError NP_GetValue(void *instance,
     return NPERR_GENERIC_ERROR;
   }
   
+  return NPERR_NO_ERROR;
+}
+
+NPError NPP_GetValue(NPP instance,
+		     NPPVariable variable,
+		     void *value)
+{
+  switch(variable)
+  {
+    case NPPVpluginScriptableNPObject:
+      fprintf(stderr, "Received the scriptable object call!\n");
+      //value = NPN_CreateObject(instance, )
+      break;
+  }
+  fprintf(stderr, "Called NPP_GetValue with %i.\n", variable);
   return NPERR_NO_ERROR;
 }

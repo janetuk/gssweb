@@ -1,0 +1,3 @@
+Ubuntu dependencies:
+firefox-dev
+libcunit1
