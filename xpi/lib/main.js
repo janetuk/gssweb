@@ -91,14 +91,16 @@ function str_to_oid(oid_str)
     minStatus = new ctypes.uint32_t(0);
     var majStatus;
     
-    myDump("Abotut to str_to_oid");
+    myDump("Abotut to str_to_oid: " + oid_str);
     majStatus = gss_str_to_oid(
 	minStatus.address(), 
 	buffer.address(), 
 	oid_ptr.address() );
     myDump("Finished the str_to_oid: " + majStatus + "/" + minStatus);
     
-    return(oid);
+    myDump("   returned oid: [ length: " + oid_ptr.contents.length + " ]");
+    
+    return(oid_ptr.contents);
 }
 
 function import_name(name)
@@ -112,6 +114,9 @@ function import_name(name)
     var minor           = new ctypes.uint32_t(0);
     var major;
     
+    var printable = new gss_buffer_t_struct();
+    var printtype = new gss_OID();
+    
     major = gss_import_name(
 	minor.address(),
 	name_buffer.address(),
@@ -119,6 +124,16 @@ function import_name(name)
 	output_name_ptr.address()
     );
     myDump("Finished the gss_import_name: " + major + "/" + minor);
+    
+    major = gss_display_name(
+	minor.address(),
+	output_name_ptr,
+	printable.address(),
+	printtype.address()
+    );
+    myDump("Display name: [ length: " + printable.length + 
+	   " value: " + printable.value + " ]");
+    myDump("Display name type: [ length: " + printtype.length + " ]");
     
     return(output_name_ptr);
 }
@@ -151,6 +166,15 @@ try{
         ctypes.uint32_t.ptr, /* arg: minor_status */
         gss_buffer_t,        /* arg: oid_str */
         gss_OID.ptr);        /* arg: oid */
+    myDump("gss_str_to_oid function is " + gss_str_to_oid);
+
+    const gss_display_name = libkrb5.declare("gss_display_name",
+        ctypes.default_abi, 
+        ctypes.uint32_t,     /* Return value           */
+        ctypes.uint32_t.ptr, /* arg: minor_status */
+        gss_name_t.ptr,      /* arg: input_name */
+        gss_buffer_t,        /* arg: output_name_buffer */
+        gss_OID.ptr);        /* arg: ouptut_name_type */
     myDump("gss_str_to_oid function is " + gss_str_to_oid);
 
     const gss_import_name = libkrb5.declare("gss_import_name", 

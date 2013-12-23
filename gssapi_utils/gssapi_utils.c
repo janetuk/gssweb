@@ -39,6 +39,21 @@ gss_construct_sec_context(
     status->major = GSS_S_CALL_INACCESSIBLE_READ;
     return(1);
   }
+  else
+  {
+    OM_uint32 maj;
+    OM_uint32 min;
+    gss_buffer_desc printable;
+    gss_OID nametype;
+
+    maj = gss_display_name(&min, target_name, &printable, &nametype);
+    
+    fprintf(stderr, "target_name:\n");
+    fprintf(stderr, "    value: %s\n", (char *)(printable.value) );
+    fprintf(stderr, "    nametype: [ length: %u, elements: %s ]\n",
+	    nametype->length,
+	    (char *)(nametype->elements));
+  }
   
   if (mech_type == NULL)
   {
@@ -47,17 +62,22 @@ gss_construct_sec_context(
     OM_uint32 maj = 0;
     OM_uint32 min = 0;
     gss_buffer_desc spnego_str;
+
+    char *elems;
     
     spnego_str.value = "1.3.6.1.5.5.2";
     spnego_str.length = 13;
     mech_type = (gss_OID)malloc(sizeof(gss_OID_desc));
     maj = gss_str_to_oid(&min, &spnego_str, &mech_type);
+
+    elems = (char *)malloc(mech_type->length + 1);
+    strncpy(elems, (char *)(mech_type->elements), mech_type->length);
+    elems[mech_type->length] = '\0';
     fprintf(stderr, "str_to_oid major/minor %u/%u\n", maj, min);
     fprintf(stderr, "mech_type: [length: %u, elements: %s]\n",
 	    mech_type->length,
-	    (char *)(mech_type->elements));
+	    elems);
   }
-  mech_type = GSS_C_NO_OID;
   
   /* Main processing */
   
@@ -75,9 +95,20 @@ gss_construct_sec_context(
                                        &ret_flags,
                                        &time_rec);
 
-  if (status->minor != 0)
+  if (status->major != 0)
   {
-    fprintf(stderr, "minor status is: %d/%s\n", status->minor, strerror(status->minor));
+    OM_uint32 maj;
+    OM_uint32 min;
+    OM_uint32 context = 0;
+    gss_buffer_desc statbuf;
+    
+    fprintf(stderr, "major status is: 0x%x\n", status->major);
+    do {
+      maj = gss_display_status(&min, status->major, GSS_C_GSS_CODE, 
+			       mech_type, &context, &statbuf);
+      fprintf(stderr, "Major status: %s\n", (char *)(statbuf.value));
+    } while(context != 0);
+    
     if (actual_mech_type == NULL)
       fprintf(stderr, "actual mech type is NULL.\n");
     else
@@ -88,6 +119,20 @@ gss_construct_sec_context(
     }
     
   }
+  if (status->minor != 0)
+  {
+    OM_uint32 maj;
+    OM_uint32 min;
+    OM_uint32 context = 0;
+    gss_buffer_desc statbuf;
+    
+    fprintf(stderr, "minor status is: %d/%s\n", status->minor, strerror(status->minor));
+    do {
+      maj = gss_display_status(&min, status->minor, GSS_C_MECH_CODE, 
+			       mech_type, &context, &statbuf);
+      fprintf(stderr, "Minor status: %s\n", (char *)(statbuf.value));
+    } while(context != 0);
+  }    
   return(0);
 }
 
