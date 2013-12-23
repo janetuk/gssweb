@@ -78,6 +78,7 @@ gss_construct_sec_context(
 	    mech_type->length,
 	    elems);
   }
+  /* mech_type = GSS_C_NO_OID; */
   
   /* Main processing */
   
@@ -125,11 +126,14 @@ gss_construct_sec_context(
     OM_uint32 min;
     OM_uint32 context = 0;
     gss_buffer_desc statbuf;
-    
-    fprintf(stderr, "minor status is: %d/%s\n", status->minor, strerror(status->minor));
+
+    fprintf(stderr, "minor status is: %d/0x%x/%s\n", 
+	    status->minor, 
+	    status->minor, 
+	    strerror(status->minor));
     do {
       maj = gss_display_status(&min, status->minor, GSS_C_MECH_CODE, 
-			       mech_type, &context, &statbuf);
+			       GSS_C_NO_OID, &context, &statbuf);
       fprintf(stderr, "Minor status: %s\n", (char *)(statbuf.value));
     } while(context != 0);
   }    
