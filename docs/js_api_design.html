@@ -1,0 +1,342 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="LibreOffice 4.1.4.2 (Windows)">
+	<META NAME="AUTHOR" CONTENT="Mark Donnelly">
+	<META NAME="CREATED" CONTENT="20140225;161057726000000">
+	<META NAME="CHANGEDBY" CONTENT="Mark Donnelly">
+	<META NAME="CHANGED" CONTENT="20140314;161316517000000">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { margin: 0.79in }
+		P { margin-bottom: 0.08in }
+		H3 { margin-bottom: 0.08in }
+		H3.western { font-family: "Arial", sans-serif }
+		H3.cjk { font-family: "Microsoft YaHei" }
+		H3.ctl { font-family: "Mangal" }
+		TD P { margin-bottom: 0in }
+		TH P { margin-bottom: 0in }
+		A:link { so-language: zxx }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<H3 CLASS="western" ALIGN=LEFT>The gssweb API</H3>
+<P STYLE="margin-bottom: 0in">The gssweb web authentication libraries
+implement user authentication using the gssweb protocols.  The
+libraries add an a new gssweb getter on the window.navigator object,
+which is the means of accessing the gssweb API. 
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Arial, sans-serif"><FONT SIZE=4>The
+gssweb getter</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">The gssweb getter is one call:</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=256*>
+	<THEAD>
+		<TR>
+			<TH WIDTH=100% VALIGN=TOP BGCOLOR="#99ccff" STYLE="border: 1px solid #000000; padding: 0.04in">
+				<P STYLE="background: #99ccff">GSSWEB GETTER</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR>
+			<TD WIDTH=100% VALIGN=TOP STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+				<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gssweb =
+				navigator.gssweb(<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>);</FONT></FONT></FONT></FONT></P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in">This method will return one gssweb
+session object per origin.  Applications should not assume that this
+object will represent an authenticated session.</P>
+<H3 CLASS="western"><BR><BR>
+</H3>
+<H3 CLASS="western" STYLE="page-break-before: always">The gssweb
+Object 
+</H3>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Arial, sans-serif"><FONT SIZE=4>Properties</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">The gssweb object provides the
+following properties:</P>
+<TABLE WIDTH=656 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=173>
+	<COL WIDTH=465>
+	<TR>
+		<TH COLSPAN=2 WIDTH=646 VALIGN=TOP BGCOLOR="#99ccff" STYLE="border: 1px solid #000000; padding: 0.04in">
+			<P>GSSWEB PROPERTIES</P>
+		</TH>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>version</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The version of the gssweb library</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>serverPath</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The path on the web server where authentication and release can
+			occur</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>authenticationState</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The current authentication state</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>credential</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The credential used for authentication, if known</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>onAuthenticateSuccess</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The function called upon successful authentication</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>onAuthenticateError</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The function called upon error in authentication</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=173 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>onRelease</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=465 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>The function called upon release of the authentication session</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>version</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The version property is the version
+number for the gssweb library.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>serverPath</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The serverPath property specifies the
+path to the gssweb endpoint on the server.  This endpoint must exist
+on the origin server for the current web page.  The system will
+append '<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>/authenticate</FONT></FONT>'
+and '<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>/</FONT></FONT><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>release</FONT></FONT>'
+to the serverPath when issuing requests for the <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>authenticate()</FONT></FONT>
+and <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>release()</FONT></FONT>
+methods, respectively.  This defaults to '/gssweb'.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>authenticationState</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The authenticationState property holds
+the current authentication state for this gssweb object.  Possible
+values are <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>true</FONT></FONT>
+for authenticated and <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>false</FONT></FONT>
+for not authenticated.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>credential</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The credential property is an object
+representing the credential currently held by the user.  It is
+defined later in this document.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>onAuthenticateSuccess</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">A callback function invoked upon
+successful creation of the authentication session.  Applications
+should use this callback to inform the user of the new authentication
+status.  This function should have the following signature:</P>
+<P STYLE="margin-left: 0.98in"><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>function
+onAuthenticateSuccess(data) {};</FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">Its parameter, data, is used to
+communicate information about the authentication session from the
+server to the client.  (This is intentionally left opaque at this
+point.)</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>onAuthenticateError</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">A callback function invoked upon a
+failed attempt to create the authentication session.  Applications
+should use this callback to inform the user of the error in creating
+the authentication session.  If this callback is not supplied, then a
+default This function should have the following signature:</P>
+<P STYLE="margin-left: 0.98in"><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>function
+onAuthenticate</FONT></FONT><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>Error</FONT></FONT><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>(</FONT></FONT><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>err</FONT></FONT><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>)
+{};</FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">Its parameter, err, holds the error
+that caused the failure in the creation of the authentication
+session.  It should be used to inform the user of the error status.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>onRelease</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">A callback function invoked upon the
+release of the authentication session.  Applications should use this
+callback to inform the user that the authentication session has been
+released.  After this callback runs, the authenticationState property
+will be reset to false, the credentials will be destroyed, and the
+authentication session will be destroyed on the client.</P>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Arial, sans-serif"><FONT SIZE=4>Methods</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">The gssweb object provides two methods:</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<TABLE WIDTH=656 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=165>
+	<COL WIDTH=473>
+	<TR>
+		<TH COLSPAN=2 WIDTH=646 VALIGN=TOP BGCOLOR="#99ccff" STYLE="border: 1px solid #000000; padding: 0.04in">
+			<P>GSSWEB METHODS</P>
+		</TH>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=165 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>authenticate</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=473 STYLE="border: 1px solid #000000; padding: 0.04in">
+			<P>Create an authentication session</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=165 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>release</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=473 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>Destroy the current authentication session</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>authenticate()</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>authenticate()</FONT></FONT>
+method is invoked to request that the system authenticate the user. 
+When processing is completed, either the <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>authenticateSuccess</FONT></FONT>
+or <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>authenticateError</FONT></FONT>
+callback will be invoked.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>release()</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>release()</FONT></FONT>
+method is invoked to release the authentication credential from the
+system.  When it completes, the <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>release</FONT></FONT>
+callback is invoked.  Unlike <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>request()</FONT></FONT>,
+there is no separate handling for an error state; the credential is
+destroyed on the client even if an error occurs in its destruction on
+the server.</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<H3 CLASS="western"><BR><BR>
+</H3>
+<H3 CLASS="western" STYLE="page-break-before: always">The credential
+Object 
+</H3>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Arial, sans-serif"><FONT SIZE=4>Properties</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">The credential object provides no
+properties.</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-top: 0.17in; page-break-after: avoid"><FONT FACE="Arial, sans-serif"><FONT SIZE=4>Methods</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in">The credential object provides the
+following methods:</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<TABLE WIDTH=656 CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=165>
+	<COL WIDTH=473>
+	<TR>
+		<TH COLSPAN=2 WIDTH=646 VALIGN=TOP BGCOLOR="#99ccff" STYLE="border: 1px solid #000000; padding: 0.04in">
+			<P>CREDENTIAL METHODS</P>
+		</TH>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=165 STYLE="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setUsername</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=473 STYLE="border: 1px solid #000000; padding: 0.04in">
+			<P>Set the username for this credential</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=165 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>getUsername</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=473 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>Get the username from this credential</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=165 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+			<P><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setPassword</FONT></FONT></P>
+		</TD>
+		<TD WIDTH=473 STYLE="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+			<P>Set the password for this credential</P>
+		</TD>
+	</TR>
+</TABLE>
+<P STYLE="margin-left: 0.49in; margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>setUsername()</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setUsername()</FONT></FONT>
+method sets the username on the unauthenticated credential.  If
+called with undefined, called without also calling <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setPassword()</FONT></FONT>,
+or not called at all, the system will prompt the user to provide the
+credentials for this authentication session.  Once the session has
+been authenticated, the <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setUsername()</FONT></FONT>
+function will return an error.</P>
+<P STYLE="margin-left: 0.49in">This username should be in Network
+Access Identifier form &ndash; generally speaking, &ldquo;user@realm&rdquo;.
+</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>getUsername()</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The g<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>etUsername()</FONT></FONT>
+method returns the current username of the credential.</P>
+<P STYLE="margin-left: 0.98in; text-indent: -0.9in; margin-top: 0.17in; page-break-after: avoid">
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 10pt"><B>setPassword()</B></FONT></FONT></P>
+<P STYLE="margin-left: 0.49in">The <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setPassword</FONT></FONT><FONT FACE="Lucida Console, monospace"><FONT SIZE=2>()</FONT></FONT>
+sets the password on the unauthenticated credential.  If the password
+is set without the username being set, the password will be ignored. 
+If <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>setPassword()</FONT></FONT>
+is called after the session has been authenticated, it will return an
+error.</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<H3 CLASS="western"><BR><BR>
+</H3>
+<H3 CLASS="western" STYLE="page-break-before: always">The GSS API</H3>
+<P STYLE="margin-bottom: 0in">In addition, the library provides
+access to GSS-API functions through a gss property on the <FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gssweb</FONT></FONT>
+object. While this API is available, it should be considered unstable
+for application development, and is provided primarily as reference
+for library implementation.</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in">navigator.<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gss_eap</FONT></FONT>.gss.init_sec_context</P>
+	<LI><P STYLE="margin-bottom: 0in">navigator.<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gss_eap</FONT></FONT>.gss.import_name</P>
+	<LI><P STYLE="margin-bottom: 0in">navigator.<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gss_eap</FONT></FONT>.gss.acquire_cred</P>
+	<LI><P STYLE="margin-bottom: 0in">navigator.<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gss_eap</FONT></FONT>.gss.wrap</P>
+	<LI><P STYLE="margin-bottom: 0in">navigator.<FONT FACE="Lucida Console, monospace"><FONT SIZE=2>gss_eap</FONT></FONT>.gss.unwrap</P>
+	<LI><P STYLE="margin-bottom: 0in">navigator.gss_eap.pseudo_random</P>
+	<LI><P STYLE="margin-bottom: 0in">navigator.gss_eap.get_mech</P>
+</UL>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+</BODY>
+</HTML>
