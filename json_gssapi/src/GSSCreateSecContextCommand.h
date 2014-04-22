@@ -22,14 +22,15 @@ public:
     gss_OID mech_type;
     OM_uint32 req_flags;
     OM_uint32 time_req;
-    gss_buffer_t input_token;
+    gss_buffer_desc input_token;
     gss_OID actual_mech_type;
-    gss_buffer_t output_token;
+    gss_buffer_desc output_token;
     OM_uint32 ret_flags;
     OM_uint32 time_rec;
     
   
     void execute();
+    JSONObject *toJSON();
     GSSCreateSecContextCommand(void *fn = (void *)&gss_init_sec_context);
     GSSCreateSecContextCommand(JSONObject *params, void *fn = (void *)&gss_init_sec_context);
     
@@ -45,8 +46,10 @@ public:
     // complex accessors
     const char * getTargetDisplayName();
     const char * getMechType();
+    const char * getActualMechType();
     
 private:
+    const char * oidToStr(gss_OID oid);
 };
 
 #endif // GSSCREATESECCONTEXTCOMMAND_H

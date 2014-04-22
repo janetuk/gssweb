@@ -24,9 +24,9 @@ public:
   static OM_uint32              req_flags;
   static OM_uint32              time_req;
   static gss_channel_bindings_t input_chan_bindings;
-  static gss_buffer_t           input_token;
+  static gss_buffer_desc        input_token;
   static gss_OID                actual_mech_type;
-  static gss_buffer_t           output_token;
+  static gss_buffer_desc        output_token;
   static OM_uint32              ret_flags;
   static OM_uint32              time_rec;
   

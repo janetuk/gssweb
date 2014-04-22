@@ -22,6 +22,7 @@ class GSSCreateSecContextTest :  public CppUnit::TestFixture
   CPPUNIT_TEST( testConstructor );
   CPPUNIT_TEST( testConstructorWithJSONObject );
   CPPUNIT_TEST( testEmptyCall );
+  CPPUNIT_TEST( testJSONMarshal );
   CPPUNIT_TEST_SUITE_END();
   
   
@@ -34,6 +35,7 @@ public:
   void testConstructor();
   void testConstructorWithJSONObject();
   void testEmptyCall();
+  void testJSONMarshal();
   
 private:
   GSSCreateSecContextCommand command;

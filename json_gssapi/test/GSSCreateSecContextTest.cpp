@@ -19,7 +19,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( GSSCreateSecContextTest );
 
 
 
-OM_uint32 KRB5_CALLCONV
+static OM_uint32 KRB5_CALLCONV
 mock_init_sec(
     OM_uint32             *minor_status,
     gss_cred_id_t          claimant_cred_handle,
@@ -44,13 +44,15 @@ mock_init_sec(
   InitSecContextMock::req_flags = req_flags;
   InitSecContextMock::time_req = time_req;
   InitSecContextMock::input_chan_bindings = input_chan_bindings;
-  InitSecContextMock::input_token = input_token;
+  InitSecContextMock::input_token.length = input_token->length;
+  InitSecContextMock::input_token.value = input_token->value;
+  
   
   /* Copy out the output from this function */
   *minor_status = InitSecContextMock::minor_status;
   *actual_mech_type = InitSecContextMock::actual_mech_type;
-  output_token->length = InitSecContextMock::output_token->length;
-  output_token->value = InitSecContextMock::output_token->value;
+  output_token->length = InitSecContextMock::output_token.length;
+  output_token->value = InitSecContextMock::output_token.value;
   *ret_flags = InitSecContextMock::ret_flags;
   *time_rec = InitSecContextMock::time_rec;
   
@@ -93,10 +95,11 @@ GSSCreateSecContextTest::testConstructor()
 
 void GSSCreateSecContextTest::testConstructorWithJSONObject()
 {
-  const char* input = "{\"req_flags\": \"1\", \
+  const char* input = "{\"method\": \"gss_create_sec_context\", \
+    \"arguments\": {\"req_flags\": \"1\", \
     \"time_req\": \"2\", \
     \"mech_type\": \"{ 1 2 840 113554 1 2 1 4 }\", \
-    \"target_name\": \"me@my.sha/DOW\"}";
+    \"target_name\": \"me@my.sha/DOW\"}}";
 
   json_error_t jsonErr;
   JSONObject json = JSONObject::load(input, 0, &jsonErr);
@@ -107,7 +110,7 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
   );
   
   
-  const char *from_json = json["target_name"].string();
+  const char *from_json = json["arguments"]["target_name"].string();
   const char *from_cmd = cmd.getTargetDisplayName();
   
   CPPUNIT_ASSERT_MESSAGE(
@@ -117,27 +120,26 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The context_handle values differ.",
-    json["context_handle"].integer(),
+    json["arguments"]["context_handle"].integer(),
     (json_int_t)cmd.getContextHandle()
   );
   
   CPPUNIT_ASSERT_MESSAGE(
     "The mech_type values differ.",
-    ( strcmp(json["mech_type"].string(), cmd.getMechType()) == 0 )
+    ( strcmp(json["arguments"]["mech_type"].string(), cmd.getMechType()) == 0 )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The req_flags differ.",
-    (int)json["req_flags"].integer(),
+    (int)json["arguments"]["req_flags"].integer(),
     (int)cmd.getReqFlags()
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The req_flags differ.",
-    (int)json["time_req"].integer(),
+    (int)json["arguments"]["time_req"].integer(),
     (int)cmd.getTimeReq()
   );
-  
   
 }
 
@@ -164,9 +166,8 @@ GSSCreateSecContextTest::testEmptyCall()
   InitSecContextMock::minor_status = rand() % 1024;
   InitSecContextMock::context_handle = GSS_C_NO_CONTEXT;
   InitSecContextMock::actual_mech_type = NULL;
-  InitSecContextMock::output_token = (gss_buffer_t)malloc(sizeof(gss_buffer_desc));
-  InitSecContextMock::output_token->value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
-  InitSecContextMock::output_token->length = strlen((char *)InitSecContextMock::output_token->value);
+  InitSecContextMock::output_token.value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
+  InitSecContextMock::output_token.length = strlen((char *)InitSecContextMock::output_token.value);
   InitSecContextMock::ret_flags = rand() % 1024;
   InitSecContextMock::time_req = rand() % 1024;
   
@@ -222,8 +223,8 @@ GSSCreateSecContextTest::testEmptyCall()
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "output_token was not copied back to the command.",
-    InitSecContextMock::output_token->value,
-    cmd.output_token->value
+    InitSecContextMock::output_token.value,
+    cmd.output_token.value
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "ret_flags was not copied back to the command.",
@@ -236,4 +237,82 @@ GSSCreateSecContextTest::testEmptyCall()
     cmd.time_rec
   );
 }
+
+void GSSCreateSecContextTest::testJSONMarshal()
+{
+  /* Variables */
+  GSSCreateSecContextCommand cmd ((void *)&mock_init_sec);
+  JSONObject *result;
+  
+  /* Error checking */
+  
+  /* Setup */
+  // Set expectations on what the GSS function will produce
+  InitSecContextMock::retVal = GSS_S_BAD_MECH;
+  InitSecContextMock::minor_status = 20;
+  InitSecContextMock::context_handle = GSS_C_NO_CONTEXT;
+  InitSecContextMock::actual_mech_type = (gss_OID)GSS_C_MA_MECH_NEGO;
+  InitSecContextMock::output_token.value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
+  InitSecContextMock::output_token.length = strlen((char *)InitSecContextMock::output_token.value);
+  InitSecContextMock::ret_flags = GSS_C_MUTUAL_FLAG | 
+      GSS_C_REPLAY_FLAG | 
+      GSS_C_SEQUENCE_FLAG | 
+      GSS_C_CONF_FLAG | 
+      GSS_C_INTEG_FLAG | 
+      GSS_C_ANON_FLAG | 
+      GSS_C_PROT_READY_FLAG;
+  InitSecContextMock::time_req = GSS_C_INDEFINITE;
+  
+  /* Main */
+  cmd.execute();
+  result = cmd.toJSON();
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The command name is incorrect",
+    ( strcmp("gss_init_sec_context", 
+	     (*result)["command"].string() ) == 0 )
+  );
+  
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The return value was reported incorrectly",
+    (int)InitSecContextMock::retVal,
+    (int)( (*result)["return_values"]["major_status"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The minor_status value was reported incorrectly",
+    (int)InitSecContextMock::minor_status,
+    (int)( (*result)["return_values"]["minor_status"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The actual_mech_type value was reported incorrectly",
+    ( strcmp("{ 1 3 6 1 5 5 13 4 }", 
+	     (*result)["return_values"]["actual_mech_type"].string() ) == 0 )
+  );
+  
+  CPPUNIT_ASSERT_MESSAGE(
+    "The output_token value was reported incorrectly",
+    ( strcmp((const char *)(InitSecContextMock::output_token.value), 
+	     (*result)["return_values"]["output_token"].string() ) == 0 )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The minor_status value was reported incorrectly",
+    (int)InitSecContextMock::ret_flags,
+    (int)( (*result)["return_values"]["ret_flags"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The minor_status value was reported incorrectly",
+    (int)InitSecContextMock::time_rec,
+    (int)( (*result)["return_values"]["time_rec"].integer() )
+  );
+  
+  
+  /* Cleanup */
+  /* Return */
+}
+
 
