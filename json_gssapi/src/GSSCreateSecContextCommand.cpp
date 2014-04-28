@@ -288,14 +288,16 @@ JSONObject *GSSCreateSecContextCommand::toJSON()
 
 GSSCreateSecContextCommand::GSSCreateSecContextCommand(
   JSONObject *params, 
-  void *fn) : GSSCommand(params, fn)
+  void *fn) : GSSCommand(params)
 {
   zeroOut(false);
   loadParameters(params);
+  function = fn;
 }
 
-GSSCreateSecContextCommand::GSSCreateSecContextCommand(void *fn) : GSSCommand(fn)
+GSSCreateSecContextCommand::GSSCreateSecContextCommand(void *fn)
 {
   zeroOut(false);
+  function = fn;
 }
 

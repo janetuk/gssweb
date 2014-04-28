@@ -73,3 +73,12 @@ Doxyfile
 .*kate-swp
 #build
 #build/
+
+
+#
+# Files specific to gssweb
+############################
+json_gssapi/build
+json_gssapi/debug
+json_gssapi/manual
+test/

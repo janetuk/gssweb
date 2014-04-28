@@ -354,7 +354,7 @@ bool JSONObject::isBoolean(void) const
 
 bool JSONObject::isNull(void) const
 {
-    return json_is_null(m_obj);
+   return json_is_null(m_obj);
 }
 
 JSONIterator::JSONIterator(const JSONObject &obj)

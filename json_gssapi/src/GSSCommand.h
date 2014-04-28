@@ -15,15 +15,13 @@ class GSSCommand
 {
 public:
   GSSCommand() {};
-  GSSCommand(void *fn) : function(fn) {};
-  GSSCommand(JSONObject params, void *fn) : function(fn) { };
+  GSSCommand(JSONObject params) : parameters(params) { };
   
-  void *getGSSFunction() { return function; };
   virtual void execute() { std::cout << "\ninside GSSCommand::invoke()\n"; };  
   virtual JSONObject *toJSON() { return new JSONObject(); }
   
 protected:
-  void *function;
+  JSONObject parameters;
 };
 
 #endif // GSSCOMMAND_H

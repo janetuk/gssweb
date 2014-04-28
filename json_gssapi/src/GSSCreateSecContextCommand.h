@@ -42,6 +42,7 @@ public:
     OM_uint32 getReqFlags() { return req_flags; }
     OM_uint32 getTimeReq() { return time_req; }
     gss_ctx_id_t getContextHandle() { return context_handle; }
+    void *getGSSFunction() { return function; }
     
     // complex accessors
     const char * getTargetDisplayName();
@@ -49,6 +50,7 @@ public:
     const char * getActualMechType();
     
 private:
+    void *function;
     const char * oidToStr(gss_OID oid);
 };
 
