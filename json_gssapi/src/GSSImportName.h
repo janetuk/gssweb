@@ -23,17 +23,22 @@ public:
   void execute();
   JSONObject* toJSON();
   
-  GSSBuffer getInputName() { return GSSBuffer(inputName); }
-  GSSBuffer getInputNameType() { return GSSBuffer(inputNameType); }
+  GSSBuffer getInputName() { return GSSBuffer(inputName); };
+  GSSOID getInputNameType() { return GSSOID(inputNameType); };
   
-  gss_imp_name_type getGSSFunction() { return function; }
+  gss_imp_name_type getGSSFunction() { return function; };
+  void setInputName ( std::string name ) { inputName.setValue(name); };
+  void setInputNameType ( std::string type ) { inputNameType.setValue(type); };
   
 private:
   gss_imp_name_type function;
   bool loadParameters(JSONObject *params);
+  
+  OM_uint32 retVal;
+  OM_uint32 minor_status;
   GSSBuffer inputName;
-  GSSBuffer inputNameType;
-
+  GSSOID    inputNameType;
+  GSSName   outputName;
 };
 
 #endif // GSSIMPORTNAME_H

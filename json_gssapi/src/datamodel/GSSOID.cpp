@@ -29,10 +29,16 @@ GSSOID::GSSOID(gss_OID gssoid)
   this->gssInternal = true;
 }
 
-GSSOID::~GSSOID()
+GSSOID::GSSOID ( const GSSOID &gssoid )
+{
+  this->oid = gssoid.oid;
+  this->gssInternal = true;
+}
+
+void GSSOID::release()
 {
   OM_uint32 major, minor;
-  if (! this->gssInternal)
+  if ( (!this->gssInternal) && (oid != GSS_C_NO_OID) )
   {
     major = gss_release_oid(&minor, &(this->oid));
     if (GSS_ERROR(major))
@@ -40,6 +46,11 @@ GSSOID::~GSSOID()
       throw GSSException("Error in releasing a GSS OID", major, minor);
     }
   }
+}
+
+GSSOID::~GSSOID()
+{
+  this->release();
 }
   
 void GSSOID::init(GSSBuffer oid_str)
@@ -70,6 +81,8 @@ std::string GSSOID::toString()
   std::string ret;
   
   /* Error checking */
+  if (oid->length == 0)
+    return std::string("");
   /* Setup */
   /* Main */ 
   major = gss_oid_to_str(&minor, this->oid, &buf);
@@ -90,4 +103,17 @@ std::string GSSOID::toString()
   
   /* Return */ 
   return(ret);
+}
+
+bool GSSOID::setValue ( GSSBuffer buf )
+{
+  init(buf);
+  return true;
+}
+
+bool GSSOID::setValue ( gss_OID gssOID )
+{
+  oid = gssOID;
+  this->gssInternal = true;
+  return true;
 }

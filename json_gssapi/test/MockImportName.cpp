@@ -30,9 +30,9 @@ public:
 
 OM_uint32 MockImportName::retVal = 0;
 OM_uint32 MockImportName::minor_status = 0;
-GSSBuffer MockImportName::input_name_buffer = GSSBuffer(std::string(""));
-gss_OID MockImportName::input_name_type = NULL;
-gss_name_t MockImportName::output_name = NULL;
+GSSBuffer MockImportName::input_name_buffer((char *)"");
+GSSOID    MockImportName::input_name_type;
+GSSName   MockImportName::output_name;
 
 
 

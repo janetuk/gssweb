@@ -15,20 +15,26 @@
 
 class GSSOID { 
 public:
+  GSSOID() { oid = GSS_C_NO_OID; gssInternal = true; };
   GSSOID(char *oid_str);
   GSSOID(std::string oid_str);
   GSSOID(GSSBuffer oid_str);
   GSSOID(gss_OID gssoid);
+  GSSOID(const GSSOID &gssoid);
   ~GSSOID();
   
   gss_OID toGss() { return(oid); };
   std::string toString();
+  
+  bool setValue(GSSBuffer buf);
+  bool setValue(gss_OID   gssOID);
 
 private:
   gss_OID oid;
   bool gssInternal;
   
   void init(GSSBuffer oid_str);
+  void release();
 };
 
 

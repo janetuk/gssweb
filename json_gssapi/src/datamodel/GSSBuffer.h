@@ -21,16 +21,16 @@ public:
   GSSBuffer(const GSSBuffer &other);
   ~GSSBuffer(void);
   
-  std::string toString() { return(std::string((char *)buf->value, buf->length)); }
-  gss_buffer_t toGss() { return( buf ); }
-  int length() { return(buf->length); }
+  std::string toString() const { return(std::string((char *)buf->value, buf->length)); }
+  gss_buffer_t toGss() const { return( buf ); }
+  int length() const { return(buf->length); }
   
   void setValue(std::string str);
   void setValue(char *str);
   void setValue(char *str, int len);
   void setValue(gss_buffer_t gssbuf);
   
-  bool operator==(GSSBuffer B) { return(this->toString() == B.toString()); }
+  bool operator==(GSSBuffer B) const { return(this->toString() == B.toString()); }
 
 private:
   gss_buffer_t buf;

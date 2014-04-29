@@ -6,10 +6,11 @@
  */
 
 #include "GSSImportName.h"
+#include "GSSException.h"
 
 void GSSImportName::execute()
 {
-
+  this->outputName = GSSName(inputName, inputNameType, function);
 }
 
 JSONObject *GSSImportName::toJSON()
@@ -42,8 +43,8 @@ bool GSSImportName::loadParameters(JSONObject *params)
   std::string input_name = (*params)["arguments"]["input_name"].string();
   std::string input_name_type = (*params)["arguments"]["input_name_type"].string();
   
-  this->inputName.setValue( (*params)["arguments"]["input_name"].string() );
-  this->inputNameType.setValue( (*params)["arguments"]["input_name_type"].string() );
+  this->inputName.setValue( input_name );
+  this->inputNameType.setValue( input_name_type );
   
   /* Cleanup */
   /* Return */

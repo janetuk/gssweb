@@ -8,14 +8,14 @@
 #include "GSSName.h"
 #include "../GSSException.h" 
 
-void GSSName::init(GSSBuffer namestr, GSSOID name_type, gss_imp_name_type fn)
+void GSSName::init(const GSSBuffer namestr, GSSOID name_type, gss_imp_name_type fn)
 {
   /* Variables */
   OM_uint32 major, minor;
   /* Error checking */
   /* Setup */
   /* Main */ 
-  major = gss_import_name(&minor, namestr.toGss(), name_type.toGss(), &name);
+  major = fn(&minor, namestr.toGss(), name_type.toGss(), &name);
   if ( GSS_ERROR(major) )
   {
     std::string errMsg;
@@ -23,7 +23,6 @@ void GSSName::init(GSSBuffer namestr, GSSOID name_type, gss_imp_name_type fn)
     errMsg += namestr.toString();
     throw GSSException(errMsg.c_str(), major, minor, name_type.toGss());
   }
-  this->function = fn;
   
   /* Cleanup */
   /* Return */
@@ -38,7 +37,7 @@ GSSName::GSSName(std::string namestr, GSSOID name_type, gss_imp_name_type fn)
 
 GSSName::GSSName(char *namestr,       GSSOID name_type, gss_imp_name_type fn)
 {
-  init(GSSBuffer(namestr), name_type, fn); 
+  init(GSSBuffer(namestr, true), name_type, fn); 
 }
 
 GSSName::GSSName(GSSBuffer namestr,   GSSOID name_type, gss_imp_name_type fn)
@@ -48,12 +47,12 @@ GSSName::GSSName(GSSBuffer namestr,   GSSOID name_type, gss_imp_name_type fn)
 
 GSSName::GSSName(std::string namestr, gss_OID name_type, gss_imp_name_type fn)
 {
-  init(GSSBuffer(namestr), GSSOID(name_type), fn); 
+  init(GSSBuffer(namestr, true), GSSOID(name_type), fn); 
 }
 
 GSSName::GSSName(char *namestr,       gss_OID name_type, gss_imp_name_type fn)
 {
-  init(GSSBuffer(namestr), GSSOID(name_type), fn); 
+  init(GSSBuffer(namestr, true), GSSOID(name_type), fn); 
 }
 
 GSSName::GSSName(GSSBuffer namestr,   gss_OID name_type, gss_imp_name_type fn)
@@ -63,12 +62,12 @@ GSSName::GSSName(GSSBuffer namestr,   gss_OID name_type, gss_imp_name_type fn)
 
 GSSName::GSSName(std::string namestr, std::string name_type, gss_imp_name_type fn)
 {
-  init(GSSBuffer(namestr), GSSOID(name_type), fn); 
+  init(GSSBuffer(namestr, true), GSSOID(name_type), fn); 
 }
 
 GSSName::GSSName(char *namestr,       std::string name_type, gss_imp_name_type fn)
 {
-  init(GSSBuffer(namestr), GSSOID(name_type), fn); 
+  init(GSSBuffer(namestr, true), GSSOID(name_type), fn); 
 }
 
 GSSName::GSSName(GSSBuffer namestr,   std::string name_type, gss_imp_name_type fn)
@@ -76,13 +75,15 @@ GSSName::GSSName(GSSBuffer namestr,   std::string name_type, gss_imp_name_type f
   init(namestr, GSSOID(name_type), fn); 
 }
 
-
-GSSName::~GSSName()
+void GSSName::release()
 {
   /* Variables */
   OM_uint32 major, minor;
   
   /* Error checking */
+  if (name == GSS_C_NO_NAME)
+    return;
+  
   /* Setup */
   /* Main */ 
   major = gss_release_name(&minor, &name);
@@ -93,6 +94,11 @@ GSSName::~GSSName()
 
   /* Cleanup */
   /* Return */
+}
+
+GSSName::~GSSName()
+{
+  this->release();
 }  
 
 
@@ -115,4 +121,11 @@ std::string GSSName::toString()
   /* Cleanup */
   /* Return */
   return buf.toString();
+}
+
+bool GSSName::setValue ( gss_name_t newName )
+{
+  this->release();
+  this->name = newName;
+  return(true);
 }

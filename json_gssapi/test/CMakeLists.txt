@@ -11,6 +11,8 @@ add_executable(test GSSExceptionTest.cpp
                     ../src/GSSImportName.cpp
                     ../src/GSSException.cpp
                     ../src/datamodel/GSSBuffer.cpp
+                    ../src/datamodel/GSSName.cpp
+                    ../src/datamodel/GSSOID.cpp
                     datamodel/GSSBufferTest.cpp
   )
 

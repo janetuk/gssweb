@@ -40,15 +40,16 @@ mock_import_name(
 {
   /* Error checking */
   /* Variables */
+  
   /* Setup */
   /* Main */
   // Copy our input from the appropriate parameters to MockImportName
-  MockImportName::input_name_buffer = input_name_buffer;
-  MockImportName::input_name_type = input_name_type;
+  MockImportName::input_name_buffer.setValue((char *)input_name_buffer->value, input_name_buffer->length);
+  MockImportName::input_name_type.setValue(input_name_type);
   
   // copy our output to the appropriate parameters
   *minor_status = MockImportName::minor_status;
-  *output_name = MockImportName::output_name;
+  *output_name = MockImportName::output_name.toGSS();
   
   
   /* Cleanup */
@@ -87,11 +88,44 @@ void GSSImportNameTest::testConstructor()
 void GSSImportNameTest::testEmptyCall()
 {
   /* Variables */
-  GSSImportName cmd = GSSImportName();
+  GSSImportName cmd = GSSImportName(&mock_import_name);
+  std::string name = std::string("ssh@server");
+  std::string type = std::string("{ 1 2 840 113554 1 2 1 4 }");
   
   /* Error checking */
   /* Setup */
+  cmd.setInputName(name);
+  cmd.setInputNameType(type);
+  MockImportName::minor_status = rand() % 1024;
+  MockImportName::retVal = rand() % 1024;
+  MockImportName::output_name.setValue(GSS_C_NO_NAME);
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "Input name was not set correctly.",
+    name,
+    cmd.getInputName().toString()
+  );
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "Input name was not set correctly.",
+    type,
+    cmd.getInputNameType().toString()
+  );
+  
+  cmd.execute();
+  
   /* Main */
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The requested GSS name is not correct",
+    name,
+    MockImportName::input_name_buffer.toString()
+  );
+  
+  GSSOID retOID = GSSOID(MockImportName::input_name_type);
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The requested GSS name type is not correct",
+    type,
+    retOID.toString()
+  );
   
   /* Cleanup */
   /* Return */
