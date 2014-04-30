@@ -62,10 +62,17 @@ public:
   std::string toString();
   
   bool setValue(gss_name_t newName);
+  bool setKey(std::string key) { this->hashKey = key; }
+  std::string getKey() const { return this->hashKey; }
+  
+  OM_uint32 getMajorStatus() const { return this->major_status; }
+  OM_uint32 getMinorStatus() const { return this->minor_status; }
   
 private:
+  OM_uint32 major_status, minor_status;
   gss_name_t name;
   gss_imp_name_type function;
+  std::string hashKey;
   
   void init(const GSSBuffer namestr, GSSOID name_type, gss_imp_name_type fn);
   void release();

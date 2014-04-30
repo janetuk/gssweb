@@ -11,17 +11,16 @@
 void GSSName::init(const GSSBuffer namestr, GSSOID name_type, gss_imp_name_type fn)
 {
   /* Variables */
-  OM_uint32 major, minor;
   /* Error checking */
   /* Setup */
   /* Main */ 
-  major = fn(&minor, namestr.toGss(), name_type.toGss(), &name);
-  if ( GSS_ERROR(major) )
+  this->major_status = fn(&(this->minor_status), namestr.toGss(), name_type.toGss(), &name);
+  if ( GSS_ERROR(this->major_status) )
   {
     std::string errMsg;
     errMsg += "Cannot import name: ";
     errMsg += namestr.toString();
-    throw GSSException(errMsg.c_str(), major, minor, name_type.toGss());
+    throw GSSException(errMsg.c_str(), this->major_status, this->minor_status, name_type.toGss());
   }
   
   /* Cleanup */

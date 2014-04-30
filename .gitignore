@@ -81,4 +81,4 @@ Doxyfile
 json_gssapi/build
 json_gssapi/debug
 json_gssapi/manual
-test/
+./test/

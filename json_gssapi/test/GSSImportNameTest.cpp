@@ -163,11 +163,48 @@ void GSSImportNameTest::testConstructorWithJSONObject()
 void GSSImportNameTest::testJSONMarshal()
 {
   /* Variables */
-  GSSImportName cmd = GSSImportName();
+  std::string name("dns@google.com");
+  std::string type("{ 1 2 840 113554 1 2 1 4 }");
+  JSONObject *result;
+  GSSImportName cmd = GSSImportName(&mock_import_name);
   
   /* Error checking */
   /* Setup */
+  cmd.setInputName(name);
+  cmd.setInputNameType(type);
+  MockImportName::minor_status = 0;
+  MockImportName::retVal = 0;
+  MockImportName::output_name.setValue(GSS_C_NO_NAME);
+  
   /* Main */
+  cmd.execute();
+  result = cmd.toJSON();
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The command name is incorrect",
+    std::string("gss_import_name"),
+    std::string( (*result)["command"].string() )
+  );
+  
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The return value was reported incorrectly",
+    (int)MockImportName::retVal,
+    (int)( (*result)["return_values"]["major_status"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The minor_status value was reported incorrectly",
+    (int)MockImportName::minor_status,
+    (int)( (*result)["return_values"]["minor_status"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The gss_name was reported incorrectly",
+    std::string("constant for now"),
+    std::string( (*result)["return_values"]["gss_name"].string() )
+  );
+  
   
   /* Cleanup */
   /* Return */
