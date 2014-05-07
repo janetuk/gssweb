@@ -101,7 +101,7 @@ GSSName::~GSSName()
 }  
 
 
-std::string GSSName::toString()
+std::string GSSName::toString() const
 {
   /* Variables */
   OM_uint32 major, minor;

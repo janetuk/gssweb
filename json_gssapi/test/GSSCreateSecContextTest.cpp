@@ -8,7 +8,7 @@
 
 #include "GSSCreateSecContextTest.h"
 #include "GSSCreateSecContextCommand.h"
-#include "InitSecContextMock.h"
+#include "command_mocks/InitSecContextMock.h"
 #include <iostream>
 #include <string.h>
 #include <exception>

@@ -58,11 +58,11 @@ public:
   ~GSSName();
   
   
-  gss_name_t toGSS() { return(name); }
-  std::string toString();
+  gss_name_t toGss() const { return(name); }
+  std::string toString() const;
   
   bool setValue(gss_name_t newName);
-  bool setKey(std::string key) { this->hashKey = key; }
+  void setKey(std::string key) { this->hashKey = key; }
   std::string getKey() const { return this->hashKey; }
   
   OM_uint32 getMajorStatus() const { return this->major_status; }

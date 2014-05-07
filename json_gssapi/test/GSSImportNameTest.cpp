@@ -20,7 +20,7 @@
 
 #include "GSSImportNameTest.h"
 #include "GSSImportName.h"
-#include "MockImportName.h"
+#include "command_mocks/MockImportName.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSImportNameTest );
 
@@ -49,7 +49,7 @@ mock_import_name(
   
   // copy our output to the appropriate parameters
   *minor_status = MockImportName::minor_status;
-  *output_name = MockImportName::output_name.toGSS();
+  *output_name = MockImportName::output_name.toGss();
   
   
   /* Cleanup */

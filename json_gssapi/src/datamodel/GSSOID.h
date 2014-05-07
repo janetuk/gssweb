@@ -23,7 +23,7 @@ public:
   GSSOID(const GSSOID &gssoid);
   ~GSSOID();
   
-  gss_OID toGss() { return(oid); };
+  gss_OID toGss() const { return(oid); };
   std::string toString();
   
   bool setValue(GSSBuffer buf);
