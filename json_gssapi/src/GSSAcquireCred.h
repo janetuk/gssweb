@@ -19,13 +19,14 @@ class GSSAcquireCred :  GSSCommand
 public:
     GSSAcquireCred( gss_acq_cred_type fn = &gss_acquire_cred );
     GSSAcquireCred ( const GSSAcquireCred& other );
-    GSSAcquireCred ( JSONObject params );
+    GSSAcquireCred ( JSONObject *params, gss_acq_cred_type fn = &gss_acquire_cred );
     ~GSSAcquireCred();
     
     GSSAcquireCred& operator= ( const GSSAcquireCred& other );
     
     virtual void execute();
     virtual JSONObject* toJSON();
+    bool loadParameters(JSONObject *params);
     
     gss_acq_cred_type getGSSFunction() { return function; };
     

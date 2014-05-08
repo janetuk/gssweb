@@ -7,6 +7,7 @@
 
 #include <string>
 #include "gssapi.h"
+#include "../util_json.h"
 
 #include "GSSBuffer.h"
 
@@ -24,11 +25,12 @@ public:
   ~GSSOID();
   
   gss_OID toGss() const { return(oid); };
-  std::string toString();
+  std::string toString() const;
   
   bool setValue(GSSBuffer buf);
   bool setValue(gss_OID   gssOID);
 
+  JSONObject *toJSONValue() const;
 private:
   gss_OID oid;
   bool gssInternal;

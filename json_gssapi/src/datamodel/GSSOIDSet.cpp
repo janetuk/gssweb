@@ -96,6 +96,41 @@ void GSSOIDSet::addOID( const gss_OID other )
 }
 
 
+bool GSSOIDSet::includes ( const gss_OID oid ) const
+{
+  /* Variables */
+  OM_uint32 major, minor;
+  int present;
+  
+  /* Error checking */
+  /* Setup */
+  /* Main */
+  major = gss_test_oid_set_member(&minor, oid, this->set, &present);
+  if (GSS_ERROR(major))
+    /* How? */
+    throw GSSException("Cannot check if an OID is included in a set.", major, minor);
+  
+  /* Cleanup */
+  /* return */
+  return (present == 1);
+}
+
+bool GSSOIDSet::includes ( const GSSOID &oid ) const
+{
+  return(this->includes( oid.toGss() ) );
+}
+
+// JSONObject* GSSOIDSet::toJSONValue() const
+// {
+//   /* Variables */
+//   JSONObject x("hello");
+//   /* Error checking */
+//   /* Setup */
+//   /* Main */
+//   /* Cleanup */
+//   /* return */
+// }
+
 
   /* Variables */
   /* Error checking */

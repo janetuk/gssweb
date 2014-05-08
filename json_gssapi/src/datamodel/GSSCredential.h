@@ -8,7 +8,9 @@
 #ifndef GSSCREDENTIAL_H
 #define GSSCREDENTIAL_H
 
+#include "../util_json.h"
 #include <gssapi/gssapi.h>
+#include <string>
 
 typedef OM_uint32 (*gss_acq_cred_type)(
     OM_uint32 *,        /* minor_status */
@@ -35,6 +37,7 @@ public:
     gss_cred_id_t toGss() const { return(credential); }
     
     void setValue(gss_cred_id_t cred) { this->credential = cred; }
+    JSONObject *toJSONValue() { return( new JSONObject("not now") ); }
     
 private:
     gss_cred_id_t credential;

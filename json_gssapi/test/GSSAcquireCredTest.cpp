@@ -10,6 +10,7 @@
 #include "command_mocks/MockAcquireCred.h"
 #include <datamodel/GSSName.h>
 #include <gssapi.h>
+#include <stdexcept>
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSAcquireCredTest );
 
@@ -70,7 +71,72 @@ void GSSAcquireCredTest::testConstructor()
 
 void GSSAcquireCredTest::testConstructorWithJSONObject()
 {
+  /* Variables */
+  // To feed into the JSON
+  OM_uint32 time_req = rand();
+  gss_cred_usage_t cred_usage = 2;
+  GSSOID mech( (char *)"{ 1 2 840 113554 1 2 1 4 }" );
+  std::stringstream input;
 
+  // The JSON string
+  input << 
+  "{\"method\"   : \"gss_acquire_cred\", \
+    \"arguments\": \
+       {\"desired_name\" : \"#################\", \
+        \"time_req\"     : " << time_req << ", \
+        \"cred_usage\"   : " << cred_usage << ", \
+        \"desired_mechs\": [\"" << mech.toString() << "\"] \
+       } \
+   }";
+  
+  // The JSON itself
+  json_error_t jsonErr;
+  JSONObject json = JSONObject::load(input.str().c_str(), 0, &jsonErr);
+  
+  GSSOIDSet desiredMechs;
+  
+  
+  GSSAcquireCred cmd = GSSAcquireCred(&json, &mock_acquire_cred);
+  
+  /* Error checking */
+  /* Setup */
+  /* Main */
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSAcquireCred's time_req was not loaded correctly",
+    time_req,
+    cmd.getTimeReq()
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSAcquireCred's cred_usage was not loaded correctly",
+    cred_usage,
+    cmd.getCredUsage()
+  );
+  
+  json["arguments"].set( "cred_usage", "GSS_C_INITIATE" );
+  cmd.loadParameters(&json);
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSAcquireCred's cred_usage was not loaded correctly",
+    GSS_C_INITIATE,
+    (int)cmd.getCredUsage()
+  );
+  
+  // CPPUNIT_ASSERT_THROW(expression, exception);
+  json["arguments"].set( "cred_usage", "GSS_C_INITIATOR" );
+  CPPUNIT_ASSERT_THROW_MESSAGE(
+    "GSSAcquireCred's JSON parsing is admitting invalid strings.", 
+    cmd.loadParameters(&json), 
+    std::invalid_argument 
+  );
+  
+  desiredMechs = cmd.getDesiredMechs();
+  CPPUNIT_ASSERT_MESSAGE(
+    "The desired mechanisms were not set properly.",
+    desiredMechs.includes(mech)
+  );
+  
+  /* Cleanup */
+  /* Return */
 }
 
 void GSSAcquireCredTest::testEmptyCall()
@@ -140,12 +206,90 @@ void GSSAcquireCredTest::testEmptyCall()
     cmd.getTimeRec()
   );
   
+  /* Cleanup */
+  /* Return */
+}
+
+
+/* Desired JSON output:
+ * 
+ * {
+ *   "command": "gss_acquire_cred",
+ *   "return_values": {
+ *     "major_status": 0,
+ *     "minor_status": 0,
+ *     "cred_handle": "###########",
+ *     "actual_mechs": [
+ *       "{ 1 2 3 4 }",
+ *       "{ 5 6 7 8 }"
+ *     ],
+ *     "time_rec": 0
+ *   }
+ * }
+ */
+void GSSAcquireCredTest::testJSONMarshal()
+{
+  /* Variables */
+  GSSOIDSet actualMechs;
+  JSONObject *result;
+  GSSAcquireCred cmd = GSSAcquireCred(&mock_acquire_cred);
+  
+  /* Error checking */
+  /* Setup */
+  actualMechs.addOID( GSSOID( (char *)"{ 1 2 3 4 }" ) );
+  actualMechs.addOID( GSSOID( (char *)"{ 5 6 7 8 }" ) );
+  MockAcquireCred::reset();
+  MockAcquireCred::retVal = 0;
+  MockAcquireCred::minor_status = 0;
+  MockAcquireCred::output_cred_handle = GSS_C_NO_CREDENTIAL;
+  MockAcquireCred::actual_mechs = actualMechs.toGss();
+  MockAcquireCred::time_rec = 0;
+  
+  /* Main */
+  cmd.execute();
+  result = cmd.toJSON();
+  
+  std::cout << "\n" << result->dump() << "\n";
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The command name is incorrect",
+    std::string("gss_acquire_cred"),
+    std::string( (*result)["command"].string() )
+  );
+  
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The return value was reported incorrectly",
+    (int)MockAcquireCred::retVal,
+    (int)( (*result)["return_values"]["major_status"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The minor_status value was reported incorrectly",
+    (int)MockAcquireCred::minor_status,
+    (int)( (*result)["return_values"]["minor_status"].integer() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The gss_name was reported incorrectly",
+    std::string("{ 1 2 3 4 }"),
+    std::string( (*result)["return_values"]["actual_mechs"][(size_t)0].string() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The gss_name was reported incorrectly",
+    std::string("{ 5 6 7 8 }"),
+    std::string( (*result)["return_values"]["actual_mechs"][(size_t)1].string() )
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The minor_status value was reported incorrectly",
+    (int)MockAcquireCred::time_rec,
+    (int)( (*result)["return_values"]["time_rec"].integer() )
+  );
+  
   
   /* Cleanup */
   /* Return */
 }
 
-void GSSAcquireCredTest::testJSONMarshal()
-{
-
-}

@@ -20,6 +20,11 @@ public:
     void addOID (const gss_OID other );
     gss_OID_set toGss() const { return(set); }
     
+    bool includes(const gss_OID oid) const;
+    bool includes(const GSSOID &oid) const;
+    
+    JSONObject *toJSONValue() const;
+    
 private:
     gss_OID_set set;
 

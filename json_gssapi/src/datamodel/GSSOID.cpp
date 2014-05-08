@@ -73,7 +73,7 @@ void GSSOID::init(GSSBuffer oid_str)
   /* Return */
 }
 
-std::string GSSOID::toString()
+std::string GSSOID::toString() const
 {
   /* Variables */
   OM_uint32 major, minor;
@@ -103,6 +103,13 @@ std::string GSSOID::toString()
   
   /* Return */ 
   return(ret);
+}
+
+JSONObject *GSSOID::toJSONValue() const
+{ 
+  std::string val = this->toString();
+  JSONObject *ret = new JSONObject( val.c_str() );
+  return(ret); 
 }
 
 bool GSSOID::setValue ( GSSBuffer buf )
