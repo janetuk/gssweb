@@ -120,16 +120,38 @@ bool GSSOIDSet::includes ( const GSSOID &oid ) const
   return(this->includes( oid.toGss() ) );
 }
 
-// JSONObject* GSSOIDSet::toJSONValue() const
-// {
-//   /* Variables */
-//   JSONObject x("hello");
-//   /* Error checking */
-//   /* Setup */
-//   /* Main */
-//   /* Cleanup */
-//   /* return */
-// }
+/*
+ * Desired JSON Output:
+ * 
+ * [
+ *   "{ 1 2 3 4 }",
+ *   "{ 5 6 7 8 }"
+ * ]
+ * 
+ */
+JSONObject* GSSOIDSet::toJSONValue() const
+{
+  /* Variables */
+  JSONObject  jsonArray = JSONObject::array();
+  JSONObject *ret, *temp;
+  OM_uint32   index;
+  /* Error checking */
+  /* Setup */
+  /* Main */
+
+  for (index = 0; index < set->count; index++)
+  {
+    GSSOID m( set->elements + index );
+    temp = m.toJSONValue();
+    jsonArray.append( *temp );
+  }
+  
+  ret = new JSONObject(jsonArray);
+  
+  /* Cleanup */
+  /* return */
+  return(ret);
+}
 
 
   /* Variables */

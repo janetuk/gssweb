@@ -249,7 +249,7 @@ void GSSAcquireCredTest::testJSONMarshal()
   cmd.execute();
   result = cmd.toJSON();
   
-  std::cout << "\n" << result->dump() << "\n";
+//   std::cout << "\n" << result->dump() << "\n";
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The command name is incorrect",

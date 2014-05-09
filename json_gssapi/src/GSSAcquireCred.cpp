@@ -149,30 +149,28 @@ JSONObject *GSSAcquireCred::toJSON()
   /* Variables */
   JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
-  JSONObject mechs = JSONObject::array();
+//   JSONObject mechs = JSONObject::array();
   JSONObject *temp;
-  gss_OID_set gssMechs;
-  OM_uint32 i;
   
   /* Error checking */
   
   /* Setup */
   
   /* Main */
-  gssMechs = actualMechs.toGss();
-  for (i = 0; i < gssMechs->count; i++)
-  {
-    GSSOID m( gssMechs->elements + i );
-    temp = m.toJSONValue();
-    std::cout << "\nMech value: " << temp->string();
-    mechs.append( *temp );
-  }
+  // Return Values
+  // Easy stuff
   values->set("major_status", this->retVal);
   values->set("minor_status", this->minor_status);
+  values->set("time_rec", (int)this->time_rec );
+  
+  // Objects that generate their own JSONObject
   temp = this->cred.toJSONValue();
   values->set("output_cred_handle", *temp );
-  values->set("actual_mechs", mechs);
-  values->set("time_rec", (int)this->time_rec );
+  
+  temp = this->actualMechs.toJSONValue();
+  values->set("actual_mechs", *temp);
+  
+  // Put it all together.
   ret->set("command", "gss_acquire_cred");
   ret->set("return_values", *values);
   
