@@ -12,6 +12,7 @@ add_executable(json_gssapi src/datamodel/GSSName.cpp
                            src/GSSCommand.cpp 
                            src/GSSImportName.cpp
                            src/GSSAcquireCred.cpp 
+                           src/GSSWrap.cpp 
                            src/util_json.cpp 
                            main.cpp)
 target_link_libraries(json_gssapi gssapi_krb5 jansson)
