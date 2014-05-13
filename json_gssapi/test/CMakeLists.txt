@@ -2,9 +2,11 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_executable(test GSSExceptionTest.cpp 
                     GSSAcquireCredTest.cpp
-                    GSSWrapTest.cpp
+                    GSSWrapTest.cpp 
+                    GSSUnwrapTest.cpp
                     command_mocks/InitSecContextMock.cpp
-                    command_mocks/MockAcquireCred.cpp 
+                    command_mocks/MockAcquireCred.cpp  
+                    command_mocks/MockUnwrap.cpp
                     command_mocks/MockWrap.cpp 
                     GSSCreateSecContextTest.cpp 
                     GSSImportNameTest.cpp
@@ -15,6 +17,7 @@ add_executable(test GSSExceptionTest.cpp
                     ../src/GSSImportName.cpp
                     ../src/GSSException.cpp
                     ../src/GSSAcquireCred.cpp
+                    ../src/GSSUnwrap.cpp
                     ../src/GSSWrap.cpp
                     ../src/datamodel/GSSBuffer.cpp
                     ../src/datamodel/GSSCredential.cpp
