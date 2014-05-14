@@ -7,7 +7,8 @@ add_executable(json_gssapi src/datamodel/GSSName.cpp
                            src/datamodel/GSSOIDSet.cpp
                            src/datamodel/GSSBuffer.cpp
                            src/datamodel/GSSCredential.cpp
-                           src/GSSException.cpp 
+                           src/GSSException.cpp
+                           src/GSSGetMic.cpp
                            src/GSSCreateSecContextCommand.cpp
                            src/GSSCommand.cpp 
                            src/GSSImportName.cpp
