@@ -1,0 +1,128 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <style type="text/css" media="screen">
+         p, td { line-height: 1.3; }
+         p { padding-bottom: 1em; }
+         a { color: #3697b3; font-weight: bold; text-decoration: none; }
+         a:hover { color: #000; text-decoration: underline; }
+         a:active { color: #000; text-decoration: underline; }
+      </style>
+   </head>
+   <body style="font-size:12px;color:#262626;line-height:1.3;font-family:Arial, Helvetica, sans-serif;background-color:#fff;">
+      <div class="ennote">
+         <div>GSS Commands</div>
+         <div>
+            <ul>
+               <li>General:</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>GSSCommand should consume major, minor</li>
+                     <li>GSSCommand::toJSON() should produce outer shell, including major, minor</li>
+                     <li>Provide reasonable default values for the GSSCommands</li>
+                     <li>Provide comment examples of JSON input and output</li>
+                     <li>Think through whether toJSON can generate errors</li>
+                     <li>All JSONs should contain an identifier to match up the response, given a multithreaded environment where multiple requests and responses can happen out of order</li>
+                  </ul>
+               </li>
+               <li>GSSAcquireCred</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>The returned cred_handle needs to be cached and returned usefully.</li>
+                  </ul>
+               </li>
+               <li>GSSCreateSecContext</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>Rename to GSSInitSecContext?</li>
+                     <li>Update to use GSSOID, GSSBuffer, etc.</li>
+                     <li>Update to cache context, return that usefully</li>
+                     <li>Update loadParameters to check for JSON value type, NULL</li>
+                     <li>Update loadParameters to accept strings or integers where named constants exist.</li>
+                  </ul>
+               </li>
+               <li>GSSGetMic - only the general</li>
+               <li>GSSImportName</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>Update loadParameters to check for JSON value type, NULL</li>
+                  </ul>
+               </li>
+               <li>GSSUnwrap - only the general</li>
+               <li>GSSWrap - only the general</li>
+               <li>Pseudo random - need to implement totally</li>
+            </ul>
+            <div>Datamodel</div>
+         </div>
+         <div>
+            <ul>
+               <li>General</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>Make CopyConstructors / Assignment / etc. work for not freeing memory buffers when some stray copy of an object goes out of scope, rather than making the calling code think about it.</li>
+                     <li>All datamodel objects should be able to generate their own JSON Value representation</li>
+                     <li><br clear="none"/></li>
+                  </ul>
+               </li>
+               <li>Memory cache</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>You know... make it happen ;)</li>
+                     <li>Make a cache object</li>
+                     <li style="list-style: none; display: inline">
+                        <ul>
+                           <li>it can call back into the GSS data object to let the object know of the UID string for itself, to be used when marshaling to JSON</li>
+                           <li>It will be responsible for sweeping the GSS Data Objects periodically to reap unneeded ones</li>
+                           <li>implementation thoughts:</li>
+                           <li style="list-style: none; display: inline">
+                              <ul>
+                                 <li>A cache object with one hash/map/table/etc. for every kind of data object?</li>
+                                 <li>A cache object with a single table for all, and some way to determine data object type upon retrieval?</li>
+                                 <li>The overall cache object should be responsible for generating the random strings to be used as table keys</li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                     <li>GSS Data object</li>
+                     <li style="list-style: none; display: inline">
+                        <ul>
+                           <li>Should have a settable cache lookup string</li>
+                           <li>Should have a bool reapable?() method to set the reaping policy for this object</li>
+                           <li style="list-style: none; display: inline">
+                              <ul>
+                                 <li>If using a simple ##-minute timer, the timer could be reset upon each access</li>
+                                 <li>Otherwise, it could use the natural timeout for the object, such as the timeout associated with a security context</li>
+                                 <li>Or should objects be linked to a specific security context, and all expire together?</li>
+                                 <li>Or should objects be linked to a specific web page, and all expire together?</li>
+                              </ul>
+                           </li>
+                           <li>Should have a toJSONValue() method to generate their JSON representation</li>
+                           <li style="list-style: none; display: inline">
+                              <ul>
+                                 <li>Memory cached objects should add themselves to the cache during this method, if the object is not already added in.</li>
+                              </ul>
+                           </li>
+                        </ul>
+                     </li>
+                  </ul>
+               </li>
+            </ul>
+            <div>Organizational</div>
+         </div>
+         <div>
+            <ul>
+               <li>Move GSS commands into their own directory off src</li>
+               <li>Create a single routine that calls all of the appropriate stuff, given an input of a JSON string, and returns the appropriate response JSON string.</li>
+               <li>Turn src/datamodel and src/gsscommands into a library</li>
+               <li>Move GSS command tests into test/gsscommands</li>
+               <li>Make sure that the command line interface to the underlying code is the same as the FF dlopen() interface</li>
+               <li style="list-style: none; display: inline">
+                  <ul>
+                     <li>So the command line needs to handle only I/O, and hand off the JSON strings to the next layer down, which is also called by the FF dlopen() implementation</li>
+                  </ul>
+               </li>
+            </ul>
+         </div>
+      </div>
+   </body>
+</html>
