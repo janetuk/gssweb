@@ -13,6 +13,7 @@ add_executable(json_gssapi src/datamodel/GSSName.cpp
                            src/GSSCommand.cpp 
                            src/GSSImportName.cpp
                            src/GSSAcquireCred.cpp 
+                           src/GSSPseudoRandom.cpp
                            src/GSSWrap.cpp  
                            src/GSSUnwrap.cpp
                            src/util_json.cpp 

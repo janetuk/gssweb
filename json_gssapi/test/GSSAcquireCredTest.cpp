@@ -221,7 +221,7 @@ void GSSAcquireCredTest::testEmptyCall()
  *     "cred_handle": "###########",
  *     "actual_mechs": [
  *       "{ 1 2 3 4 }",
- *       "{ 5 6 7 8 }"
+ *       "{ 1 5 6 7 8 }"
  *     ],
  *     "time_rec": 0
  *   }
@@ -237,7 +237,7 @@ void GSSAcquireCredTest::testJSONMarshal()
   /* Error checking */
   /* Setup */
   actualMechs.addOID( GSSOID( (char *)"{ 1 2 3 4 }" ) );
-  actualMechs.addOID( GSSOID( (char *)"{ 5 6 7 8 }" ) );
+  actualMechs.addOID( GSSOID( (char *)"{ 1 5 6 7 8 }" ) );
   MockAcquireCred::reset();
   MockAcquireCred::retVal = 0;
   MockAcquireCred::minor_status = 0;
@@ -278,7 +278,7 @@ void GSSAcquireCredTest::testJSONMarshal()
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The gss_name was reported incorrectly",
-    std::string("{ 5 6 7 8 }"),
+    std::string("{ 1 5 6 7 8 }"),
     std::string( (*result)["return_values"]["actual_mechs"][(size_t)1].string() )
   );
   
