@@ -59,7 +59,7 @@ void GSSUnwrap::execute()
 JSONObject* GSSUnwrap::toJSON()
 {
   /* Variables */
-  const char *conf_state, *qop_state;
+  const char *conf_state;
   JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   
