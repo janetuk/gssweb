@@ -1,4 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src/commands)
 
 add_executable(test GSSExceptionTest.cpp 
                     GSSAcquireCredTest.cpp 
@@ -16,15 +17,15 @@ add_executable(test GSSExceptionTest.cpp
                     GSSImportNameTest.cpp
                     command_mocks/MockImportName.cpp
                     test_run.cpp 
-                    ../src/GSSCreateSecContextCommand.cpp 
+                    ../src/commands/GSSCreateSecContextCommand.cpp 
                     ../src/util_json.cpp 
-                    ../src/GSSImportName.cpp
+                    ../src/commands/GSSImportName.cpp
                     ../src/GSSException.cpp
-                    ../src/GSSGetMic.cpp
-                    ../src/GSSAcquireCred.cpp
-                    ../src/GSSPseudoRandom.cpp
-                    ../src/GSSUnwrap.cpp
-                    ../src/GSSWrap.cpp
+                    ../src/commands/GSSGetMic.cpp
+                    ../src/commands/GSSAcquireCred.cpp
+                    ../src/commands/GSSPseudoRandom.cpp
+                    ../src/commands/GSSUnwrap.cpp
+                    ../src/commands/GSSWrap.cpp
                     ../src/datamodel/GSSBuffer.cpp
                     ../src/datamodel/GSSCredential.cpp
                     ../src/datamodel/GSSName.cpp
