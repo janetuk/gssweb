@@ -8,6 +8,8 @@
 #include "GSSWrapTest.h"
 #include "command_mocks/MockWrap.h"
 #include "GSSWrap.h"
+#include <datamodel/GSSContext.h>
+#include <cache/GSSContextCache.h>
 #include <gssapi/gssapi.h>
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSWrapTest );
@@ -146,26 +148,48 @@ void GSSWrapTest::testEmptyCall()
   /* Return */
 }
 
+/*
+ * Example JSON input:
+ * {
+ *   "method": "gss_wrap",
+ *   "arguments": {
+ *     "context_handle": "stuff",
+ *     "conf_req": "TRUE",
+ *     "qop_req": "GSS_C_QOP_DEFAULT",
+ *     "input_message": "mary had a little lamb"
+ *   }
+ * }
+ * 
+ */
 void GSSWrapTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  const char* input = "{\"method\": \"gss_wrap\", \
+  GSSContext context( (gss_ctx_id_t)rand(), true );
+  std::string key = GSSContextCache::instance()->store(context);
+  
+  std::string input = "{\"method\": \"gss_wrap\", \
     \"arguments\": \
     { \
-         \"context_handle\": \"#######\", \
+         \"context_handle\": \"" + key + "\", \
          \"conf_req\": \"TRUE\", \
          \"qop_req\": \"GSS_C_QOP_DEFAULT\", \
          \"input_message\": \"mary had a little lamb\" \
     }\
   }";
   json_error_t jsonErr;
-  JSONObject json = JSONObject::load(input, 0, &jsonErr);
+  JSONObject json = JSONObject::load(input.c_str(), 0, &jsonErr);
   
   GSSWrap cmd = GSSWrap(&json, &mock_wrap);
   
   /* Error checking */
   /* Setup */
   /* Main */
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSWrap did not retrive the GSS context correctly",
+    context.getContext(),
+    cmd.getContext()
+  );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "GSSWrap did not parse the conf_req argument correctly",
@@ -191,7 +215,19 @@ void GSSWrapTest::testConstructorWithJSONObject()
   /* Return */
 }
 
-
+/* Desired JSON output:
+ * 
+ * {
+ *  "command":       "gss_wrap",
+ *  "return_values": 
+ *  {
+ *      "major_status":   0,
+ *      "minor_status":   0,
+ *      "conf_state":     "TRUE",
+ *      "output_message": "asdf"
+ *  }
+ * }
+ */
 void GSSWrapTest::testJSONMarshal()
 {
   /* Variables */

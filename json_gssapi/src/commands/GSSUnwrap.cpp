@@ -6,6 +6,7 @@
  */
 
 #include "GSSUnwrap.h"
+#include <cache/GSSContextCache.h>
 
 GSSUnwrap::GSSUnwrap ( JSONObject* params, gss_unwrap_type fn )
 {
@@ -31,6 +32,16 @@ bool GSSUnwrap::loadParameters(JSONObject *params)
   {
     sInputMessage = params->get("arguments").get("input_message").string();
     this->inputMessage.setValue(sInputMessage);
+  }
+  
+  /******************
+   * context_handle *
+   ******************/
+  if ( ! params->get("arguments").get("context_handle").isNull() )
+  {
+    sInputMessage = params->get("arguments").get("context_handle").string();
+    GSSContext ctx = GSSContextCache::instance()->retrieve(sInputMessage);
+    this->context = ctx.getContext();
   }
   
   /* Cleanup */

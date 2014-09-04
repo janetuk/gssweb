@@ -6,14 +6,17 @@
  */
 
 #include <algorithm>
+#include <string>
 
 //#include <cppunit/TestFixture.h>
 //#include <cppunit/extensions/HelperMacros.h>
 #include <openssl/rand.h>
 
+#include "cache/GSSContextCache.h"
+#include "datamodel/GSSContext.h"
+#include "command_mocks/MockPseudoRandom.h"
 #include "GSSPseudoRandom.h"
 #include "GSSPseudoRandomTest.h"
-#include "command_mocks/MockPseudoRandom.h"
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSPseudoRandomTest );
@@ -173,7 +176,7 @@ void GSSPseudoRandomTest::testEmptyCall()
  * {"method":    "gss_pseudo_random",
  *  "arguments": 
  *   {
- *     "context_handle":     "########",
+ *     "context_handle":     "context handle key",
  *     "prf_key":            ###,
  *     "prf_in":             "la la la input message",
  *     "desired_output_len": ####
@@ -183,23 +186,32 @@ void GSSPseudoRandomTest::testEmptyCall()
 void GSSPseudoRandomTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  const char* input = "{\"method\": \"gss_pseudo_random\", \
+  GSSContext context( (gss_ctx_id_t)rand(), true );
+  std::string key = GSSContextCache::instance()->store(context);
+  
+  std::string input = "{\"method\": \"gss_pseudo_random\", \
     \"arguments\": \
     { \
-         \"context_handle\": \"#######\", \
+         \"context_handle\": \"" + key + "\", \
          \"prf_key\": 1234567890, \
          \"prf_in\": \"mary had a little lamb\", \
          \"desired_output_len\": 256 \
     }\
   }";
   json_error_t jsonErr;
-  JSONObject json = JSONObject::load(input, 0, &jsonErr);
+  JSONObject json = JSONObject::load(input.c_str(), 0, &jsonErr);
   
   GSSPseudoRandom cmd = GSSPseudoRandom(&json, &mock_gss_pseudo_random);
 
   /* Error Checking */
   /* Setup */
   /* Main */
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSWrap did not retrive the GSS context correctly",
+    context.getContext(),
+    cmd.getContextHandle()
+  );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "GSSPseudoRandom did not parse the prf_key argument correctly.",

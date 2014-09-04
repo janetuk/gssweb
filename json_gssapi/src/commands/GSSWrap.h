@@ -44,6 +44,7 @@ public:
     int getConfReq() const { return(conf_req); }
     gss_qop_t getQopReq() const { return(qop_req); }
     GSSBuffer getInputMessage () const { return(inputMessage); }
+    gss_ctx_id_t getContext() const { return(context); }
     
 private:
     gss_wrap_type function;

@@ -18,9 +18,21 @@ add_executable(json_gssapi src/datamodel/GSSName.cpp
                            src/commands/GSSPseudoRandom.cpp
                            src/commands/GSSWrap.cpp  
                            src/commands/GSSUnwrap.cpp
-                           src/util_json.cpp 
+                           src/util_json.cpp
+                           src/cache/GSSContextCache.cpp
+                           src/cache/GSSNameCache.cpp
+                           src/datamodel/GSSContext.cpp
+                           src/util/base64.cpp
                            main.cpp)
-target_link_libraries(json_gssapi gssapi_krb5 jansson)
+target_link_libraries(json_gssapi gssapi_krb5 jansson crypto)
+
+find_package (PkgConfig)
+pkg_check_modules (GLIB2   glib-2.0)
+if (GLIB2_FOUND)
+  include_directories(${GLIB2_INCLUDE_DIRS})
+  target_link_libraries(json_gssapi ${GLIB2_LIBRARIES})
+endif(GLIB2_FOUND)
+ 
 
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")

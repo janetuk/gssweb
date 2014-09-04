@@ -7,15 +7,57 @@
 
 #include "GSSImportName.h"
 #include "GSSException.h"
+#include <cache/GSSNameCache.h>
+
+
+typedef OM_uint32 (*gss_imp_name_type)(
+    OM_uint32 *,        /* minor_status */
+    gss_buffer_t,       /* input_name_buffer */
+    gss_OID,            /* input_name_type(used to be const) */
+    gss_name_t *);      /* output_name */
+
+
 
 void GSSImportName::execute()
 {
-  this->outputName = GSSName(inputName, inputNameType, function);
-  this->retVal = this->outputName.getMajorStatus();
-  this->minor_status = this->outputName.getMinorStatus();
-  this->outputName.setKey("constant for now");
+  /* Variables */
+  gss_name_t name;
+  std::string key;
+
+  /* Error checking */
+  /* Setup */
+
+  /* Main */
+  retVal = function(&minor_status, inputName.toGss(), inputNameType.toGss(), &name);
+  if ( GSS_ERROR(this->retVal) )
+  {
+    std::string errMsg;
+    errMsg += "Cannot import name: ";
+    errMsg += inputName.toString();
+    throw GSSException(errMsg.c_str(), this->retVal, this->minor_status, inputNameType.toGss());
+  }
+  this->outputName.setValue(name);
+  key = GSSNameCache::instance()->store(this->outputName);
+//   std::cout << "Storing key: " << key << std::endl;
+  this->outputName.setKey(key);
+  /* Cleanup */
+  /* Return */
+  
 }
 
+/* Example output:
+ * 
+ * {
+ *   "command": "gss_import_name",
+ *   "return_values":
+ *   {
+ *     "major_status": 0,
+ *     "minor_status": 0,
+ *     "gss_name": "base64_encoded_string"
+ *   }
+ * }
+ * 
+ */
 JSONObject *GSSImportName::toJSON()
 {
   /* Variables */
@@ -37,6 +79,14 @@ JSONObject *GSSImportName::toJSON()
   
   /* Return */
   return(ret);
+}
+
+GSSImportName::GSSImportName ( gss_imp_name_type fn )
+{
+  // defaults
+  function = fn;
+  inputName = "";
+  inputNameType.setValue(GSSBuffer("{ 1 2 840 113554 1 2 1 4 }"));
 }
 
 GSSImportName::GSSImportName(JSONObject *params, gss_imp_name_type fn) : GSSCommand(params)

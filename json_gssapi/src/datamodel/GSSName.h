@@ -22,46 +22,18 @@ typedef OM_uint32 (*gss_imp_name_type)(
 
 class GSSName {
 public:
-  GSSName() {name = GSS_C_NO_NAME; };
-  GSSName(std::string nameStr, 
-          GSSOID name_type = GSSOID( (gss_OID)GSS_C_NO_OID ), 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-  GSSName(std::string nameStr, 
-          gss_OID name_type, 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-  GSSName(std::string nameStr, 
-          std::string name_type, 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-
-  GSSName(char *namestr,       
-          GSSOID name_type = GSSOID( (gss_OID)GSS_C_NO_OID ), 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-  GSSName(char *namestr,       
-          gss_OID name_type, 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-  GSSName(char *namestr,       
-          std::string name_type, 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-
-  GSSName(GSSBuffer namestr,   
-          GSSOID name_type = GSSOID( (gss_OID)GSS_C_NO_OID ), 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-  GSSName(GSSBuffer namestr,   
-          gss_OID name_type, 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-  GSSName(GSSBuffer namestr,   
-          std::string name_type, 
-          gss_imp_name_type fn = (gss_imp_name_type)&gss_import_name);
-
-  GSSName(gss_name_t gss_name) { name = gss_name; }
+  GSSName() { name = GSS_C_NO_NAME; skipRelease = false; };
+  GSSName(const GSSName& n);
+  GSSName(gss_name_t gss_name, bool skipRelease = false);
 
   ~GSSName();
   
+  GSSName& operator=(const GSSName& rhs);
   
   gss_name_t toGss() const { return(name); }
   std::string toString() const;
   
-  bool setValue(gss_name_t newName);
+  bool setValue(gss_name_t newName, bool skipRelease = false);
   void setKey(std::string key) { this->hashKey = key; }
   std::string getKey() const { return this->hashKey; }
   
@@ -73,8 +45,9 @@ private:
   gss_name_t name;
   gss_imp_name_type function;
   std::string hashKey;
+  bool skipRelease;
   
-  void init(const GSSBuffer namestr, GSSOID name_type, gss_imp_name_type fn);
+  void init(const GSSBuffer namestr, GSSOID name_type, bool skipRelease, gss_imp_name_type fn);
   void release();
 };
 

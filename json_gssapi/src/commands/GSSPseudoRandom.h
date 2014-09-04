@@ -45,6 +45,7 @@ public:
     OM_uint32 getMinorStatus() { return(minor_status); }
     int       getKey() { return(key); }
     int       getDesiredOutputLength() { return(desiredOutputLength); }
+    gss_ctx_id_t getContextHandle() const { return(this->context); }
     gss_pseudo_random_type getGSSFunction() { return function; };
     
 private:

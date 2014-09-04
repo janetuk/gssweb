@@ -6,6 +6,7 @@
  */
 
 #include "GSSGetMic.h"
+#include <cache/GSSContextCache.h>
 
 #include <stdexcept>
 #include <mit-krb5/gssapi/gssapi.h>
@@ -64,6 +65,16 @@ bool GSSGetMic::loadParameters ( JSONObject* params )
     this->inputMessage.setValue(sInputMessage);
   }
   
+  /******************
+   * context_handle *
+   ******************/
+  if ( ! params->get("arguments").get("context_handle").isNull() )
+  {
+    sInputMessage = params->get("arguments").get("context_handle").string();
+    GSSContext ctx = GSSContextCache::instance()->retrieve(sInputMessage);
+    this->context = ctx.getContext();
+  }
+  
   /* Cleanup */
   /* Return */
   return true;
@@ -87,7 +98,6 @@ void GSSGetMic::execute()
 JSONObject* GSSGetMic::toJSON()
 {
   /* Variables */
-  const char *conf_state;
   JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   

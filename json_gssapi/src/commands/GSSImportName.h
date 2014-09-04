@@ -17,7 +17,7 @@
 class GSSImportName : public GSSCommand
 {
 public:
-  GSSImportName(gss_imp_name_type fn = &gss_import_name) : function(fn) {};
+  GSSImportName(gss_imp_name_type fn = &gss_import_name);
   GSSImportName(JSONObject *params, gss_imp_name_type fn = &gss_import_name);
   
   void execute();

@@ -7,6 +7,7 @@
 
 #include "GSSCreateSecContextCommand.h"
 #include "GSSException.h"
+#include <cache/GSSContextCache.h>
 #include <gssapi.h>
 #include <stdlib.h>
 #include <string.h>
@@ -85,6 +86,9 @@ GSSCreateSecContextCommand::execute()
     &output_token,
     &ret_flags,
     &time_rec);
+  
+  context.setContext(context_handle, true);
+  contextKey = GSSContextCache::instance()->store(context);
   
   /* Cleanup */
   
@@ -272,7 +276,7 @@ JSONObject *GSSCreateSecContextCommand::toJSON()
   /* Main */
   values->set("major_status", this->retVal);
   values->set("minor_status", this->minor_status);
-  values->set("context_handle", (json_int_t)0);
+  values->set("context_handle", this->contextKey.c_str());
   values->set("actual_mech_type", this->getActualMechType());
   values->set("output_token", (const char *)this->output_token.value);
   values->set("ret_flags", this->ret_flags);

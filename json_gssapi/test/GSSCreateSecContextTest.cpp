@@ -13,6 +13,8 @@
 #include <string.h>
 #include <exception>
 #include "util_json.h"
+#include <cache/GSSContextCache.h>
+#include <datamodel/GSSContext.h>
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSCreateSecContextTest );
@@ -35,6 +37,8 @@ mock_init_sec(
     OM_uint32             *ret_flags,
     OM_uint32             *time_rec)
 {
+  gss_ctx_id_t tmpContext;
+  
   InitSecContextMock::visited = true;
   
   /* Copy in the input to this function */
@@ -57,13 +61,9 @@ mock_init_sec(
   *time_rec = InitSecContextMock::time_rec;
   
   /* Handle the one that's I/O */
-    if (*context_handle == GSS_C_NO_CONTEXT)
-  {
-    *context_handle = InitSecContextMock::context_handle;
-  } else if (*context_handle != InitSecContextMock::context_handle)
-  {
-    InitSecContextMock::invalidContextHandle = true;
-  }
+  tmpContext = *context_handle;
+  *context_handle = InitSecContextMock::context_handle;
+  InitSecContextMock::context_handle = tmpContext;
 
   return InitSecContextMock::retVal;
 }
@@ -89,10 +89,23 @@ GSSCreateSecContextTest::testConstructor()
   
   cmdFn = cmd.getGSSFunction();
   GSSFn = (void *)&gss_init_sec_context;
-  CPPUNIT_ASSERT_MESSAGE("The default constructor for GSSCreateSecContextCommand should assign the function gss_init_sec_context", cmdFn == GSSFn);
+  CPPUNIT_ASSERT_MESSAGE(
+    "The default constructor for GSSCreateSecContextCommand should assign the function gss_init_sec_context", 
+    cmdFn == GSSFn);
 }
 
-
+/* JSON Input:
+ * { 
+ *   "method": "gss_create_sec_context",
+ *   "arguments": 
+ *   {
+ *     "req_flags": "1",
+ *     "time_req": "2",
+ *     "mech_type": "{ 1 2 840 113554 1 2 1 4 }",
+ *     "target_name": "me@my.sha/DOW"
+ *   }
+ * }
+ */
 void GSSCreateSecContextTest::testConstructorWithJSONObject()
 {
   const char* input = "{\"method\": \"gss_create_sec_context\", \
@@ -146,13 +159,15 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
 void
 GSSCreateSecContextTest::testEmptyCall()
 {
+  gss_ctx_id_t expectedResult, expectedArgument;
+  
   GSSCreateSecContextCommand cmd ((void *)&mock_init_sec);
   
   /* Set expectations on what the GSS function will be called with */
   cmd.time_req = rand() % 1024;
   cmd.req_flags = rand() % 1024;
   cmd.target_name = NULL;
-  cmd.context_handle = GSS_C_NO_CONTEXT;
+  cmd.context_handle = expectedArgument = (gss_ctx_id_t)rand();
   
   CPPUNIT_ASSERT_MESSAGE(
     "The mech_type values differ.",
@@ -164,7 +179,7 @@ GSSCreateSecContextTest::testEmptyCall()
   /* Set expectations on what the GSS function will produce */
   InitSecContextMock::retVal = rand() % 1024;
   InitSecContextMock::minor_status = rand() % 1024;
-  InitSecContextMock::context_handle = GSS_C_NO_CONTEXT;
+  InitSecContextMock::context_handle = expectedResult = (gss_ctx_id_t)rand();
   InitSecContextMock::actual_mech_type = NULL;
   InitSecContextMock::output_token.value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
   InitSecContextMock::output_token.length = strlen((char *)InitSecContextMock::output_token.value);
@@ -213,8 +228,13 @@ GSSCreateSecContextTest::testEmptyCall()
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "context_handle was not copied back to the command.",
-    InitSecContextMock::context_handle,
+    expectedResult,
     cmd.context_handle
+  );
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "context_handle was not copied back to the command.",
+    expectedArgument,
+    InitSecContextMock::context_handle
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "actual_mech_type was not copied back to the command.",
@@ -236,13 +256,37 @@ GSSCreateSecContextTest::testEmptyCall()
     InitSecContextMock::time_rec,
     cmd.time_rec
   );
+  
+  // Set this to no context, or cleanup attempts to free the not-a-real-pointer.
+  InitSecContextMock::context_handle = GSS_C_NO_CONTEXT;
+  
 }
 
+/* Expected JSON output:
+ * 
+ * {
+ *   "command": "gss_init_sec_context", 
+ *   "return_values": 
+ *   {
+ *     "context_handle": "base64_encoded_string", 
+ *     "major_status": ##, 
+ *     "output_token": "http@project-moonshot.org/PROJECT-MOONSHOT.ORG", 
+ *     "actual_mech_type": "{ 1 3 6 1 5 5 13 4 }", 
+ *     "minor_status": ##, 
+ *     ret_flags": ##, 
+ *     "time_rec": ##
+ *   }
+ * }
+ * 
+ */
 void GSSCreateSecContextTest::testJSONMarshal()
 {
   /* Variables */
   GSSCreateSecContextCommand cmd ((void *)&mock_init_sec);
   JSONObject *result;
+  GSSContextCache *cache = GSSContextCache::instance();
+  GSSContext context;
+  gss_ctx_id_t expectedResult;
   
   /* Error checking */
   
@@ -250,7 +294,7 @@ void GSSCreateSecContextTest::testJSONMarshal()
   // Set expectations on what the GSS function will produce
   InitSecContextMock::retVal = GSS_S_BAD_MECH;
   InitSecContextMock::minor_status = 20;
-  InitSecContextMock::context_handle = GSS_C_NO_CONTEXT;
+  InitSecContextMock::context_handle = expectedResult = (gss_ctx_id_t)rand();
   InitSecContextMock::actual_mech_type = (gss_OID)GSS_C_MA_MECH_NEGO;
   InitSecContextMock::output_token.value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
   InitSecContextMock::output_token.length = strlen((char *)InitSecContextMock::output_token.value);
@@ -266,6 +310,8 @@ void GSSCreateSecContextTest::testJSONMarshal()
   /* Main */
   cmd.execute();
   result = cmd.toJSON();
+/*  
+  std::cout << "create sec context json: " << result->dump() << "\n";*/
   
   CPPUNIT_ASSERT_MESSAGE(
     "The command name is incorrect",
@@ -310,6 +356,13 @@ void GSSCreateSecContextTest::testJSONMarshal()
     (int)( (*result)["return_values"]["time_rec"].integer() )
   );
   
+  context = cache->retrieve( (*result)["return_values"]["context_handle"].string() );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The returned context was reported incorrectly",
+    (long)expectedResult,
+    (long)context.getContext()
+  );
   
   /* Cleanup */
   /* Return */

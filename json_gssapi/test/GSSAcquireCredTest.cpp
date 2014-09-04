@@ -144,7 +144,7 @@ void GSSAcquireCredTest::testEmptyCall()
   /* Variables */
   GSSAcquireCred cmd = GSSAcquireCred(&mock_acquire_cred);
   OM_uint32 minor;
-  GSSName steve((char *)"steve@local", (gss_OID)GSS_C_NT_USER_NAME);
+  GSSName steve; // ((char *)"steve@local", (gss_OID)GSS_C_NT_USER_NAME);
   GSSOID moonshotOID((char *)"{1 3 6 1 5 5 15 1 1 18}");
   
   /* Error checking */

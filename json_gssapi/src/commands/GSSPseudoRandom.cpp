@@ -8,6 +8,8 @@
 #include <stdexcept>
 
 #include "GSSPseudoRandom.h"
+#include <cache/GSSContextCache.h>
+#include <datamodel/GSSContext.h>
 
 GSSPseudoRandom::GSSPseudoRandom(JSONObject *params, 
 					       gss_pseudo_random_type fn) : GSSCommand(params)
@@ -77,6 +79,20 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
     {
       sInputMessage = params->get("arguments").get("prf_in").string();
       this->inputMessage.setValue(sInputMessage);
+    }
+  }
+
+  
+  /******************
+   * context_handle *
+   ******************/
+  if ( ! params->get("arguments").get("context_handle").isNull() )
+  {
+    if (params->get("arguments").get("context_handle").isString())
+    {
+      std::string contextKey = params->get("arguments").get("context_handle").string();
+      GSSContext ctx = GSSContextCache::instance()->retrieve(contextKey);
+      this->context = ctx.getContext();
     }
   }
   

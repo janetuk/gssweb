@@ -8,6 +8,8 @@
 #include "GSSGetMicTest.h"
 #include "command_mocks/MockGetMic.h"
 #include "GSSGetMic.h"
+#include <datamodel/GSSContext.h>
+#include <cache/GSSContextCache.h>
 #include <gssapi/gssapi.h>
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSGetMicTest );
@@ -130,16 +132,19 @@ void GSSGetMicTest::testEmptyCall()
 void GSSGetMicTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  const char* input = "{\"method\": \"gss_get_mic\", \
+  GSSContext context((gss_ctx_id_t)rand(), true);
+  std::string key = GSSContextCache::instance()->store(context);
+
+  std::string input = "{\"method\": \"gss_get_mic\", \
     \"arguments\": \
     { \
-         \"context_handle\": \"#######\", \
+         \"context_handle\": \"" + key + "\", \
          \"qop_req\": \"GSS_C_QOP_DEFAULT\", \
          \"input_message\": \"mary had a little lamb\" \
     }\
   }";
   json_error_t jsonErr;
-  JSONObject json = JSONObject::load(input, 0, &jsonErr);
+  JSONObject json = JSONObject::load(input.c_str(), 0, &jsonErr);
   
   GSSGetMic cmd = GSSGetMic(&json, &mock_get_mic);
   
@@ -157,6 +162,12 @@ void GSSGetMicTest::testConstructorWithJSONObject()
     "GSSGetMic did not parse the input message argument correctly",
     std::string("mary had a little lamb"),
     cmd.getInputMessage().toString()
+  );
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSGetMic did not retrieve the context handle correctly",
+    context.getContext(),
+    cmd.getContextHandle()
   );
   
   /* Cleanup */

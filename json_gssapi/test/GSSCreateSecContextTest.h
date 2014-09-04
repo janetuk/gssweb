@@ -11,10 +11,11 @@
 // #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <gssapi.h>
-#include "GSSCreateSecContextCommand.h"
-
 #include <stdlib.h>
+
+#include <gssapi.h>
+
+#include "commands/GSSCreateSecContextCommand.h"
 
 class GSSCreateSecContextTest :  public CppUnit::TestFixture
 {
@@ -36,6 +37,7 @@ public:
   void testConstructorWithJSONObject();
   void testEmptyCall();
   void testJSONMarshal();
+  void getCache();
   
 private:
   GSSCreateSecContextCommand command;

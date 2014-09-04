@@ -6,6 +6,7 @@
  */
 
 #include "GSSWrap.h"
+#include <cache/GSSContextCache.h>
 #include <stdexcept>
 
 /*
@@ -78,6 +79,16 @@ bool GSSWrap::loadParameters(JSONObject *params)
   {
     sInputMessage = params->get("arguments").get("input_message").string();
     this->inputMessage.setValue(sInputMessage);
+  }
+  
+  /***********
+   * context *
+   ***********/
+  if ( ! params->get("arguments").get("context_handle").isNull() )
+  {
+    std::string contextKey = params->get("arguments").get("context_handle").string();
+    GSSContext ctx = GSSContextCache::instance()->retrieve(contextKey);
+    this->context = ctx.getContext();
   }
   
   /* Cleanup */

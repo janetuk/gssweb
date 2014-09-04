@@ -9,6 +9,7 @@
 #define GSSCREATESECCONTEXTCOMMAND_H
 
 #include "GSSCommand.h"
+#include <datamodel/GSSContext.h>
 #include <gssapi.h>
 
 class GSSCreateSecContextCommand : public GSSCommand
@@ -52,6 +53,8 @@ public:
 private:
     void *function;
     const char * oidToStr(gss_OID oid);
+    GSSContext context;
+    std::string contextKey;
 };
 
 #endif // GSSCREATESECCONTEXTCOMMAND_H

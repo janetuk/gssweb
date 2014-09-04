@@ -35,6 +35,7 @@ public:
     int getConfState() const { return(conf_state); }
     GSSBuffer getInputMessage() const { return(inputMessage); }
     GSSBuffer getOutputMessage() const { return(outputMessage); }
+    gss_ctx_id_t getContextHandle() const { return(context); }
 
     virtual void execute();  
     virtual JSONObject* toJSON();

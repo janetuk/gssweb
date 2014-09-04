@@ -5,10 +5,15 @@
  *
  */
 
+#include <string>
+
 #include "GSSUnwrapTest.h"
 #include "command_mocks/MockUnwrap.h"
 #include "GSSUnwrap.h"
+#include <datamodel/GSSContext.h>
+#include <cache/GSSContextCache.h>
 #include <gssapi/gssapi.h>
+
 
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSUnwrapTest );
 
@@ -138,21 +143,29 @@ void GSSUnwrapTest::testEmptyCall()
 void GSSUnwrapTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  const char* input = "{\"method\": \"gss_wrap\", \
+  GSSContext context((gss_ctx_id_t)rand(), true);
+  std::string key = GSSContextCache::instance()->store(context);
+  std::string input = "{\"method\": \"gss_wrap\", \
     \"arguments\": \
     { \
-         \"context_handle\": \"#######\", \
+         \"context_handle\": \"" + key + "\", \
          \"input_message\": \"mary had a little lamb\" \
     }\
   }";
   json_error_t jsonErr;
-  JSONObject json = JSONObject::load(input, 0, &jsonErr);
+  JSONObject json = JSONObject::load(input.c_str(), 0, &jsonErr);
   
   GSSUnwrap cmd = GSSUnwrap(&json, &mock_unwrap);
   
   /* Error checking */
   /* Setup */
   /* Main */
+  
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "GSSUnwrap did not retrieve the GSS context correctly",
+    context.getContext(),
+    cmd.getContextHandle()
+  );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "GSSUnwrap did not parse the input message argument correctly",
