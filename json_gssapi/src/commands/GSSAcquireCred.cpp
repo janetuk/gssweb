@@ -7,12 +7,13 @@
 
 #include "GSSAcquireCred.h"
 #include "GSSException.h"
+#include <cache/GSSNameCache.h>
 
 #include <stdexcept>
 
 GSSAcquireCred::GSSAcquireCred(gss_acq_cred_type fn) : function(fn)
 {
-
+  desired_name = GSS_C_NO_NAME;
 }
 
 GSSAcquireCred::GSSAcquireCred ( const GSSAcquireCred& other )
@@ -55,6 +56,9 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
   // Easy stuff(*params)
   this->time_req = (*params)["arguments"]["time_req"].integer();
 
+  /**************
+   * cred_usage *
+   **************/
   if ( ! params->get("arguments").get("cred_usage").isNull() )
   {
     if (params->get("arguments").get("cred_usage").isString())
@@ -74,6 +78,9 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
       throw std::invalid_argument( "Unrecognized argument type for cred_usage." );
       }
   
+  /*****************
+   * desired_mechs *
+   *****************/
   if ( params->get("arguments").get("desired_mechs").isArray() )
   {
     for (nDesiredMechs = 0; 
@@ -85,6 +92,16 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
     }
   } else
     throw std::invalid_argument("Unrecognized desired_mechs array.");
+
+  /****************
+   * desired_name *
+   ****************/
+  if ( ! params->get("arguments").get("desired_name").isNull() )
+  {
+    std::string key = params->get("arguments").get("desired_name").string();
+    this->desired_name = GSSNameCache::instance()->retrieve(key);
+  }
+
   
   /* Cleanup */
   /* Return */

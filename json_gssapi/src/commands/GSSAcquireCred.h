@@ -14,7 +14,7 @@
 #include "datamodel/GSSName.h"
 #include <gssapi/gssapi.h>
 
-class GSSAcquireCred :  GSSCommand
+class GSSAcquireCred : public GSSCommand
 {
 public:
     GSSAcquireCred( gss_acq_cred_type fn = &gss_acquire_cred );

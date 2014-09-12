@@ -8,7 +8,10 @@
 #include "GSSCreateSecContextCommand.h"
 #include "GSSException.h"
 #include <cache/GSSContextCache.h>
+#include <cache/GSSNameCache.h>
+#include <datamodel/GSSName.h>
 #include <gssapi.h>
+#include <stdexcept>
 #include <stdlib.h>
 #include <string.h>
 
@@ -28,56 +31,26 @@ typedef OM_uint32 (*init_sec_context)(
     OM_uint32 *         /* time_req */
 );
 
-/* Helper function - import the OID from a string */
-static gss_OID str_to_oid(const char *mech_type_str = NULL)
-{
-  /* Variables */
-  gss_buffer_desc gssbuffOID;
-  gss_OID gssoidTargetOID;
-  OM_uint32 major;
-  OM_uint32 minor;
-  
-  /* Error checking */
-  if (mech_type_str == NULL ||
-      *mech_type_str == 0)
-    return NULL;
-  
-  /* Setup */
-  /* Main */
-  gssbuffOID.value = (void *)(mech_type_str);
-  gssbuffOID.length = strlen(mech_type_str);
-  major = gss_str_to_oid(&minor, 
-			 &gssbuffOID, 
-			 &gssoidTargetOID);
-  if (major != GSS_S_COMPLETE)
-    throw GSSException("Error converting string to OID", major, minor);
-
-  /* Cleanup */
-  
-  /* Return */
-  return gssoidTargetOID;
-}
-
 void
 GSSCreateSecContextCommand::execute()
 {
   /* Variables */
   init_sec_context fn = (init_sec_context)function;
+  gss_OID actual_mech_type;
   
   /* Error checking */
   
   /* Setup */
   if (output_token.length > 0)
     retVal = gss_release_buffer(&minor_status, &output_token);
-  
+
   /* Main */
-  
   retVal = fn(
     &minor_status,
     GSS_C_NO_CREDENTIAL,
     &context_handle,
-    target_name,
-    mech_type,
+    targetName.toGss(),
+    mechType.toGss(),
     req_flags,
     time_req,
     GSS_C_NO_CHANNEL_BINDINGS,
@@ -86,6 +59,15 @@ GSSCreateSecContextCommand::execute()
     &output_token,
     &ret_flags,
     &time_rec);
+  
+  if ( GSS_ERROR(this->retVal) )
+  {
+    std::string errMsg;
+    errMsg += "Cannot init_sec_context: ";
+    throw GSSException(errMsg.c_str(), this->retVal, this->minor_status, mechType.toGss());
+  }
+  
+  actualMechType.setValue(actual_mech_type);
   
   context.setContext(context_handle, true);
   contextKey = GSSContextCache::instance()->store(context);
@@ -120,88 +102,77 @@ const char* GSSCreateSecContextCommand::getTargetDisplayName()
   return( ret );
 }
 
-const char* GSSCreateSecContextCommand::getActualMechType()
-{
-  return(this->oidToStr(this->actual_mech_type));
-}
-
-const char* GSSCreateSecContextCommand::getMechType()
-{
-  return(this->oidToStr(this->mech_type));
-}
-
-const char* GSSCreateSecContextCommand::oidToStr(gss_OID oid)
-{
-  gss_buffer_desc output;
-  OM_uint32 major, minor;
-  const char *retVal;
-
-  /* error checking */
-  if (oid == NULL)
-    return NULL;
-
-  /* Setup */  
-  
-  /* main */
-  major = gss_oid_to_str(&minor, oid, &output);
-  if (major == GSS_S_COMPLETE)
-    retVal = (const char *)output.value;
-  else
-    retVal = NULL;
-  
-  /* cleanup */
-  
-  /* return */
-  return( retVal );
-}
-
 bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
 {
   /* Variables */
-  OM_uint32 major, minor;
-  gss_buffer_desc gssbuffTargetName;
-  const char *buffer;
+  std::string key;
   
   /* Error checking */
+  if ( params->get("arguments").isNull() )
+    return true;
   
   /* Setup */
   // Should I zeroOut?
   
   /* Main processing */
   // Easy stuff(*params)
-  this->time_req = (OM_uint32)( (*params)["arguments"]["time_req"].integer() );
-  this->req_flags = (OM_uint32)( (*params)["arguments"]["req_flags"].integer() );
+  if ( !params->get("arguments").get("time_req").isNull() )
+    this->time_req = params->get("arguments").get("time_req").integer();
+  
+  if ( !params->get("arguments").get("req_flags").isNull() )
+    this->req_flags = params->get("arguments").get("req_flags").integer();
   
   // context_handle
-  //   -- just treat the value passed in as correct.
-  context_handle = (gss_ctx_id_t)( (*params)["arguments"]["context_handle"].integer() );
+  if ( ! params->get("arguments").get("context_handle").isNull() )
+  {
+    this->context_handle = GSS_C_NO_CONTEXT;
+    if (params->get("arguments").get("context_handle").isString())
+    {
+      key = params->get("arguments").get("context_handle").string();
+      context = GSSContextCache::instance()->retrieve( key.c_str() );
+      this->context_handle = context.getContext();
+    }
+    if (GSS_C_NO_CONTEXT == this->context_handle)
+      throw std::invalid_argument( "Could not find the context_handle." );
+  }
   
   // target_name
-  buffer = (*params)["arguments"]["target_name"].string();
-  if (buffer != NULL && *buffer != 0)
+  if ( ! params->get("arguments").get("target_name").isNull() )
   {
-    gssbuffTargetName.value = (void *)buffer;
-    gssbuffTargetName.length = strlen( buffer );
-    
-    major = gss_import_name(&minor, 
-			    &gssbuffTargetName, 
-			    GSS_C_NO_OID, 
-			    &target_name);
-    if (major != GSS_S_COMPLETE)
-      throw GSSException("Error importing target_name", major, minor);
+    this->target_name = GSS_C_NO_NAME;
+    if (params->get("arguments").get("target_name").isString())
+    {
+      key = params->get("arguments").get("target_name").string();
+      
+      targetName = GSSNameCache::instance()->retrieve(key);
+      
+      this->target_name = targetName.toGss();
+    }
+    if (GSS_C_NO_NAME == this->target_name)
+      throw std::invalid_argument( "Could not find the target_name" );
   }
   
   // mech_type  
-  mech_type = str_to_oid( (*params)["arguments"]["mech_type"].string() );
-  
-  // input_token
-  buffer = (*params)["arguments"]["input_token"].string();
-  if (buffer != NULL && *buffer != 0)
+  if ( ! params->get("arguments").get("mech_type").isNull() )
   {
-    this->input_token.value = (void *)buffer;
-    this->input_token.length = strlen(buffer);
+    key.clear();
+    if (params->get("arguments").get("mech_type").isString())
+    {
+      key = params->get("arguments").get("mech_type").string();
+      mechType.setValue(key);
+    }
+    if (GSS_C_NO_OID == this->mechType.toGss() )
+      throw std::invalid_argument( std::string() + "Could not create a mech_type OID from '" + key + "'");
   }
   
+  // input_token
+  if ( ! params->get("arguments").get("input_token").isNull() )
+  {
+    key = params->get("arguments").get("input_token").string();
+    this->input_token.value = (void *)key.c_str();
+    this->input_token.length = key.length();
+  }
+
   /* Cleanup */
   
   
@@ -228,12 +199,6 @@ bool GSSCreateSecContextCommand::zeroOut(bool initialized)
     if (this->target_name != NULL)
       gss_release_name(&minor, &(this->target_name));
       
-    if (mech_type != NULL)
-      gss_release_oid(&minor, &(this->mech_type));
-    
-    if (this->actual_mech_type != NULL)
-      gss_release_oid(&minor, &(this->actual_mech_type));
-    
     if (this->output_token.length > 0)
       gss_release_buffer(&minor, &output_token);
     
@@ -251,10 +216,9 @@ bool GSSCreateSecContextCommand::zeroOut(bool initialized)
 
   this->context_handle = GSS_C_NO_CONTEXT;
   this->target_name = GSS_C_NO_NAME;
-  mech_type = str_to_oid( "{ 1 2 840 113554 1 2 1 4 }" );
+  this->mechType.setValue( (char *)"{ 1 3 6 1 5 5 15 1 1 18 }" );
   this->input_token.length = 0;
   this->input_token.value = NULL;
-  this->actual_mech_type = GSS_C_NO_OID;
   this->output_token.length = 0;
   this->output_token.value = NULL;
 
@@ -277,7 +241,7 @@ JSONObject *GSSCreateSecContextCommand::toJSON()
   values->set("major_status", this->retVal);
   values->set("minor_status", this->minor_status);
   values->set("context_handle", this->contextKey.c_str());
-  values->set("actual_mech_type", this->getActualMechType());
+  values->set("actual_mech_type", this->getActualMechType().toString().c_str());
   values->set("output_token", (const char *)this->output_token.value);
   values->set("ret_flags", this->ret_flags);
   values->set("time_rec", this->time_rec);

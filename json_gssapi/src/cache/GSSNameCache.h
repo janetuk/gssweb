@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef GSSCONTEXTCACHE_H
-#define GSSCONTEXTCACHE_H
+#ifndef GSSNAMECACHE_H
+#define GSSNAMECACHE_H
 
 #include <map>
 #include <string>
@@ -37,4 +37,4 @@ private:
     static GSSNameCache* _instance;
 };
 
-#endif // GSSCONTEXTCACHE_H
+#endif // GSSNAMECACHE_H

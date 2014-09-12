@@ -28,12 +28,28 @@ void NameCacheTest::tearDown()
 void NameCacheTest::testStore()
 {
   /* Variables      */
+  gss_name_t src;
   std::string  key;
-  GSSName      source( (gss_name_t)rand(), true), target;
+  GSSName      source, target;
+  OM_uint32 major, minor;
   
   /* Error checking */
   /* Setup          */
-
+  major = gss_import_name(&minor, GSSBuffer((char *)"HTTP@localhost").toGss(), GSS_C_NT_HOSTBASED_SERVICE, &src);
+  if (GSS_ERROR(major))
+  {
+    OM_uint32 maj, min, context;
+    gss_buffer_desc buf;
+    
+    std::cout << "Error in importing name." << std::endl;
+    maj = gss_display_status(&min, major, GSS_C_GSS_CODE, GSS_C_NT_HOSTBASED_SERVICE, &context, &buf);
+    std::cout << "  message: " << (char *)buf.value << std::endl;
+  }
+  CPPUNIT_ASSERT_MESSAGE(
+    "Could not generate a name to test storing into the cache.",
+    !GSS_ERROR(major)
+  );
+  source.setValue(src);
   
   /* Main           */
   
@@ -45,8 +61,8 @@ void NameCacheTest::testStore()
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The name cache did not store and retrieve the same data",
-    source.toGss(),
-    target.toGss()
+    source.toString(),
+    target.toString()
   );
 
   /* Cleanup        */

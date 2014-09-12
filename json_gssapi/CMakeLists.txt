@@ -4,27 +4,32 @@ project(json_gssapi)
 
 include_directories(src/)
 
-add_executable(json_gssapi src/datamodel/GSSName.cpp
-                           src/datamodel/GSSOID.cpp
-                           src/datamodel/GSSOIDSet.cpp
-                           src/datamodel/GSSBuffer.cpp
-                           src/datamodel/GSSCredential.cpp
-                           src/GSSException.cpp
-                           src/commands/GSSGetMic.cpp
-                           src/commands/GSSCreateSecContextCommand.cpp
-                           src/commands/GSSCommand.cpp 
-                           src/commands/GSSImportName.cpp
-                           src/commands/GSSAcquireCred.cpp 
-                           src/commands/GSSPseudoRandom.cpp
-                           src/commands/GSSWrap.cpp  
-                           src/commands/GSSUnwrap.cpp
-                           src/util_json.cpp
-                           src/cache/GSSContextCache.cpp
-                           src/cache/GSSNameCache.cpp
-                           src/datamodel/GSSContext.cpp
-                           src/util/base64.cpp
-                           main.cpp)
-target_link_libraries(json_gssapi gssapi_krb5 jansson crypto)
+add_library(jsongssapi SHARED 
+                       src/datamodel/GSSName.cpp
+                       src/datamodel/GSSOID.cpp
+                       src/datamodel/GSSOIDSet.cpp
+                       src/datamodel/GSSBuffer.cpp
+                       src/datamodel/GSSCredential.cpp
+                       src/GSSException.cpp
+                       src/commands/GSSGetMic.cpp
+                       src/commands/GSSCreateSecContextCommand.cpp
+                       src/commands/GSSCommand.cpp 
+                       src/commands/GSSImportName.cpp
+                       src/commands/GSSAcquireCred.cpp 
+                       src/commands/GSSPseudoRandom.cpp
+                       src/commands/GSSWrap.cpp  
+                       src/commands/GSSUnwrap.cpp
+                       src/util_json.cpp
+                       src/cache/GSSContextCache.cpp
+                       src/cache/GSSNameCache.cpp
+                       src/datamodel/GSSContext.cpp
+                       src/util/base64.cpp
+                      )
+
+target_link_libraries(jsongssapi gssapi_krb5 jansson crypto)
+
+add_executable(json_gssapi main.cpp)
+target_link_libraries(json_gssapi gssapi_krb5 jansson crypto jsongssapi)
 
 find_package (PkgConfig)
 pkg_check_modules (GLIB2   glib-2.0)

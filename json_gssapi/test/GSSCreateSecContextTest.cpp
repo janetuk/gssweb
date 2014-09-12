@@ -14,6 +14,7 @@
 #include <exception>
 #include "util_json.h"
 #include <cache/GSSContextCache.h>
+#include <cache/GSSNameCache.h>
 #include <datamodel/GSSContext.h>
 
 // Registers the fixture into the 'registry'
@@ -92,6 +93,13 @@ GSSCreateSecContextTest::testConstructor()
   CPPUNIT_ASSERT_MESSAGE(
     "The default constructor for GSSCreateSecContextCommand should assign the function gss_init_sec_context", 
     cmdFn == GSSFn);
+  
+  // Check that we defaut to the moonshot OID
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
+    "The mech_type default value is unexpected.",
+    std::string("{ 1 3 6 1 5 5 15 1 1 18 }"),
+    cmd.getMechType().toString()
+  );
 }
 
 /* JSON Input:
@@ -108,27 +116,50 @@ GSSCreateSecContextTest::testConstructor()
  */
 void GSSCreateSecContextTest::testConstructorWithJSONObject()
 {
-  const char* input = "{\"method\": \"gss_create_sec_context\", \
+  OM_uint32 major, minor;
+  gss_name_t src;
+  GSSName source;
+  char *source_name = (char *)"HTTP@localhost\0";
+  
+  
+  major = gss_import_name(&minor, GSSBuffer(source_name).toGss(), GSS_C_NT_HOSTBASED_SERVICE, &src);
+  if (GSS_ERROR(major))
+  {
+    OM_uint32 min, context;
+    gss_buffer_desc buf;
+    
+    std::cout << "Error in importing name." << std::endl;
+    gss_display_status(&min, major, GSS_C_GSS_CODE, GSS_C_NT_HOSTBASED_SERVICE, &context, &buf);
+    std::cout << "  message: " << (char *)buf.value << std::endl;
+  }
+  CPPUNIT_ASSERT_MESSAGE(
+    "Could not generate a name to test GSSCreateSecContext JSON parsing.",
+    !GSS_ERROR(major)
+  );
+  source.setValue(src);
+  std::string key = GSSNameCache::instance()->store(source);
+
+  std::string input = "{\"method\": \"gss_create_sec_context\", \
     \"arguments\": {\"req_flags\": \"1\", \
     \"time_req\": \"2\", \
     \"mech_type\": \"{ 1 2 840 113554 1 2 1 4 }\", \
-    \"target_name\": \"me@my.sha/DOW\"}}";
+    \"target_name\": \"";
+  input = input + key + "\"}}";
 
   json_error_t jsonErr;
-  JSONObject json = JSONObject::load(input, 0, &jsonErr);
+  const char *in = input.c_str();
+  JSONObject json = JSONObject::load(in, 0, &jsonErr);
   
   GSSCreateSecContextCommand cmd = GSSCreateSecContextCommand(
     &json, 
     (void *)&mock_init_sec
   );
-  
-  
-  const char *from_json = json["arguments"]["target_name"].string();
+
   const char *from_cmd = cmd.getTargetDisplayName();
   
   CPPUNIT_ASSERT_MESSAGE(
     "The object does not have a target name.",
-    ( strcmp(from_json, from_cmd) == 0 )
+    ( strcmp(source_name, from_cmd) == 0 )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
@@ -137,9 +168,10 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
     (json_int_t)cmd.getContextHandle()
   );
   
-  CPPUNIT_ASSERT_MESSAGE(
+  CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The mech_type values differ.",
-    ( strcmp(json["arguments"]["mech_type"].string(), cmd.getMechType()) == 0 )
+    std::string(json["arguments"]["mech_type"].string()), 
+    cmd.getMechType().toString()
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
@@ -167,19 +199,14 @@ GSSCreateSecContextTest::testEmptyCall()
   cmd.time_req = rand() % 1024;
   cmd.req_flags = rand() % 1024;
   cmd.target_name = NULL;
-  cmd.context_handle = expectedArgument = (gss_ctx_id_t)rand();
-  
-  CPPUNIT_ASSERT_MESSAGE(
-    "The mech_type values differ.",
-    ( strcmp("{ 1 2 840 113554 1 2 1 4 }", cmd.getMechType()) == 0 )
-  );
+  cmd.context_handle = expectedArgument = (gss_ctx_id_t)(long)rand();
   
   
   
   /* Set expectations on what the GSS function will produce */
   InitSecContextMock::retVal = rand() % 1024;
   InitSecContextMock::minor_status = rand() % 1024;
-  InitSecContextMock::context_handle = expectedResult = (gss_ctx_id_t)rand();
+  InitSecContextMock::context_handle = expectedResult = (gss_ctx_id_t)(long)rand();
   InitSecContextMock::actual_mech_type = NULL;
   InitSecContextMock::output_token.value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
   InitSecContextMock::output_token.length = strlen((char *)InitSecContextMock::output_token.value);
@@ -205,7 +232,7 @@ GSSCreateSecContextTest::testEmptyCall()
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The mech_type field was not used in the call to init_sec_context",
-    cmd.mech_type,
+    cmd.getMechType().toGss(),
     InitSecContextMock::mech_type
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
@@ -239,7 +266,7 @@ GSSCreateSecContextTest::testEmptyCall()
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "actual_mech_type was not copied back to the command.",
     InitSecContextMock::actual_mech_type,
-    cmd.actual_mech_type
+    cmd.getActualMechType().toGss()
   );
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "output_token was not copied back to the command.",
@@ -292,9 +319,9 @@ void GSSCreateSecContextTest::testJSONMarshal()
   
   /* Setup */
   // Set expectations on what the GSS function will produce
-  InitSecContextMock::retVal = GSS_S_BAD_MECH;
-  InitSecContextMock::minor_status = 20;
-  InitSecContextMock::context_handle = expectedResult = (gss_ctx_id_t)rand();
+  InitSecContextMock::retVal = GSS_S_CONTINUE_NEEDED;
+  InitSecContextMock::minor_status = 0;
+  InitSecContextMock::context_handle = expectedResult = (gss_ctx_id_t)(long)rand();
   InitSecContextMock::actual_mech_type = (gss_OID)GSS_C_MA_MECH_NEGO;
   InitSecContextMock::output_token.value = (void *)"http@project-moonshot.org/PROJECT-MOONSHOT.ORG\0";
   InitSecContextMock::output_token.length = strlen((char *)InitSecContextMock::output_token.value);

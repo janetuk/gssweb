@@ -93,10 +93,21 @@ GSSName& GSSName::operator= ( const GSSName& rhs )
   if (rhs.toGss() != this->toGss())
   {
     this->function = rhs.function;
-    this->minor_status = rhs.minor_status;
-    this->major_status = rhs.major_status;
-    this->name = rhs.name;
-    this->hashKey = rhs.hashKey;
+    if (GSS_C_NO_NAME == rhs.name)
+    {
+      major_status = 0;
+      minor_status = 0;
+      name = GSS_C_NO_NAME;
+    }
+    else
+    {
+      this->major_status = gss_duplicate_name(&minor_status, rhs.name, &name);
+      if ( GSS_ERROR(major_status) )
+      {
+	throw GSSException("Cannot copy a GSS name.", major_status, minor_status);
+      }
+    }
+    this->hashKey = "";
     this->skipRelease = rhs.skipRelease;
   }
   return *this;

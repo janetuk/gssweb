@@ -17,8 +17,10 @@ public:
   GSSCommand() {};
   GSSCommand(JSONObject params) : parameters(params) { };
   
-  virtual void execute() { std::cout << "\ninside GSSCommand::invoke()\n"; };  
-  virtual JSONObject *toJSON() { return new JSONObject(); }
+  virtual ~GSSCommand() {};
+  
+  virtual void execute() = 0; // { std::cout << "\ninside GSSCommand::invoke()\n"; };  
+  virtual JSONObject *toJSON() = 0; // { return new JSONObject(); }
   
 protected:
   JSONObject parameters;
