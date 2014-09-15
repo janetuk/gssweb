@@ -14,6 +14,7 @@
 GSSAcquireCred::GSSAcquireCred(gss_acq_cred_type fn) : function(fn)
 {
   desired_name = GSS_C_NO_NAME;
+  desiredMechs.addOID( GSSOID((char *)"{ 1 3 6 1 5 5 15 1 1 18 }") );
 }
 
 GSSAcquireCred::GSSAcquireCred ( const GSSAcquireCred& other )
@@ -81,17 +82,20 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
   /*****************
    * desired_mechs *
    *****************/
-  if ( params->get("arguments").get("desired_mechs").isArray() )
+  if ( ! params->get("arguments").get("desired_mechs").isNull() )
   {
-    for (nDesiredMechs = 0; 
-         nDesiredMechs < params->get("arguments").get("desired_mechs").size();
-         nDesiredMechs++)
+    if ( params->get("arguments").get("desired_mechs").isArray() )
     {
-      std::string mechStr = params->get("arguments").get("desired_mechs")[nDesiredMechs].string();
-      desiredMechs.addOID( GSSOID(mechStr).toGss() );
-    }
-  } else
-    throw std::invalid_argument("Unrecognized desired_mechs array.");
+      for (nDesiredMechs = 0; 
+          nDesiredMechs < params->get("arguments").get("desired_mechs").size();
+          nDesiredMechs++)
+      {
+        std::string mechStr = params->get("arguments").get("desired_mechs")[nDesiredMechs].string();
+        desiredMechs.addOID( GSSOID(mechStr).toGss() );
+      }
+    } else
+      throw std::invalid_argument("Unrecognized desired_mechs array.");
+  }
 
   /****************
    * desired_name *
