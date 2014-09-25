@@ -23,7 +23,6 @@ add_library(jsongssapi SHARED
                        src/cache/GSSContextCache.cpp
                        src/cache/GSSNameCache.cpp
                        src/datamodel/GSSContext.cpp
-                       src/util/base64.cpp
                       )
 
 target_link_libraries(jsongssapi gssapi_krb5 jansson crypto)
