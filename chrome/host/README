@@ -1,0 +1,17 @@
+The manifest.json file in this directory will be used by chrome/chromium to
+identify which extensions are allowed to talk to the json_gssapi command
+line executable. This file must (1) be edited correctly, and (2) be placed
+in the correct location.
+
+Editing
+-------------------------------------
+The file contains a path to locate the json_gssapi command.  Edit the path
+to be correct for your system.
+
+Installing
+-------------------------------------
+The file must be located in one of three places:
+  global             /etc/opt/chrome/native-messaging-hosts
+  Personal:
+    google-chrome    ~/.config/google-chrome/NativeMessagingHosts
+    chromium-browser ~/.config/chromium/NativeMessagingHosts
