@@ -66,6 +66,18 @@ int main(int argc, char **argv) {
       JSONObject json = JSONObject::load(input, 0, &jsonErr);
       delete[] input;
       
+      if ( json.get("method").isNull() )
+      {
+        JSONObject response;
+        response.set("method", "unknown");
+        response.set("error_message", "Did not find a valid method to execute.");
+	output = response.dump();
+	len = output.length();
+	cout.write((char *)&len, threeTwoBits);
+        cout << output << endl;
+	continue;
+      }
+
       // Oh, how I wish I could simply use: switch(json.get("method"))
       c_str = json.get("method").string();
       method = c_str;
