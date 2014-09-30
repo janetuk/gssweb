@@ -37,24 +37,32 @@ int main(int argc, char **argv) {
   {
     try 
     {
+      // Read 32 bit length
       len = 0;
-      readThisRound = 0;
-      while(0 == readThisRound)
-        readThisRound = fread(&len, 4, 1, stdin);
+      readThisRound = readTotal = 0;
+      while(4 != readTotal)
+      {
+        readThisRound = read(0, ((&len) + readTotal), 4 - readTotal);
+	readTotal += readThisRound;
+      }
       
+      // Reads the number of bytes indicated by the above read
       input = new char[len + 1];
       readTotal = readThisRound = 0;
       while (readTotal < len)
       {
         readRemaining = len - readTotal;
-        readThisRound = fread( &(input[readTotal]), 1, readRemaining, stdin );
+        readThisRound = read( 0, &(input[readTotal]), readRemaining);
         if (-1 == readThisRound)
-          readTotal = len;
+          break;
         else
           readTotal += readThisRound;
       }
+      // ... and null-terminate it
       input[len] = '\0';
       
+      
+      // Parse the JSON
       JSONObject json = JSONObject::load(input, 0, &jsonErr);
       delete[] input;
       
