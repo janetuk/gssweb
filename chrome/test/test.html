@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>GSSApi Tester Application</title>
+    <script language="javascript">
+      function report(msg) {
+        var response = document.getElementById('response');
+        response.innerHTML = '<p>' + msg + '</p>' + response.innerHTML;
+      }
+
+      function doImportName() {
+        var ret = navigator.gss_import_name( 
+          document.getElementById('import_name_name').value,
+          document.getElementById('import_name_mech').value,
+          'nonce',
+          function(name, nonce, major, minor) {
+            report('GSS imported name: ' + name);
+            report('GSS imported nonce: ' + nonce);
+            report('GSS imported major status: ' + major);
+            report('GSS imported minor status: ' + minor);
+          }
+        );
+      }
+      
+      document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('import_name').addEventListener(
+          'click', doImportName);
+        console.log('DOMContentLoaded.');
+      });
+
+    </script>
+  </head>
+  <body>
+    <h2>GSS Import Name parameters:</h2>
+    <label for="import_name_name">Name:</label>
+    <input name="import_name_name" id="import_name_name" value="HTTP@localhost.localdomain" />
+    <br/>
+    <label for="import_name_mech">Mechanism:</label>
+    <input name="import_name_mech"
+           id="import_name_mech"
+           value="{1 2 840 113554 1 2 1 4 }" />
+    <br/>
+    <button id="import_name">gss_import_name</button>
+    <br/>
+    <div id='response'></div>
+  </body>
+</html>

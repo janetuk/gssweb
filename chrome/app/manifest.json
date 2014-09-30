@@ -4,10 +4,22 @@
          "local_path": "gssweb.html"
       }
    },
+   "background": {
+       "scripts": ["gssweb_background.js"]
+   },
+   "content_scripts": [
+       {
+	   "matches": ["*://*/*"],
+	   "js": ["gssweb.contentscript.js"]
+       }
+   ],
    "description": "Chrome plugin to supply GSSAPI calls.",
    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyuV9oMZvryLveAqvoFrbQGGU/NOPSFqBymsGLuQKS4i6LfQ/z+pRUTri4r/YWgWvfGGZhjdBy935QWJ0lpfq+dX+XCYSZLzFSllrLB/NM8MI9OQQKeyrnf8ie1pTU92KJGNVAeN7KpgdZjI2G6SNzV6CGz1D7FWkcOyeyk1GWyiFeUc7yEVSTuDhREiD2zEelgc29i9bUh/JZs+yTbWkIkBxdvhBEaU0MJIVyNUhrUbTFANqBu3kigbji+LCb63c0u567jBGkQDtDVS4rstsBwTjuCbCfzppNsMvexrx3kA2FpUj4otHEO2I6W0xlSsv8wza6OFwbV+MISK7CiBmkwIDAQAB",
    "manifest_version": 2,
    "name": "GSS Web Plugin",
    "permissions": [ "nativeMessaging" ],
-   "version": "1.0"
+   "version": "1.0",
+   "web_accessible_resources": [
+      "navigator.gss.js"
+   ]
 }
