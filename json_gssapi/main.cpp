@@ -26,7 +26,6 @@ int main(int argc, char **argv) {
   GSSCommand *cmd;
   int len;
   ssize_t readTotal, readThisRound, readRemaining;
-  std::streamsize threeTwoBits = 32 / sizeof(string::size_type);
   
   /* Error checking */
   
@@ -73,7 +72,7 @@ int main(int argc, char **argv) {
         response.set("error_message", "Did not find a valid method to execute.");
 	output = response.dump();
 	len = output.length();
-	cout.write((char *)&len, threeTwoBits);
+	cout.write((char *)&len, 4);
         cout << output << endl;
 	continue;
       }
@@ -100,7 +99,7 @@ int main(int argc, char **argv) {
         response.set("error_message", "Did not find a valid method to execute.");
 	output = response.dump();
 	len = output.length();
-	cout.write((char *)&len, threeTwoBits);
+	cout.write((char *)&len, 4);
         cout << output << endl;
       
         continue;
@@ -113,7 +112,7 @@ int main(int argc, char **argv) {
       output = result->dump();
       len = output.length();
       
-      cout.write((char *)&len, threeTwoBits);
+      cout.write((char *)&len, 4);
       cout << output;
       cout.flush();
 
@@ -133,7 +132,7 @@ int main(int argc, char **argv) {
       response.set("error", error);
       output = response.dump();
       len = output.length();
-      cout.write((char *)&len, threeTwoBits);
+      cout.write((char *)&len, 4);
       cout << output << endl;
     }
   } while(1);
