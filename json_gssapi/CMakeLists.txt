@@ -5,6 +5,7 @@ project(json_gssapi)
 include_directories(src/)
 
 add_library(jsongssapi SHARED 
+                       src/datamodel/GSSDisplayStatus.cpp 
                        src/datamodel/GSSName.cpp
                        src/datamodel/GSSOID.cpp
                        src/datamodel/GSSOIDSet.cpp

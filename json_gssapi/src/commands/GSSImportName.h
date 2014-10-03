@@ -39,6 +39,8 @@ private:
   GSSBuffer inputName;
   GSSOID    inputNameType;
   GSSName   outputName;
+  
+  JSONObject *values;
 };
 
 #endif // GSSIMPORTNAME_H

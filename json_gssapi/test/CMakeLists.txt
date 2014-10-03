@@ -36,6 +36,7 @@ add_executable(test GSSExceptionTest.cpp
                     ../src/commands/GSSWrap.cpp
                     ../src/datamodel/GSSBuffer.cpp
                     ../src/datamodel/GSSCredential.cpp
+                    ../src/datamodel/GSSDisplayStatus.cpp
                     ../src/datamodel/GSSName.cpp
                     ../src/datamodel/GSSOID.cpp
                     ../src/datamodel/GSSOIDSet.cpp
