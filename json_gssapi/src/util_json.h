@@ -159,7 +159,7 @@ private:
     void set(json_t *obj) {
 	if (m_obj != obj) {
 	    json_decref(m_obj);
-	    m_obj = json_incref(m_obj);
+	    m_obj = json_incref(obj);
 	}
     }
 

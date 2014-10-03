@@ -1,11 +1,15 @@
 console.log("Loading content script #6...");
 
-var elt = document.createElement("script");
-elt.setAttribute("src", 
-                 chrome.extension.getURL('navigator.gss.js')
-                );
-document.head.appendChild(elt);
 
+function addScript(url) {
+  var elt = document.createElement("script");
+  elt.setAttribute("src", 
+                   url   );
+  document.head.appendChild(elt);
+}
+
+addScript( chrome.extension.getURL('gssweb_utils.js') );
+addScript( chrome.extension.getURL('navigator.gss.js') );
 
 var port = chrome.runtime.connect({name: "com.painlesssecurity.gssweb"});
 
@@ -14,7 +18,9 @@ var port = chrome.runtime.connect({name: "com.painlesssecurity.gssweb"});
  */
 port.onMessage.addListener(
   function(gssReplyJSON) {
-     console.log("Extension port listener received message: [" + 
+     var appTag = gssReplyJSON.cookies.app_tag;
+     
+     console.log("[" + appTag + "] Extension port listener received message: [" + 
                   JSON.stringify(gssReplyJSON) + "]"
 		); 
      window.postMessage(gssReplyJSON, "*");
@@ -25,10 +31,16 @@ window.addEventListener("message", function(event) {
     // We only accept messages from ourselves
     if (event.source != window)
 	return;
-
-    console.log("Window message listener received message: [" +
+    
+    if ( typeof(event.data.cookies) == 'undefined' )
+    {
+      event.data.cookies = {};
+    }
+    var appTag = event.data.cookies.app_tag;
+    
+    console.log("[" + appTag + "] Window message listener received message: [" +
 		JSON.stringify(event.data) + "]"
 		);
     port.postMessage(event.data);
 }, false);
-    
+

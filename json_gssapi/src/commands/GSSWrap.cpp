@@ -37,19 +37,19 @@ bool GSSWrap::loadParameters(JSONObject *params)
   /************
    * CONF_REQ *
    ************/
-  if ( ! params->get("arguments").get("conf_req").isNull() )
+  if ( ! params->get("conf_req").isNull() )
   {
-    if (params->get("arguments").get("conf_req").isString())
+    if (params->get("conf_req").isString())
     {
-      sConfReq = params->get("arguments").get("conf_req").string();
+      sConfReq = params->get("conf_req").string();
       if (sConfReq == "TRUE")
         this->conf_req = 1;
       else if (sConfReq == "FALSE")
         this->conf_req = 0;
       else
         throw std::invalid_argument( std::string("Invalid QOP type given: ") + sConfReq );
-    } else if (params->get("arguments").get("conf_req").isInteger())
-      this->conf_req = (gss_cred_usage_t)( params->get("arguments").get("conf_req").integer() );
+    } else if (params->get("conf_req").isInteger())
+      this->conf_req = (gss_cred_usage_t)( params->get("conf_req").integer() );
     else
       throw std::invalid_argument( "Unrecognized argument type for conf_req." );
   }  
@@ -57,17 +57,17 @@ bool GSSWrap::loadParameters(JSONObject *params)
   /***********
    * QOP_REQ *
    ***********/
-  if ( ! params->get("arguments").get("qop_req").isNull() )
+  if ( ! params->get("qop_req").isNull() )
   {
-    if (params->get("arguments").get("qop_req").isString())
+    if (params->get("qop_req").isString())
     {
-      sQopReq = params->get("arguments").get("qop_req").string();
+      sQopReq = params->get("qop_req").string();
       if (sQopReq == "GSS_C_QOP_DEFAULT")
         this->qop_req = GSS_C_QOP_DEFAULT;
       else
         throw std::invalid_argument( std::string("Invalid QOP type given: ") + sQopReq );
-    } else if (params->get("arguments").get("qop_req").isInteger())
-      this->qop_req = (gss_cred_usage_t)( params->get("arguments").get("qop_req").integer() );
+    } else if (params->get("qop_req").isInteger())
+      this->qop_req = (gss_cred_usage_t)( params->get("qop_req").integer() );
     else
       throw std::invalid_argument( "Unrecognized argument type for qop_req." );
   }
@@ -75,18 +75,18 @@ bool GSSWrap::loadParameters(JSONObject *params)
   /*****************
    * input_message *
    *****************/
-  if ( ! params->get("arguments").get("input_message").isNull() )
+  if ( ! params->get("input_message").isNull() )
   {
-    sInputMessage = params->get("arguments").get("input_message").string();
+    sInputMessage = params->get("input_message").string();
     this->inputMessage.setValue(sInputMessage);
   }
   
   /***********
    * context *
    ***********/
-  if ( ! params->get("arguments").get("context_handle").isNull() )
+  if ( ! params->get("context_handle").isNull() )
   {
-    std::string contextKey = params->get("arguments").get("context_handle").string();
+    std::string contextKey = params->get("context_handle").string();
     GSSContext ctx = GSSContextCache::instance()->retrieve(contextKey);
     this->context = ctx.getContext();
   }
@@ -128,22 +128,18 @@ void GSSWrap::execute()
 
 /* Desired JSON output:
  * 
- * {
- *  "command":       "gss_wrap",
- *  "return_values": 
  *  {
  *      "major_status":   0,
  *      "minor_status":   0,
  *      "conf_state":     "TRUE",
  *      "output_message": "asdf"
  *  }
- * }
+ * 
  */
 JSONObject *GSSWrap::toJSON()
 {
   /* Variables */
   const char *conf_state;
-  JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -164,13 +160,9 @@ JSONObject *GSSWrap::toJSON()
     this->outputMessage.toString().c_str()
   );
   
-  // Put it all together.
-  ret->set("command", "gss_wrap");
-  ret->set("return_values", *values);
-  
   /* Cleanup */
   
   /* Return */
-  return(ret);
+  return(values);
 }
 

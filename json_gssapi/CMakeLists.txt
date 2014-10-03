@@ -11,8 +11,9 @@ add_library(jsongssapi SHARED
                        src/datamodel/GSSBuffer.cpp
                        src/datamodel/GSSCredential.cpp
                        src/GSSException.cpp
+                       src/GSSRequest.cpp 
                        src/commands/GSSGetMic.cpp
-                       src/commands/GSSCreateSecContextCommand.cpp
+                       src/commands/GSSInitSecContext.cpp
                        src/commands/GSSCommand.cpp 
                        src/commands/GSSImportName.cpp
                        src/commands/GSSAcquireCred.cpp 

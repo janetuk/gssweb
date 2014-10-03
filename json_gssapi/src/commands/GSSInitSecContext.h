@@ -5,8 +5,8 @@
  * 
  */
 
-#ifndef GSSCREATESECCONTEXTCOMMAND_H
-#define GSSCREATESECCONTEXTCOMMAND_H
+#ifndef GSSINITSECCONTEXT_H
+#define GSSINITSECCONTEXT_H
 
 #include "GSSCommand.h"
 #include <datamodel/GSSContext.h>
@@ -14,7 +14,7 @@
 #include <datamodel/GSSOID.h>
 #include <gssapi.h>
 
-class GSSCreateSecContextCommand : public GSSCommand
+class GSSInitSecContext : public GSSCommand
 {
 public:
 
@@ -32,8 +32,8 @@ public:
   
     void execute();
     JSONObject *toJSON();
-    GSSCreateSecContextCommand(void *fn = (void *)&gss_init_sec_context);
-    GSSCreateSecContextCommand(JSONObject *params, void *fn = (void *)&gss_init_sec_context);
+    GSSInitSecContext(void *fn = (void *)&gss_init_sec_context);
+    GSSInitSecContext(JSONObject *params, void *fn = (void *)&gss_init_sec_context);
     
     bool loadParameters(JSONObject *params);
     bool zeroOut(bool initialized = true);
@@ -59,4 +59,4 @@ private:
     std::string contextKey;
 };
 
-#endif // GSSCREATESECCONTEXTCOMMAND_H
+#endif // GSSINITSECCONTEXT_H

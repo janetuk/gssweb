@@ -28,18 +28,18 @@ bool GSSUnwrap::loadParameters(JSONObject *params)
   /*****************
    * input_message *
    *****************/
-  if ( ! params->get("arguments").get("input_message").isNull() )
+  if ( ! params->get("input_message").isNull() )
   {
-    sInputMessage = params->get("arguments").get("input_message").string();
+    sInputMessage = params->get("input_message").string();
     this->inputMessage.setValue(sInputMessage);
   }
   
   /******************
    * context_handle *
    ******************/
-  if ( ! params->get("arguments").get("context_handle").isNull() )
+  if ( ! params->get("context_handle").isNull() )
   {
-    sInputMessage = params->get("arguments").get("context_handle").string();
+    sInputMessage = params->get("context_handle").string();
     GSSContext ctx = GSSContextCache::instance()->retrieve(sInputMessage);
     this->context = ctx.getContext();
   }
@@ -71,7 +71,6 @@ JSONObject* GSSUnwrap::toJSON()
 {
   /* Variables */
   const char *conf_state;
-  JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -94,12 +93,8 @@ JSONObject* GSSUnwrap::toJSON()
     this->outputMessage.toString().c_str()
   );
   
-  // Put it all together.
-  ret->set("command", "gss_wrap");
-  ret->set("return_values", *values);
-  
   /* Cleanup */
   
   /* Return */
-  return(ret);
+  return(values);
 }

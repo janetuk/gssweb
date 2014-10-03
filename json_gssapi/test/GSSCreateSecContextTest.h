@@ -15,7 +15,7 @@
 
 #include <gssapi.h>
 
-#include "commands/GSSCreateSecContextCommand.h"
+#include "commands/GSSInitSecContext.h"
 
 class GSSCreateSecContextTest :  public CppUnit::TestFixture
 {
@@ -40,7 +40,7 @@ public:
   void getCache();
   
 private:
-  GSSCreateSecContextCommand command;
+  GSSInitSecContext command;
 };
 
 #endif // GSSCREATESECCONTEXTTEST_H

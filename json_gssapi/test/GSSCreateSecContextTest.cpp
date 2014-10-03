@@ -7,7 +7,7 @@
 
 
 #include "GSSCreateSecContextTest.h"
-#include "GSSCreateSecContextCommand.h"
+#include "GSSInitSecContext.h"
 #include "command_mocks/InitSecContextMock.h"
 #include <iostream>
 #include <string.h>
@@ -84,7 +84,7 @@ GSSCreateSecContextTest::tearDown()
 void
 GSSCreateSecContextTest::testConstructor()
 {
-  GSSCreateSecContextCommand cmd = GSSCreateSecContextCommand();
+  GSSInitSecContext cmd = GSSInitSecContext();
   void *cmdFn;
   void *GSSFn;
   
@@ -150,7 +150,7 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
   const char *in = input.c_str();
   JSONObject json = JSONObject::load(in, 0, &jsonErr);
   
-  GSSCreateSecContextCommand cmd = GSSCreateSecContextCommand(
+  GSSInitSecContext cmd = GSSInitSecContext(
     &json, 
     (void *)&mock_init_sec
   );
@@ -193,7 +193,7 @@ GSSCreateSecContextTest::testEmptyCall()
 {
   gss_ctx_id_t expectedResult, expectedArgument;
   
-  GSSCreateSecContextCommand cmd ((void *)&mock_init_sec);
+  GSSInitSecContext cmd ((void *)&mock_init_sec);
   
   /* Set expectations on what the GSS function will be called with */
   cmd.time_req = rand() % 1024;
@@ -309,7 +309,7 @@ GSSCreateSecContextTest::testEmptyCall()
 void GSSCreateSecContextTest::testJSONMarshal()
 {
   /* Variables */
-  GSSCreateSecContextCommand cmd ((void *)&mock_init_sec);
+  GSSInitSecContext cmd ((void *)&mock_init_sec);
   JSONObject *result;
   GSSContextCache *cache = GSSContextCache::instance();
   GSSContext context;

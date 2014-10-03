@@ -27,8 +27,6 @@ GSSPseudoRandom::GSSPseudoRandom(JSONObject *params,
 
 /* JSON input
  * 
- * {"method":    "gss_pseudo_random",
- *  "arguments": 
  *   {
  *     "context_handle":     "########",
  *     "prf_key":            ###,
@@ -49,10 +47,10 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
   /***********
    * prf_key *
    ***********/
-  if ( ! params->get("arguments").get("prf_key").isNull() )
+  if ( ! params->get("prf_key").isNull() )
   {
-    if (params->get("arguments").get("prf_key").isInteger())
-      this->key = params->get("arguments").get("prf_key").integer();
+    if (params->get("prf_key").isInteger())
+      this->key = params->get("prf_key").integer();
     else
       throw std::invalid_argument( "Unrecognized argument type for prf_key." );
   }  
@@ -61,10 +59,10 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
   /**********************
    * desired_output_len *
    **********************/
-  if ( ! params->get("arguments").get("desired_output_len").isNull() )
+  if ( ! params->get("desired_output_len").isNull() )
   {
-    if (params->get("arguments").get("desired_output_len").isInteger())
-      this->desiredOutputLength = params->get("arguments").get("desired_output_len").integer();
+    if (params->get("desired_output_len").isInteger())
+      this->desiredOutputLength = params->get("desired_output_len").integer();
     else
       throw std::invalid_argument( "Unrecognized argument type for desired_output_len." );
   }  
@@ -73,11 +71,11 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
   /**********
    * prf_in *
    **********/
-  if ( ! params->get("arguments").get("prf_in").isNull() )
+  if ( ! params->get("prf_in").isNull() )
   {
-    if (params->get("arguments").get("prf_in").isString())
+    if (params->get("prf_in").isString())
     {
-      sInputMessage = params->get("arguments").get("prf_in").string();
+      sInputMessage = params->get("prf_in").string();
       this->inputMessage.setValue(sInputMessage);
     }
   }
@@ -86,11 +84,11 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
   /******************
    * context_handle *
    ******************/
-  if ( ! params->get("arguments").get("context_handle").isNull() )
+  if ( ! params->get("context_handle").isNull() )
   {
-    if (params->get("arguments").get("context_handle").isString())
+    if (params->get("context_handle").isString())
     {
-      std::string contextKey = params->get("arguments").get("context_handle").string();
+      std::string contextKey = params->get("context_handle").string();
       GSSContext ctx = GSSContextCache::instance()->retrieve(contextKey);
       this->context = ctx.getContext();
     }
@@ -136,7 +134,6 @@ void GSSPseudoRandom::execute()
 JSONObject* GSSPseudoRandom::toJSON()
 {
   /* Variables */
-  JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -154,13 +151,9 @@ JSONObject* GSSPseudoRandom::toJSON()
     this->outputMessage.toString().c_str()
   );
   
-  // Put it all together.
-  ret->set("command", "gss_pseudo_random");
-  ret->set("return_values", *values);
-  
   /* Cleanup */
   
   /* Return */
-  return(ret);
+  return(values);
 }
 

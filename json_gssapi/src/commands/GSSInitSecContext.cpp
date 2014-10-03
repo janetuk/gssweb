@@ -5,7 +5,7 @@
  * 
  */
 
-#include "GSSCreateSecContextCommand.h"
+#include "GSSInitSecContext.h"
 #include "GSSException.h"
 #include <cache/GSSContextCache.h>
 #include <cache/GSSNameCache.h>
@@ -32,7 +32,7 @@ typedef OM_uint32 (*init_sec_context)(
 );
 
 void
-GSSCreateSecContextCommand::execute()
+GSSInitSecContext::execute()
 {
   /* Variables */
   init_sec_context fn = (init_sec_context)function;
@@ -77,7 +77,7 @@ GSSCreateSecContextCommand::execute()
   /* Return */
 }
 
-const char* GSSCreateSecContextCommand::getTargetDisplayName()
+const char* GSSInitSecContext::getTargetDisplayName()
 {
   /* Variables */
   gss_buffer_desc output_name;
@@ -102,13 +102,13 @@ const char* GSSCreateSecContextCommand::getTargetDisplayName()
   return( ret );
 }
 
-bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
+bool GSSInitSecContext::loadParameters(JSONObject *params)
 {
   /* Variables */
   std::string key;
   
   /* Error checking */
-  if ( params->get("arguments").isNull() )
+  if ( params->isNull() )
     return true;
   
   /* Setup */
@@ -116,19 +116,19 @@ bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
   
   /* Main processing */
   // Easy stuff(*params)
-  if ( !params->get("arguments").get("time_req").isNull() )
-    this->time_req = params->get("arguments").get("time_req").integer();
+  if ( !params->get("time_req").isNull() )
+    this->time_req = params->get("time_req").integer();
   
-  if ( !params->get("arguments").get("req_flags").isNull() )
-    this->req_flags = params->get("arguments").get("req_flags").integer();
+  if ( !params->get("req_flags").isNull() )
+    this->req_flags = params->get("req_flags").integer();
   
   // context_handle
-  if ( ! params->get("arguments").get("context_handle").isNull() )
+  if ( ! params->get("context_handle").isNull() )
   {
     this->context_handle = GSS_C_NO_CONTEXT;
-    if (params->get("arguments").get("context_handle").isString())
+    if (params->get("context_handle").isString())
     {
-      key = params->get("arguments").get("context_handle").string();
+      key = params->get("context_handle").string();
       context = GSSContextCache::instance()->retrieve( key.c_str() );
       this->context_handle = context.getContext();
     }
@@ -137,12 +137,12 @@ bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
   }
   
   // target_name
-  if ( ! params->get("arguments").get("target_name").isNull() )
+  if ( ! params->get("target_name").isNull() )
   {
     this->target_name = GSS_C_NO_NAME;
-    if (params->get("arguments").get("target_name").isString())
+    if (params->get("target_name").isString())
     {
-      key = params->get("arguments").get("target_name").string();
+      key = params->get("target_name").string();
       
       targetName = GSSNameCache::instance()->retrieve(key);
       
@@ -153,12 +153,12 @@ bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
   }
   
   // mech_type  
-  if ( ! params->get("arguments").get("mech_type").isNull() )
+  if ( ! params->get("mech_type").isNull() )
   {
     key.clear();
-    if (params->get("arguments").get("mech_type").isString())
+    if (params->get("mech_type").isString())
     {
-      key = params->get("arguments").get("mech_type").string();
+      key = params->get("mech_type").string();
       mechType.setValue(key);
     }
     if (GSS_C_NO_OID == this->mechType.toGss() )
@@ -166,9 +166,9 @@ bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
   }
   
   // input_token
-  if ( ! params->get("arguments").get("input_token").isNull() )
+  if ( ! params->get("input_token").isNull() )
   {
-    key = params->get("arguments").get("input_token").string();
+    key = params->get("input_token").string();
     this->input_token.value = (void *)key.c_str();
     this->input_token.length = key.length();
   }
@@ -180,7 +180,7 @@ bool GSSCreateSecContextCommand::loadParameters(JSONObject *params)
   return true;
 }
 
-bool GSSCreateSecContextCommand::zeroOut(bool initialized)
+bool GSSInitSecContext::zeroOut(bool initialized)
 {
   /* Error checking */
   /* Variables */
@@ -227,10 +227,9 @@ bool GSSCreateSecContextCommand::zeroOut(bool initialized)
   return(true);
 }
 
-JSONObject *GSSCreateSecContextCommand::toJSON()
+JSONObject *GSSInitSecContext::toJSON()
 {
   /* Variables */
-  JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -245,16 +244,14 @@ JSONObject *GSSCreateSecContextCommand::toJSON()
   values->set("output_token", (const char *)this->output_token.value);
   values->set("ret_flags", this->ret_flags);
   values->set("time_rec", this->time_rec);
-  ret->set("command", "gss_init_sec_context");
-  ret->set("return_values", *values);
   
   /* Cleanup */
   
   /* Return */
-  return(ret);
+  return(values);
 }
 
-GSSCreateSecContextCommand::GSSCreateSecContextCommand(
+GSSInitSecContext::GSSInitSecContext(
   JSONObject *params, 
   void *fn) : GSSCommand(params)
 {
@@ -263,7 +260,7 @@ GSSCreateSecContextCommand::GSSCreateSecContextCommand(
   function = fn;
 }
 
-GSSCreateSecContextCommand::GSSCreateSecContextCommand(void *fn)
+GSSInitSecContext::GSSInitSecContext(void *fn)
 {
   zeroOut(false);
   function = fn;

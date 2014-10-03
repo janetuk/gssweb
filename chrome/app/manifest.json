@@ -5,7 +5,10 @@
       }
    },
    "background": {
-       "scripts": ["gssweb_background.js"]
+       "scripts": [
+           "gssweb_utils.js",
+           "gssweb_background.js"
+       ]
    },
    "content_scripts": [
        {
@@ -20,6 +23,7 @@
    "permissions": [ "nativeMessaging" ],
    "version": "1.0",
    "web_accessible_resources": [
-      "navigator.gss.js"
+      "navigator.gss.js",
+      "gssweb_utils.js"
    ]
 }

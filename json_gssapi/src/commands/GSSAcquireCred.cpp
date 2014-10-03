@@ -60,11 +60,11 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
   /**************
    * cred_usage *
    **************/
-  if ( ! params->get("arguments").get("cred_usage").isNull() )
+  if ( ! params->get("cred_usage").isNull() )
   {
-    if (params->get("arguments").get("cred_usage").isString())
+    if (params->get("cred_usage").isString())
     {
-      sCredUsage = params->get("arguments").get("cred_usage").string();
+      sCredUsage = params->get("cred_usage").string();
       if (sCredUsage == "GSS_C_BOTH")
         this->cred_usage = GSS_C_BOTH;
       else if (sCredUsage == "GSS_C_INITIATE")
@@ -73,8 +73,8 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
         this->cred_usage = GSS_C_ACCEPT;
       else
         throw std::invalid_argument( std::string("Invalid cred_usage type given: ") + sCredUsage );
-    } else if (params->get("arguments").get("cred_usage").isInteger())
-      this->cred_usage = (gss_cred_usage_t)( params->get("arguments").get("cred_usage").integer() );
+    } else if (params->get("cred_usage").isInteger())
+      this->cred_usage = (gss_cred_usage_t)( params->get("cred_usage").integer() );
     else
       throw std::invalid_argument( "Unrecognized argument type for cred_usage." );
       }
@@ -82,15 +82,15 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
   /*****************
    * desired_mechs *
    *****************/
-  if ( ! params->get("arguments").get("desired_mechs").isNull() )
+  if ( ! params->get("desired_mechs").isNull() )
   {
-    if ( params->get("arguments").get("desired_mechs").isArray() )
+    if ( params->get("desired_mechs").isArray() )
     {
       for (nDesiredMechs = 0; 
-          nDesiredMechs < params->get("arguments").get("desired_mechs").size();
+          nDesiredMechs < params->get("desired_mechs").size();
           nDesiredMechs++)
       {
-        std::string mechStr = params->get("arguments").get("desired_mechs")[nDesiredMechs].string();
+        std::string mechStr = params->get("desired_mechs")[nDesiredMechs].string();
         desiredMechs.addOID( GSSOID(mechStr).toGss() );
       }
     } else
@@ -100,9 +100,9 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
   /****************
    * desired_name *
    ****************/
-  if ( ! params->get("arguments").get("desired_name").isNull() )
+  if ( ! params->get("desired_name").isNull() )
   {
-    std::string key = params->get("arguments").get("desired_name").string();
+    std::string key = params->get("desired_name").string();
     this->desired_name = GSSNameCache::instance()->retrieve(key);
   }
 
@@ -152,8 +152,6 @@ void GSSAcquireCred::execute()
 /* Desired JSON output:
  * 
  * {
- *   "command": "gss_acquire_cred",
- *   "return_values": {
  *     "major_status": 0,
  *     "minor_status": 0,
  *     "cred_handle": "###########",
@@ -162,15 +160,12 @@ void GSSAcquireCred::execute()
  *       "{ 5 6 7 8 }"
  *     ],
  *     "time_rec": 0
- *   }
  * }
  */
 JSONObject *GSSAcquireCred::toJSON()
 {
   /* Variables */
-  JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
-//   JSONObject mechs = JSONObject::array();
   JSONObject *temp;
   
   /* Error checking */
@@ -191,12 +186,8 @@ JSONObject *GSSAcquireCred::toJSON()
   temp = this->actualMechs.toJSONValue();
   values->set("actual_mechs", *temp);
   
-  // Put it all together.
-  ret->set("command", "gss_acquire_cred");
-  ret->set("return_values", *values);
-  
   /* Cleanup */
   
   /* Return */
-  return(ret);
+  return(values);
 }

@@ -18,14 +18,11 @@ GSSGetMic::GSSGetMic ( JSONObject* params, gss_get_mic_type fn )
 }
 
 /*
- * {"method": "gss_get_mic",
- *  "arguments":
  *  {
  *       "context_handle": "#######",
  *       "qop_req": "GSS_C_QOP_DEFAULT",
  *       "input_message": "mary had a little lamb"
  *  }
- * }
  * 
  */
 bool GSSGetMic::loadParameters ( JSONObject* params )
@@ -41,17 +38,17 @@ bool GSSGetMic::loadParameters ( JSONObject* params )
   /***********
    * QOP_REQ *
    ***********/
-  if ( ! params->get("arguments").get("qop_req").isNull() )
+  if ( ! params->get("qop_req").isNull() )
   {
-    if (params->get("arguments").get("qop_req").isString())
+    if (params->get("qop_req").isString())
     {
-      sQopReq = params->get("arguments").get("qop_req").string();
+      sQopReq = params->get("qop_req").string();
       if (sQopReq == "GSS_C_QOP_DEFAULT")
         this->qop_req = GSS_C_QOP_DEFAULT;
       else
         throw std::invalid_argument( std::string("Invalid QOP type given: ") + sQopReq );
-    } else if (params->get("arguments").get("qop_req").isInteger())
-      this->qop_req = (gss_cred_usage_t)( params->get("arguments").get("qop_req").integer() );
+    } else if (params->get("qop_req").isInteger())
+      this->qop_req = (gss_cred_usage_t)( params->get("qop_req").integer() );
     else
       throw std::invalid_argument( "Unrecognized argument type for qop_req." );
   }
@@ -59,18 +56,18 @@ bool GSSGetMic::loadParameters ( JSONObject* params )
   /*****************
    * input_message *
    *****************/
-  if ( ! params->get("arguments").get("input_message").isNull() )
+  if ( ! params->get("input_message").isNull() )
   {
-    sInputMessage = params->get("arguments").get("input_message").string();
+    sInputMessage = params->get("input_message").string();
     this->inputMessage.setValue(sInputMessage);
   }
   
   /******************
    * context_handle *
    ******************/
-  if ( ! params->get("arguments").get("context_handle").isNull() )
+  if ( ! params->get("context_handle").isNull() )
   {
-    sInputMessage = params->get("arguments").get("context_handle").string();
+    sInputMessage = params->get("context_handle").string();
     GSSContext ctx = GSSContextCache::instance()->retrieve(sInputMessage);
     this->context = ctx.getContext();
   }
@@ -98,7 +95,6 @@ void GSSGetMic::execute()
 JSONObject* GSSGetMic::toJSON()
 {
   /* Variables */
-  JSONObject *ret = new JSONObject();
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -116,12 +112,8 @@ JSONObject* GSSGetMic::toJSON()
     this->outputToken.toString().c_str()
   );
   
-  // Put it all together.
-  ret->set("command", "gss_get_mic");
-  ret->set("return_values", *values);
-  
   /* Cleanup */
   
   /* Return */
-  return(ret);
+  return(values);
 }

@@ -25,7 +25,7 @@ add_executable(test GSSExceptionTest.cpp
                     GSSImportNameTest.cpp
                     command_mocks/MockImportName.cpp
                     test_run.cpp 
-                    ../src/commands/GSSCreateSecContextCommand.cpp 
+                    ../src/commands/GSSInitSecContext.cpp 
                     ../src/util_json.cpp 
                     ../src/commands/GSSImportName.cpp
                     ../src/GSSException.cpp

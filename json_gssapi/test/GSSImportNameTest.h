@@ -25,7 +25,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <gssapi.h>
-#include "GSSCreateSecContextCommand.h"
+#include "GSSInitSecContext.h"
 
 #include <stdlib.h>
 
