@@ -38,11 +38,11 @@ void NameCacheTest::testStore()
   major = gss_import_name(&minor, GSSBuffer((char *)"HTTP@localhost").toGss(), GSS_C_NT_HOSTBASED_SERVICE, &src);
   if (GSS_ERROR(major))
   {
-    OM_uint32 maj, min, context;
+    OM_uint32 min, context;
     gss_buffer_desc buf;
     
     std::cout << "Error in importing name." << std::endl;
-    maj = gss_display_status(&min, major, GSS_C_GSS_CODE, GSS_C_NT_HOSTBASED_SERVICE, &context, &buf);
+    gss_display_status(&min, major, GSS_C_GSS_CODE, GSS_C_NT_HOSTBASED_SERVICE, &context, &buf);
     std::cout << "  message: " << (char *)buf.value << std::endl;
   }
   CPPUNIT_ASSERT_MESSAGE(
