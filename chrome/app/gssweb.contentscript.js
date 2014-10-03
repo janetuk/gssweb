@@ -32,6 +32,12 @@ window.addEventListener("message", function(event) {
     if (event.source != window)
 	return;
     
+    // Check to see if this message's data is data we care about
+    if ( typeof(event.data.method) == 'undefined' ||
+         typeof(event.data.arguments) == 'undefined' ||
+         typeof(event.data.return_values) != 'undefined' )
+        return;
+    
     if ( typeof(event.data.cookies) == 'undefined' )
     {
       event.data.cookies = {};
