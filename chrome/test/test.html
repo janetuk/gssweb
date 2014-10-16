@@ -8,22 +8,30 @@
       }
 
       function doImportName() {
-        var ret = navigator.gss_import_name( 
-          document.getElementById('import_name_name').value,
-          document.getElementById('import_name_mech').value,
-          'nonce',
-          function(name, nonce, major, minor) {
-            report('GSS imported name: ' + name);
-            report('GSS imported nonce: ' + nonce);
-            report('GSS imported major status: ' + major);
-            report('GSS imported minor status: ' + minor);
-          }
-        );
+        var gss = new navigator.gss({
+          appTag: "TestApp",
+          error:  function(major, minor, errMsg, appTag) 
+                  {
+                    report("Error");
+                    report("Major: " + major + "; Minor: " + minor);
+                    report("<blockquote>" + errMsg + "</blockquote>");
+                    report("appTag: " + appTag);
+                  }
+        });
+        gss.import_name({
+          name:      document.getElementById('import_name_name').value,
+          name_type: document.getElementById('import_name_mech').value,
+          success:   function(name, appTag) {
+                       report("GSS imported name: " + name);
+                       report("appTag: " + appTag);
+                     }
+        });
       }
       
       document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('import_name').addEventListener(
-          'click', doImportName);
+          'click', doImportName
+        );
         console.log('DOMContentLoaded.');
       });
 
