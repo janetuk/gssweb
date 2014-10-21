@@ -92,7 +92,7 @@ var GSSEap = (function ()
         var error = params.error || this.default_error; 
         var app_tag = params.app_tag || this.appTag;
 
-        /* Erorr checking */
+        /* Error checking */
         // Call an error if we don't have the required parameters.
         // - name
         // - success()
