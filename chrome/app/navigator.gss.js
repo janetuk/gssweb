@@ -10,6 +10,7 @@ var GSSEap = (function ()
     {
         // Public attributes
         this.version = "0.0.1";
+        this.implemented_methods = ["gss_import_name"];
         this.callbacks = {};
         this.methods = {};
         this.errors = {};
@@ -44,7 +45,7 @@ var GSSEap = (function ()
         */
         method = event.data.method;
         if (
-             (method != "gss_import_name") ||
+             ( -1 == this.implemented_methods.indexOf(method) ) ||
              ("undefined" == typeof (event.data.return_values)) ||
              ("undefined" == typeof (event.data.cookies)))
         {
