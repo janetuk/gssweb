@@ -14,10 +14,14 @@ var GSSEap = (function ()
         this.methods = {};
         this.errors = {};
         this.appTag = config.appTag || "";
-        this.default_error = config.error || function (major, minor, error, appTag) {
-            console.warn(error);
-        };
-        window.addEventListener("message", this.dispatch_responses.bind(this));
+        this.default_error = config.error || 
+            function (major, minor, error, appTag) {
+                console.warn(error);
+            };
+        window.addEventListener(
+            "message",
+            this.dispatch_responses.bind(this)
+        );
     }
     GSSEap.prototype.dispatch_responses = function (event) 
     {
@@ -32,9 +36,11 @@ var GSSEap = (function ()
         *   object
         * - data.return_values exists
         * - data.cookies exists
-        * - One of my callbacks matches the nonce in data.cookies.navigator_gss_tag
-        * - One of my methods matches the nonce in data.cookies.navigator_gss_tag
-        *   and that method matches data.method
+        * - One of my callbacks matches the nonce in
+        *   data.cookies.navigator_gss_tag
+        * - One of my methods matches the nonce in 
+        *   data.cookies.navigator_gss_tag and that method matches
+        *   data.method
         */
         method = event.data.method;
         if (
@@ -48,7 +54,8 @@ var GSSEap = (function ()
         nonce = event.data.cookies.navigator_gss_tag;
         event.data.cookies.navigator_gss_tag = undefined;
         callback = this.callbacks[nonce];
-        if ("undefined" == typeof (callback) || this.methods[nonce] != method) {
+        if ("undefined" == typeof (callback) || 
+            this.methods[nonce] != method) {
             return;
         }
 
