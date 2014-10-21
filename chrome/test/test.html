@@ -1,14 +1,119 @@
 <html>
   <head>
     <title>GSSApi Tester Application</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+  </head>
+  <body>
+    <div class="row">
+      <div class="col-xs-4">
+        <!-- left column -->
+        <h2>GSS Import Name</h2>
+        <div class="form-group">
+          <label for="import_name_name">Name:</label>
+          <input name="import_name_name" id="import_name_name" value="HTTP@localhost.localdomain" />
+        </div>
+        <div class="form-group">
+          <label for="import_name_mech">Mechanism:</label>
+          <input name="import_name_mech"
+                 id="import_name_mech"
+                 value="{1 2 840 113554 1 2 1 4 }" />
+        </div>
+        <button id="import_name">gss_import_name</button>
+        <div id='response' style="overflow: auto;"></div>
+      </div>
+
+
+      <div class="col-xs-4">
+        <!-- middle column -->
+        <h2>GSS Acquire Cred</h2>
+        <div class="form-group">
+          <label for="acquire_cred_desired_name">Desired name:</label>
+          <select name="acquire_cred_desired_name" class="gss_name">
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="acquire_cred_cred_usage">Cred Usage:</label>
+          <select name="acquire_cred_cred_usage">
+            <option value="GSS_C_INITIATE">GSS_C_INITIATE</option>
+            <option value="GSS_C_ACCEPT">GSS_C_ACCEPT</option>
+            <option value="GSS_C_BOTH">GSS_C_BOTH</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="acquire_cred_time_req">Requested lifetime in seconds (0 for default 2 hours):</label>
+          <input name="acquire_cred_time_req" value="0"/>
+        </div>
+
+        <div class="form-group">
+          <label for="acquire_cred_desired_mechs">Desired mechanisms (comma separated, blank for default):</label>
+          <input name="acquire_cred_time_req" value=""/>
+        </div>
+
+      </div>
+
+
+      <div class="col-xs-4">
+        <!-- right column -->
+        <h2>GSS Init Sec Context</h2>
+        <div class="form-group">
+          <label for="init_sec_context_target_name">Target name:</label>
+          <select name="init_sec_context_target_name" class="gss_name">
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="init_sec_context_context_handle">Context handle:</label>
+          <input name="init_sec_context_context_handle"/>
+        </div>
+
+        <div class="form-group">
+          <label for="init_sec_context_input_token">Input token:</label>
+          <input name="init_sec_context_input_token"/>
+        </div>
+
+        <div class="form-group">
+          <label for="init_sec_context_mech_type">Mechanism type (blank for default):</label>
+          <input name="init_sec_context_mech_type"/>
+        </div>
+
+        <div class="form-group">
+          <label for="init_sec_context_time_req">Requested lifetime in seconds (0 for default 2 hours):</label>
+          <input name="init_sec_context_time_req" value="0" />
+        </div>
+
+        <div class="form-group">
+          <label for="init_sec_context_req_flags">Request flags (0 unless you know what you're doing):</label>
+          <input name="init_sec_context_req_flags" value="0" />
+        </div>
+
+      </div> 
+   </div>
+
+   <!-- Scripts! ------------------------------------------------------------------------------>
+   <!-- Required JQuery -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+   <!-- Latest compiled and minified JavaScript -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
     <script language="javascript">
+      var gss;
+
       function report(msg) {
         var response = document.getElementById('response');
         response.innerHTML = '<p>' + msg + '</p>' + response.innerHTML;
       }
 
       function doImportName() {
-        var gss = new navigator.gss_eap({
+        gss = gss || new navigator.gss_eap({
           appTag: "TestApp",
           error:  function(major, minor, errMsg, appTag) 
                   {
@@ -21,9 +126,13 @@
         gss.import_name({
           name:      document.getElementById('import_name_name').value,
           name_type: document.getElementById('import_name_mech').value,
-          success:   function(name, appTag) {
-                       report("GSS imported name: " + name);
+          success:   function(data, appTag) {
+                       report("GSS imported name: " + data.gss_name);
                        report("appTag: " + appTag);
+                       newOption = $('<option></option>');
+                       newOption.attr('value', data.gss_name);
+                       newOption.append(document.getElementById('import_name_name').value);
+                       $('.gss_name').append(newOption);
                      }
         });
       }
@@ -32,23 +141,11 @@
         document.getElementById('import_name').addEventListener(
           'click', doImportName
         );
+
         console.log('DOMContentLoaded.');
       });
 
     </script>
-  </head>
-  <body>
-    <h2>GSS Import Name parameters:</h2>
-    <label for="import_name_name">Name:</label>
-    <input name="import_name_name" id="import_name_name" value="HTTP@localhost.localdomain" />
-    <br/>
-    <label for="import_name_mech">Mechanism:</label>
-    <input name="import_name_mech"
-           id="import_name_mech"
-           value="{1 2 840 113554 1 2 1 4 }" />
-    <br/>
-    <button id="import_name">gss_import_name</button>
-    <br/>
-    <div id='response'></div>
+
   </body>
 </html>

@@ -68,7 +68,7 @@ var GSSEap = (function ()
               app_tag);
         } else {
             if ("gss_import_name" == method) 
-            { callback(event.data.return_values.gss_name, app_tag); }
+            { callback(event.data.return_values, app_tag); }
             // if( "gss_X" == method ) { callback(event.data.return_values.x, app_tag);}
         }
     };
