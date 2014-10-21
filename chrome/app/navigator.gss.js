@@ -1,4 +1,4 @@
-console.log('Loading navigator.gss.js - #7');
+console.log('Loading navigator.gss.js - #8');
 
 /* This file gets injected into the web page verbatim */
 
@@ -85,12 +85,18 @@ var GSSEap = (function ()
     GSSEap.prototype.import_name = function (params) 
     {
         /* variables */
+        // internal variables
         var nonce;
+        
+        // Required parameters
         var name = params.name;
-        var name_type = params.name_type || "{1 2 840 113554 1 2 1 4 }";
         var callback = params.success;
+        
+        // Optional & defaulted parameters
+        var name_type = params.name_type || "{1 2 840 113554 1 2 1 4 }";
         var error = params.error || this.default_error; 
         var app_tag = params.app_tag || this.appTag;
+
 
         /* Error checking */
         // Call an error if we don't have the required parameters.
@@ -104,11 +110,19 @@ var GSSEap = (function ()
           );
           return;
         }
+
         
+        /* Setup */
         nonce = navigator.generateNonce();
+
+
+        /* Main processing */
+        // Save our callback, method name, and error function
         this.callbacks[nonce] = callback;
         this.methods[nonce] = "gss_import_name";
         this.errors[nonce] = error;
+        
+        // Now pass the request on to the C code
         window.postMessage({
             "method":"gss_import_name",
             "arguments":
