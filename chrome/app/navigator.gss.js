@@ -12,8 +12,9 @@ var GSSEap = (function ()
         this.version = "0.0.1";
         this.callbacks = {};
         this.methods = {};
+        this.errors = {};
         this.appTag = config.appTag || "";
-        this.error = config.error || function (major, minor, error, appTag) {
+        this.default_error = config.error || function (major, minor, error, appTag) {
             console.warn(error);
         };
         window.addEventListener("message", this.dispatch_responses.bind(this));
@@ -24,6 +25,7 @@ var GSSEap = (function ()
         var nonce;
         var callback;
         var app_tag;
+        var error;
 
         /* This message is destined for us only if all the following apply:
         * - The data.method_name is one of the methods implemented by this
@@ -53,6 +55,7 @@ var GSSEap = (function ()
         // We now know that this message is for us!
         this.callbacks[nonce] = undefined;
         app_tag = event.data.cookies.app_tag;
+        error = this.errors[nonce] || this.default_error;
 
         if (this.gss_error(event.data.return_values.major_status))
         {
@@ -61,7 +64,7 @@ var GSSEap = (function ()
               event.data.return_values.errors.major_status_message + 
               "; Minor status message: " + 
               event.data.return_values.errors.minor_status_message;
-            this.error(
+            error(
               event.data.return_values.major_status,
               event.data.return_values.minor_status, 
               errMsg,
@@ -80,7 +83,7 @@ var GSSEap = (function ()
         var name = params.name;
         var name_type = params.name_type || "{1 2 840 113554 1 2 1 4 }";
         var callback = params.success;
-        var error = params.error || this.error; 
+        var error = params.error || this.default_error; 
         var app_tag = params.app_tag || this.appTag;
 
         /* Erorr checking */
@@ -90,7 +93,7 @@ var GSSEap = (function ()
         if ( "undefined" == typeof(name) ||
              "undefined" == typeof(callback) )
         {
-          this.error(-1, -1, 
+          error(-1, -1, 
             "import_name called missing either name or success callback"
           );
           return;
@@ -99,6 +102,7 @@ var GSSEap = (function ()
         nonce = navigator.generateNonce();
         this.callbacks[nonce] = callback;
         this.methods[nonce] = "gss_import_name";
+        this.errors[nonce] = error;
         window.postMessage({
             "method":"gss_import_name",
             "arguments":
