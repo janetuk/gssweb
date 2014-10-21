@@ -121,8 +121,8 @@ var GSSEap = (function ()
         var routineMask;
         var mask;
 
-        callingMask = 377 << 24;
-        routineMask = 377 << 16;
+        callingMask = 255 << 24;
+        routineMask = 255 << 16;
         mask = callingMask | routineMask;
 
         return (0 != (major & mask));
