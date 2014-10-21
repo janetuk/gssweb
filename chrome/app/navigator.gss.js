@@ -88,7 +88,7 @@ var GSSEap = (function ()
         // - name
         // - success()
         if ( "undefined" == typeof(name) ||
-             "undefined" == typeof(success) )
+             "undefined" == typeof(callback) )
         {
           this.error(-1, -1, 
             "import_name called missing either name or success callback"
