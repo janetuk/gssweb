@@ -10,6 +10,7 @@
 
   </head>
   <body>
+  <div class="container-fluid">
     <div class="row">
       <div class="col-xs-4">
         <!-- left column -->
@@ -25,7 +26,7 @@
                  value="{1 2 840 113554 1 2 1 4 }" />
         </div>
         <button id="import_name">gss_import_name</button>
-        <div id='response' style="overflow: auto;"></div>
+        <div id='import_response' style="overflow: auto;"></div>
       </div>
 
 
@@ -97,6 +98,20 @@
       </div> 
    </div>
 
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="authenticate_server_path">Server Path:</label>
+          <input name="authenticate_server_path" value="/gss" />
+        </div>
+
+        <button id="authenticate">authenticate</button>
+        <div id='authenticate_response' style="overflow: auto;"></div>
+      </div>
+    </div>
+
+  </div>
+  
    <!-- Scripts! ------------------------------------------------------------------------------>
    <!-- Required JQuery -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -104,12 +119,16 @@
    <!-- Latest compiled and minified JavaScript -->
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
+   <!-- GSS Web script -->
+   <script src="navigator.gssweb.js"></script>
+
     <script language="javascript">
       var gss;
+      var gssweb;
 
-      function report(msg) {
-        var response = document.getElementById('response');
-        response.innerHTML = '<p>' + msg + '</p>' + response.innerHTML;
+      function report(msg, elemId) {
+        var element = $(elemId);
+        element.prepend('<p>' + msg + '</p>');
       }
 
       function doImportName() {
@@ -117,32 +136,55 @@
           appTag: "TestApp",
           error:  function(major, minor, errMsg, appTag) 
                   {
-                    report("Error");
-                    report("Major: " + major + "; Minor: " + minor);
-                    report("<blockquote>" + errMsg + "</blockquote>");
-                    report("appTag: " + appTag);
+                    report("Error", '#import_response');
+                    report("Major: " + major + "; Minor: " + minor, '#import_response');
+                    report("<blockquote>" + errMsg + "</blockquote>", '#import_response');
+                    report("appTag: " + appTag, '#import_response');
                   }
         });
         gss.import_name({
           name:      document.getElementById('import_name_name').value,
           name_type: document.getElementById('import_name_mech').value,
           success:   function(data, appTag) {
-                       report("GSS imported name: " + data.gss_name);
-                       report("appTag: " + appTag);
+                       report("GSS imported name: " + data.gss_name, '#import_response');
+                       report("appTag: " + appTag, '#import_response');
                        newOption = $('<option></option>');
                        newOption.attr('value', data.gss_name);
                        newOption.append(document.getElementById('import_name_name').value);
                        $('.gss_name').append(newOption);
                      }
         });
-      }
+      } // doImportName
+
+      function doAuthenticate() {
+        gssweb = gssweb || new navigator.gssweb({
+          serverPath: "/gss",
+          appTag:     "Authentication Test",
+          error:      function(errMsg) {
+                        report(errMsg, '#authenticate_response');
+                      },
+          success:    function(appData, contentType, appTag) {
+                        report(contentType, '#authenticate_response');
+                        report("Content-Type:", '#authenticate_response');
+                        report(appData, '#authenticate_response');
+                        report("Found app data:", '#authenticate_response');
+                        report("Success!", '#authenticate_response');
+                      }
+        });
+        gssweb.authenticate();
+      } // doAuthenticate
       
       document.addEventListener('DOMContentLoaded', function () {
+        <!-- Listen for the import name button click -->
         document.getElementById('import_name').addEventListener(
           'click', doImportName
         );
 
-        console.log('DOMContentLoaded.');
+        <!-- Listen for the authenticate button click -->
+        document.getElementById('authenticate').addEventListener(
+          'click', doAuthenticate
+        );
+
       });
 
     </script>
