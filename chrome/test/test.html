@@ -17,7 +17,9 @@
         <h2>GSS Import Name</h2>
         <div class="form-group">
           <label for="import_name_name">Name:</label>
-          <input name="import_name_name" id="import_name_name" value="HTTP@localhost.localdomain" />
+          <input name="import_name_name"
+                 id="import_name_name"
+                 value="HTTP@localhost.localdomain" />
         </div>
         <div class="form-group">
           <label for="import_name_mech">Mechanism:</label>
@@ -49,14 +51,25 @@
         </div>
 
         <div class="form-group">
-          <label for="acquire_cred_time_req">Requested lifetime in seconds (0 for default 2 hours):</label>
-          <input name="acquire_cred_time_req" value="0"/>
+          <label for="acquire_cred_time_req">
+            Requested lifetime in seconds (0 for default 2 hours):
+          </label>
+          <input name="acquire_cred_time_req"
+                 id="acquire_cred_time_req"
+                 value="0"/>
         </div>
 
         <div class="form-group">
-          <label for="acquire_cred_desired_mechs">Desired mechanisms (comma separated, blank for default):</label>
-          <input name="acquire_cred_time_req" value=""/>
+          <label for="acquire_cred_desired_mechs">
+            Desired mechanisms (comma separated, blank for default):
+          </label>
+          <input name="acquire_cred_desired_mechs"
+                 id="acquire_cred_desired_mechs"
+                 value=""/>
         </div>
+
+        <button id="acquire_cred">gss_acquire_cred</button>
+        <div id="acquire_response" style="overflow: auto;"></div>
 
       </div>
 
@@ -66,34 +79,50 @@
         <h2>GSS Init Sec Context</h2>
         <div class="form-group">
           <label for="init_sec_context_target_name">Target name:</label>
-          <select name="init_sec_context_target_name" class="gss_name">
+          <select name="init_sec_context_target_name"
+                  id="init_sec_context_target_name"
+                  class="gss_name">
           </select>
         </div>
 
         <div class="form-group">
           <label for="init_sec_context_context_handle">Context handle:</label>
-          <input name="init_sec_context_context_handle"/>
+          <input name="init_sec_context_context_handle"
+                 id="init_sec_context_context_handle"/>
         </div>
 
         <div class="form-group">
           <label for="init_sec_context_input_token">Input token:</label>
-          <input name="init_sec_context_input_token"/>
+          <input name="init_sec_context_input_token"
+                 id="init_sec_context_input_token"/>
         </div>
 
         <div class="form-group">
-          <label for="init_sec_context_mech_type">Mechanism type (blank for default):</label>
-          <input name="init_sec_context_mech_type"/>
+          <label for="init_sec_context_mech_type">
+            Mechanism type (blank for default):
+          </label>
+          <input name="init_sec_context_mech_type"
+                 id="init_sec_context_mech_type"/>
         </div>
 
         <div class="form-group">
-          <label for="init_sec_context_time_req">Requested lifetime in seconds (0 for default 2 hours):</label>
-          <input name="init_sec_context_time_req" value="0" />
+          <label for="init_sec_context_time_req">
+            Requested lifetime in seconds (0 for default 2 hours):
+          </label>
+          <input name="init_sec_context_time_req"
+                 id="init_sec_context_time_req" value="0" />
         </div>
 
         <div class="form-group">
-          <label for="init_sec_context_req_flags">Request flags (0 unless you know what you're doing):</label>
-          <input name="init_sec_context_req_flags" value="0" />
+          <label for="init_sec_context_req_flags">
+            Request flags (0 unless you know what you're doing):
+          </label>
+          <input name="init_sec_context_req_flags" 
+                 id="init_sec_context_req_flags" value="0" />
         </div>
+
+        <button id="init_sec_context">gss_init_sec_context</button>
+        <div id="init_sec_context_response" style="overflow: auto;"></div>
 
       </div> 
    </div>
@@ -102,7 +131,9 @@
       <div class="col-xs-12">
         <div class="form-group">
           <label for="authenticate_server_path">Server Path:</label>
-          <input name="authenticate_server_path" value="/gss" />
+          <input name="authenticate_server_path" 
+                 id="authenticate_server_path" 
+                 value="/gss" />
         </div>
 
         <button id="authenticate">authenticate</button>
@@ -133,15 +164,15 @@
 
       function doImportName() {
         gss = gss || new navigator.gss_eap({
-          appTag: "TestApp",
-          error:  function(major, minor, errMsg, appTag) 
-                  {
-                    report("Error", '#import_response');
-                    report("Major: " + major + "; Minor: " + minor, '#import_response');
-                    report("<blockquote>" + errMsg + "</blockquote>", '#import_response');
-                    report("appTag: " + appTag, '#import_response');
-                  }
+          appTag: "TestApp"
         });
+        gss.error = function(major, minor, errMsg, appTag) 
+        {
+          report("Error", '#import_response');
+          report("Major: " + major + "; Minor: " + minor, '#import_response');
+          report("<blockquote>" + errMsg + "</blockquote>", '#import_response');
+          report("appTag: " + appTag, '#import_response');
+        };
         gss.import_name({
           name:      document.getElementById('import_name_name').value,
           name_type: document.getElementById('import_name_mech').value,
@@ -155,6 +186,66 @@
                      }
         });
       } // doImportName
+
+      function doAcquireCred() {
+        gss = gss || new navigator.gss_eap({
+          appTag: "TestApp"
+        });
+        gss.error = function(major, minor, errMsg, appTag) 
+        {
+          report("Error", '#acquire_response');
+          report("Major: " + major + "; Minor: " + minor, '#acquire_response');
+          report("<blockquote>" + errMsg + "</blockquote>", '#acquire_response');
+          report("appTag: " + appTag, '#acquire_response');
+        };        
+
+        var params = {
+          desired_name: document.getElementById('import_name_name').value,
+          cred_usage: document.getElementById('import_name_name').value
+        };
+        if (document.getElementById("acquire_cred_time_req").value > 0)
+        {
+          params.time_req = document.getElementById("acquire_cred_time_req").value;
+        }
+        if ("" != document.getElementById("acquire_cred_desired_mechs").value)
+        {
+          params.desired_mechs = 
+            document.getElementById("acquire_cred_desired_mechs").value;
+        }
+        
+        gss.acquire_cred(params);
+      }
+
+      /********************************************************
+       *  Call the init_sec_context routine
+       ********************************************************/
+      function doInitSecContext() {
+        gss = gss || new navigator.gss_eap({
+          appTag: "TestApp",
+          success: function(data, appTag) {
+            $('#init_sec_context_context_handle').attr("value",
+                                                       data.context_handle);
+            report("Output token: " + data.output_token,
+                   '#init_sec_context_response');
+          }
+        });
+        gss.error = function(major, minor, errMsg, appTag) 
+        {
+          report("Error",
+                 '#init_sec_context_response');
+          report("Major: " + major + "; Minor: " + minor, 
+                 '#init_sec_context_response');
+          report("<blockquote>" + errMsg + "</blockquote>",
+                 '#init_sec_context_response');
+          report("appTag: " + appTag,
+                 '#init_sec_context_response');
+        };        
+
+        var params = {
+          target_name: document.getElementById('init_sec_context_target_name').value
+        };
+        gss.init_sec_context(params);
+      }
 
       function doAuthenticate() {
         gssweb = gssweb || new navigator.gssweb({
@@ -179,6 +270,17 @@
         document.getElementById('import_name').addEventListener(
           'click', doImportName
         );
+
+        <!-- Listen for the acquire cred button click -->
+        document.getElementById('acquire_cred').addEventListener(
+          'click', doAcquireCred
+        );
+
+        <!-- Listen for the import name button click -->
+        document.getElementById('init_sec_context').addEventListener(
+          'click', doInitSecContext
+        );
+
 
         <!-- Listen for the authenticate button click -->
         document.getElementById('authenticate').addEventListener(
