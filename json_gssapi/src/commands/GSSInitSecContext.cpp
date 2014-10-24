@@ -1,9 +1,37 @@
 /*
- * Copyright (c) 2014 <copyright holder> <email>
- * 
- * For license details, see the LICENSE file in the root of this project.
- * 
+ * Copyright (c) 2014, JANET(UK)
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of JANET(UK) nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
+// MRW -- Add proper copyright boilerplate to all files
 
 #include "GSSInitSecContext.h"
 #include "GSSException.h"
@@ -45,6 +73,7 @@ GSSInitSecContext::execute()
     retVal = gss_release_buffer(&minor_status, &output_token);
 
   /* Main */
+  // MRW -- fix so that this uses all of the vars from the object 
   retVal = fn(
     &minor_status,
     GSS_C_NO_CREDENTIAL,
@@ -62,6 +91,7 @@ GSSInitSecContext::execute()
   
   if ( GSS_ERROR(this->retVal) )
   {
+    // MRW -- steal code from import name
     std::string errMsg;
     errMsg += "Cannot init_sec_context: ";
     throw GSSException(errMsg.c_str(), this->retVal, this->minor_status, mechType.toGss());
@@ -77,6 +107,7 @@ GSSInitSecContext::execute()
   /* Return */
 }
 
+#if 0
 const char* GSSInitSecContext::getTargetDisplayName()
 {
   /* Variables */
@@ -101,6 +132,7 @@ const char* GSSInitSecContext::getTargetDisplayName()
   /* return */
   return( ret );
 }
+#endif
 
 bool GSSInitSecContext::loadParameters(JSONObject *params)
 {
@@ -112,16 +144,11 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
     return true;
   
   /* Setup */
-  // Should I zeroOut?
   
   /* Main processing */
-  // Easy stuff(*params)
-  if ( !params->get("time_req").isNull() )
-    this->time_req = params->get("time_req").integer();
-  
-  if ( !params->get("req_flags").isNull() )
-    this->req_flags = params->get("req_flags").integer();
-  
+  // MRW -- finish parsing all of the variables
+  // claimant_cred_handle
+
   // context_handle
   if ( ! params->get("context_handle").isNull() )
   {
@@ -165,6 +192,16 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
       throw std::invalid_argument( std::string() + "Could not create a mech_type OID from '" + key + "'");
   }
   
+  // req_flags
+  if ( !params->get("req_flags").isNull() )
+    this->req_flags = params->get("req_flags").integer();
+
+  // time_req
+  if ( !params->get("time_req").isNull() )
+    this->time_req = params->get("time_req").integer();
+
+  // input_chennel_bindings
+
   // input_token
   if ( ! params->get("input_token").isNull() )
   {
@@ -174,7 +211,6 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   }
 
   /* Cleanup */
-  
   
   /* Return */
   return true;
@@ -230,6 +266,7 @@ bool GSSInitSecContext::zeroOut(bool initialized)
 JSONObject *GSSInitSecContext::toJSON()
 {
   /* Variables */
+  // MRW -- values should be scoped to the class, so execute can set error values?
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -244,7 +281,8 @@ JSONObject *GSSInitSecContext::toJSON()
   values->set("output_token", (const char *)this->output_token.value);
   values->set("ret_flags", this->ret_flags);
   values->set("time_rec", this->time_rec);
-  
+  // MRW -- modify for new error handling
+
   /* Cleanup */
   
   /* Return */
