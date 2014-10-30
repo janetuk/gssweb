@@ -5,11 +5,12 @@
  *
  */
 
-#include <glib.h>
+// #include <glib.h>
 #include <stdexcept>
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
+#include "utils/base64.h"
 #include "GSSContextCache.h"
 
 #define KEYLEN 128
@@ -92,7 +93,8 @@ bool GSSContextCache::generateKey(std::string &key)
   }
 
   // Encode the binary string
-  key = g_base64_encode(theKey, KEYLEN);
+  key = (char *)theKey;
+  key = base64_encode(key);
   
   /* Cleanup        */
   /* Return         */

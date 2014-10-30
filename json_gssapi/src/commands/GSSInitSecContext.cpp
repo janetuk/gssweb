@@ -43,6 +43,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils/base64.h"
+
 typedef OM_uint32 (*init_sec_context)(
     OM_uint32 *,        /* minor_status */
     gss_cred_id_t,      /* claimant_cred_handle */
@@ -107,7 +109,6 @@ GSSInitSecContext::execute()
   /* Return */
 }
 
-#if 0
 const char* GSSInitSecContext::getTargetDisplayName()
 {
   /* Variables */
@@ -132,12 +133,13 @@ const char* GSSInitSecContext::getTargetDisplayName()
   /* return */
   return( ret );
 }
-#endif
 
 bool GSSInitSecContext::loadParameters(JSONObject *params)
 {
   /* Variables */
   std::string key;
+  std::string token;
+  size_t len;
   
   /* Error checking */
   if ( params->isNull() )
@@ -205,9 +207,10 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   // input_token
   if ( ! params->get("input_token").isNull() )
   {
-    key = params->get("input_token").string();
-    this->input_token.value = (void *)key.c_str();
-    this->input_token.length = key.length();
+    token = params->get("input_token").string();
+    token = (char *)base64_decode(token, &len);
+    this->input_token.value = (void *)token.c_str();
+    this->input_token.length = token.length();
   }
 
   /* Cleanup */
@@ -267,6 +270,7 @@ JSONObject *GSSInitSecContext::toJSON()
 {
   /* Variables */
   // MRW -- values should be scoped to the class, so execute can set error values?
+  std::string output_str;
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -278,7 +282,9 @@ JSONObject *GSSInitSecContext::toJSON()
   values->set("minor_status", this->minor_status);
   values->set("context_handle", this->contextKey.c_str());
   values->set("actual_mech_type", this->getActualMechType().toString().c_str());
-  values->set("output_token", (const char *)this->output_token.value);
+  // MRW -- is output_token.value guaranteed to be null-terminated?
+  output_str = (char *)output_token.value;
+  values->set("output_token", base64_encode(output_str));
   values->set("ret_flags", this->ret_flags);
   values->set("time_rec", this->time_rec);
   // MRW -- modify for new error handling

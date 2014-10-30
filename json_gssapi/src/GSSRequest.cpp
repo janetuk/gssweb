@@ -85,7 +85,7 @@ void GSSRequest::getCommand()
   {
     cmd = new GSSImportName ( &arguments );
   } 
-  else if ( "gss_create_sec_context" == method ) 
+  else if ( "gss_init_sec_context" == method ) 
   {
     cmd = new GSSInitSecContext ( &arguments );
   } 

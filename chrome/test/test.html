@@ -222,12 +222,6 @@
       function doInitSecContext() {
         gss = gss || new navigator.gss_eap({
           appTag: "TestApp",
-          success: function(data, appTag) {
-            $('#init_sec_context_context_handle').attr("value",
-                                                       data.context_handle);
-            report("Output token: " + data.output_token,
-                   '#init_sec_context_response');
-          }
         });
         gss.error = function(major, minor, errMsg, appTag) 
         {
@@ -242,7 +236,13 @@
         };        
 
         var params = {
-          target_name: document.getElementById('init_sec_context_target_name').value
+          target_name: document.getElementById('init_sec_context_target_name').value,
+          success: function(data, appTag) {
+            $('#init_sec_context_context_handle').attr("value",
+                                                       data.context_handle);
+            report("Output token: " + data.output_token,
+                   '#init_sec_context_response');
+          }
         };
         gss.init_sec_context(params);
       }
