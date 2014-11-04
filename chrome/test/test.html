@@ -235,8 +235,15 @@
                  '#init_sec_context_response');
         };        
 
+/* context_handle, mech_type, req_flags, time_req, input_token */
+
         var params = {
+          context_handle: document.getElementById('init_sec_context_context_handle').value,
           target_name: document.getElementById('init_sec_context_target_name').value,
+          mech_type: document.getElementById('init_sec_context_mech_type').value,
+          req_flags: document.getElementById('init_sec_context_req_flags').value,
+          time_req: document.getElementById('init_sec_context_time_req').value,
+          input_token: document.getElementById('init_sec_context_input_token').value,
           success: function(data, appTag) {
             $('#init_sec_context_context_handle').attr("value",
                                                        data.context_handle);
