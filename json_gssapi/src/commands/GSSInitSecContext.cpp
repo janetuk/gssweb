@@ -154,7 +154,7 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   // context_handle
   if (!(params->get("context_handle").isNull() ||
 	(params->get("context_handle").isString() &&
-	 "" != params->get("context_handle").string())))
+	 std::string("") == params->get("context_handle").string())))
   {
     this->context_handle = GSS_C_NO_CONTEXT;
     if (params->get("context_handle").isString())
@@ -168,9 +168,11 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   }
   
   // target_name
-  if (!(params->get("target_name").isNull() ||
-	(params->get("target_name").isString() &&
-	 "" == params->get("target_name").string())))
+  if (! (  params->get("target_name").isNull() ||
+	   (params->get("target_name").isString() &&
+	    std::string("") == params->get("target_name").string())
+	)
+     )
   {
     this->target_name = GSS_C_NO_NAME;
     if (params->get("target_name").isString())
@@ -186,9 +188,13 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   }
   
   // mech_type  
-  if (!(params->get("mech_type").isNull() ||
-	(params->get("mech_type").isString() &&
-	 "" == params->get("mech_type").string())))
+  if (! ( params->get("mech_type").isNull() ||
+	  (
+	    params->get("mech_type").isString() &&
+	    std::string("") == params->get("mech_type").string()
+	  )
+	)
+     )
   {
     key.clear();
     if (params->get("mech_type").isString())
@@ -211,7 +217,7 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   // input_token
   if (! (params->get("input_token").isNull() ||
 	 (params->get("input_token").isString() &&
-	  "" == params->get("input_token").string())))
+	  std::string("") == params->get("input_token").string())))
   {
     token = params->get("input_token").string();
     token = (char *)base64_decode(token, &len);
