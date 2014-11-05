@@ -124,7 +124,7 @@ var GSSWeb = (function () {
     };
 
     if ("" != this.clientCred) {
-      params.claimant_cred_handle = this.clientCred;
+      params.cred_handle = this.clientCred;
     }
     if ("" != this.serverToken) {
       params.input_token = this.serverToken;
@@ -135,20 +135,18 @@ var GSSWeb = (function () {
 
     this.gss.init_sec_context(params);
   };
-  GSSWeb.prototype.sendTokenToServer = 
-    function (ctxt, 
-              mech_type, 
-              output_token, 
-              ret_flags, 
-              time_rec,
-              app_tag) {
-    this.clientToken = output_token;
-    this.context = ctxt;
 
-    var data = "nonce=" + this.nonce +
+  GSSWeb.prototype.sendTokenToServer = 
+    function (data, 
+              app_tag) {
+    this.clientToken = data.output_token;
+    this.context = data.context_handle;
+
+    var msg = "nonce=" + this.nonce +
                "&token=" + encodeURIComponent(this.clientToken);
-    this.xhr.send(data);
+    this.xhr.send(msg);
   };
+
   GSSWeb.prototype.recvTokenFromServer = function () {
     // Only care when we're ready
     if (this.xhr.readyState != 4) {
