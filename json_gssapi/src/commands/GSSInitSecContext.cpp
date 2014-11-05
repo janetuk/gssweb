@@ -282,7 +282,7 @@ JSONObject *GSSInitSecContext::toJSON()
 {
   /* Variables */
   // MRW -- values should be scoped to the class, so execute can set error values?
-  std::string output_str;
+  std::string output_str((char *)output_token.value, output_token.length);
   JSONObject *values = new JSONObject();
   
   /* Error checking */
@@ -295,7 +295,7 @@ JSONObject *GSSInitSecContext::toJSON()
   values->set("context_handle", this->contextKey.c_str());
   values->set("actual_mech_type", this->getActualMechType().toString().c_str());
   // MRW -- is output_token.value guaranteed to be null-terminated?
-  output_str = (char *)output_token.value;
+  //output_str = (char *)output_token.value;
   values->set("output_token", base64_encode(output_str));
   values->set("ret_flags", this->ret_flags);
   values->set("time_rec", this->time_rec);

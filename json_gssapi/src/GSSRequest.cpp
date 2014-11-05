@@ -11,6 +11,7 @@
 #include "commands/GSSAcquireCred.h"
 #include "commands/GSSInitSecContext.h"
 #include "commands/GSSImportName.h"
+#include "commands/GSSDisplayName.h"
 #include "GSSRequest.h"
 
 using std::bad_alloc;
@@ -93,6 +94,10 @@ void GSSRequest::getCommand()
   {
     cmd = new GSSAcquireCred ( &arguments );
   } 
+  else if ( "gss_display_name" == method )
+  {
+    cmd = new GSSDisplayName ( &arguments );
+  }
   else 
   {
     string error_message = string("Unrecognized command: ") + method;

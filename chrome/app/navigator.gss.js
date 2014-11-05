@@ -42,7 +42,7 @@ var GSSEap = (function ()
     {
         // Public attributes
         this.version = "0.0.1";
-        this.implemented_methods = ["gss_import_name", "gss_init_sec_context", "gss_acquire_cred"];
+        this.implemented_methods = ["gss_import_name", "gss_display_name", "gss_init_sec_context", "gss_acquire_cred"];
 	// MRW -- combine success/error callback hashes?
         this.callbacks = {};
         this.errors = {};
@@ -178,6 +178,50 @@ var GSSEap = (function ()
         }, "*");
         
     };
+
+    GSSEap.prototype.display_name = function(params)
+    {
+        /* Variables */
+        // required parameters
+        var input_name = params.input_name;
+        var callback = params.success;
+
+        if ( "undefined" == typeof(name) ||
+             "undefined" == typeof(callback) )
+        {
+          error(-1, -1, 
+            "import_name called missing either name or success callback"
+          );
+          return;
+        }
+
+        var error = params.error || this.default_error; 
+        var app_tag = params.app_tag || this.appTag;
+        
+        /* Setup */
+        nonce = navigator.generateNonce();
+
+
+        /* Main processing */
+        // Save our callback, method name, and error function
+        this.callbacks[nonce] = callback;
+        this.errors[nonce] = error;
+        
+        // Now pass the request on to the C code
+        window.postMessage({
+            "method":"gss_display_name",
+            "arguments":
+            {
+                "input_name": input_name,
+            },
+            "cookies":
+            {
+                "navigator_gss_tag": nonce,
+                "app_tag": app_tag
+            }
+        }, "*");
+        
+    }
 
     GSSEap.prototype.import_name = function (params) 
     {

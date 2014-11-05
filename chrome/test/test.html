@@ -127,6 +127,22 @@
       </div> 
    </div>
 
+   <div class="row">
+      <div class="col-xs-4">
+        <!-- middle column -->
+        <h2>GSS Display Name</h2>
+        <div class="form-group">
+          <label for="display_name_name">Name:</label>
+          <select name="display_name_name" id="display_name_name" class="gss_name">
+          </select>
+        </div>
+
+        <button id="display_name">gss_display_name</button>
+        <div id="display_name_response" style="overflow: auto;"></div>
+
+      </div>
+   </div>
+
     <div class="row">
       <div class="col-xs-12">
         <div class="form-group">
@@ -186,6 +202,38 @@
                      }
         });
       } // doImportName
+
+      function doDisplayName() {
+        gss = gss || new navigator.gss_eap({
+          appTag: "TestApp"
+        });
+        gss.error = function(major, minor, errMsg, appTag) 
+        {
+          report("Error", '#display_response');
+          report("Major: " + major + "; Minor: " + minor, '#display_response');
+          report("<blockquote>" + errMsg + "</blockquote>", '#display_response');
+          report("appTag: " + appTag, '#display_response');
+        };
+        gss.display_name({
+          input_name:      document.getElementById('display_name_name').value,
+          success:   function(data, appTag) {
+                       report("GSS displayed name: " + data.gss_name, '#display_response');
+                       report("appTag: " + appTag, '#display_response');
+                       newOption = $('<option></option>');
+                       newOption.attr('value', data.gss_name);
+                       newOption.append(document.getElementById('display_name_name').value);
+                       $('.gss_name').append(newOption);
+                     },
+          error: function(major, minor, errMsg, appTag) 
+        {
+          report("Error", '#display_response');
+          report("Major: " + major + "; Minor: " + minor, '#display_response');
+          report("<blockquote>" + errMsg + "</blockquote>", '#display_response');
+          report("appTag: " + appTag, '#display_response');
+        }
+        });
+      } // doDisplayName
+
 
       function doAcquireCred() {
         gss = gss || new navigator.gss_eap({
@@ -276,6 +324,11 @@
         <!-- Listen for the import name button click -->
         document.getElementById('import_name').addEventListener(
           'click', doImportName
+        );
+
+        <!-- Listen for the import name button click -->
+        document.getElementById('display_name').addEventListener(
+          'click', doDisplayName
         );
 
         <!-- Listen for the acquire cred button click -->

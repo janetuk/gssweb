@@ -18,6 +18,7 @@ add_library(jsongssapi SHARED
                        src/commands/GSSCommand.cpp 
                        src/commands/GSSImportName.cpp
                        src/commands/GSSAcquireCred.cpp 
+                       src/commands/GSSDisplayName.cpp
                        src/commands/GSSPseudoRandom.cpp
                        src/commands/GSSWrap.cpp  
                        src/commands/GSSUnwrap.cpp
