@@ -62,7 +62,7 @@ std::string GSSNameCache::store ( GSSName& data, std::string inKey )
   // Store the key/value pair in the map
   // Store the key in the context for convenience
 //   std::cout << "\n==> In GSSNameCache::store, about to store data in the names hash.\n";
-  names[key] = data;
+  names[key] = &data;
   
   /* Cleanup        */
   /* Return         */
@@ -118,7 +118,7 @@ GSSName& GSSNameCache::retrieve ( std::string key )
   
   /* Cleanup        */
   /* Return         */
-  return names[key];
+  return *(names[key]);
 }
 
 GSSNameCache* GSSNameCache::instance()

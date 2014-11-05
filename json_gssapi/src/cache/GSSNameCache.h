@@ -13,7 +13,7 @@
 
 #include "datamodel/GSSName.h"
 
-typedef std::map<std::string, GSSName> NameMap;
+typedef std::map<std::string, GSSName*> NameMap;
 
 class GSSNameCache
 {
