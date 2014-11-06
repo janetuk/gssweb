@@ -36,7 +36,7 @@
 #include <cache/GSSContextCache.h>
 
 #include <stdexcept>
-#include <mit-krb5/gssapi/gssapi.h>
+#include <gssapi/gssapi.h>
 
 GSSGetMic::GSSGetMic ( JSONObject* params, gss_get_mic_type fn )
 {
