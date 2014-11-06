@@ -38,14 +38,6 @@
 #include <datamodel/GSSDisplayStatus.h>
 
 
-typedef OM_uint32 (*gss_imp_name_type)(
-    OM_uint32 *,        /* minor_status */
-    gss_buffer_t,       /* input_name_buffer */
-    gss_OID,            /* input_name_type(used to be const) */
-    gss_name_t *);      /* output_name */
-
-
-
 void GSSImportName::execute()
 {
   /* Variables */
