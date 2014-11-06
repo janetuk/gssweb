@@ -23,7 +23,7 @@ public:
   
   std::string toString() const { return(std::string((char *)buf->value, buf->length)); }
   gss_buffer_t toGss() const { return( buf ); }
-  int length() const { return(buf->length); }
+  int length() const { return((int )buf->length); }
   
   void setValue(std::string str);
   void setValue(char *str);
