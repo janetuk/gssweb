@@ -12,7 +12,7 @@
 #include <gssapi/gssapi.h>
 #include <string>
 
-typedef OM_uint32 (*gss_acq_cred_type)(
+typedef OM_uint32 (KRB5_CALLCONV *gss_acq_cred_type)(
     OM_uint32 *,        /* minor_status */
     gss_name_t,         /* desired_name */
     OM_uint32,          /* time_req */

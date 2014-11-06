@@ -39,7 +39,7 @@
 #include "datamodel/GSSBuffer.h"
 #include <gssapi/gssapi.h>
 
-typedef OM_uint32 (*gss_get_mic_type) (
+typedef OM_uint32 (KRB5_CALLCONV *gss_get_mic_type) (
     OM_uint32 *,        /* minor_status */
     gss_ctx_id_t,       /* context_handle */
     gss_qop_t,          /* qop_req */

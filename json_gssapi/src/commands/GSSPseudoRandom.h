@@ -35,13 +35,12 @@
 #ifndef GSSPSEUDORANDOMCOMMAND_H
 #define GSSPSEUDORANDOMCOMMAND_H
 
-#include <openssl/rand.h>
 #include <gssapi/gssapi.h>
 
 #include "datamodel/GSSBuffer.h"
 #include "GSSCommand.h"
 
-typedef OM_uint32 (*gss_pseudo_random_type) (
+typedef OM_uint32 (KRB5_CALLCONV *gss_pseudo_random_type) (
     OM_uint32 *,        /* minor_status */
     gss_ctx_id_t,       /* context */
     int,                /* prf_key */

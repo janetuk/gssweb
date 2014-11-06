@@ -40,7 +40,7 @@
 #include "GSSCommand.h"
 #include "datamodel/GSSBuffer.h"
 
-typedef OM_uint32 (*gss_wrap_type) (
+typedef OM_uint32 (KRB5_CALLCONV *gss_wrap_type) (
     OM_uint32 *,        /* minor_status */
     gss_ctx_id_t,       /* context_handle */
     int,                /* conf_req_flag */

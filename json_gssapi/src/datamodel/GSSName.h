@@ -13,7 +13,7 @@
 #define GSSNAME_H
 
 
-typedef OM_uint32 (*gss_imp_name_type)(
+typedef OM_uint32 (KRB5_CALLCONV *gss_imp_name_type)(
     OM_uint32 *,        /* minor_status */
     gss_buffer_t,       /* input_name_buffer */
     gss_OID,            /* input_name_type(used to be const) */
