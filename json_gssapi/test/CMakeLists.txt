@@ -7,7 +7,8 @@ if (GLIB2_FOUND)
   include_directories(${GLIB2_INCLUDE_DIRS})
 endif(GLIB2_FOUND)
   
-
+if (WIN32)
+else (WIN32)
 add_executable(test GSSExceptionTest.cpp 
                     GSSAcquireCredTest.cpp 
                     GSSGetMicTest.cpp
@@ -50,8 +51,8 @@ add_executable(test GSSExceptionTest.cpp
   )
 
 target_link_libraries(test cppunit gssapi_krb5 jansson crypto ${GLIB2_LIBRARIES})
-
 # install(TARGETS test RUNTIME DESTINATION bin)
+endif(WIN32)
 
 add_subdirectory(datamodel)
 add_subdirectory(command_mocks)
