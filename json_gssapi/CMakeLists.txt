@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
-
+include(GenerateExportHeader)
 project(json_gssapi)
 
-include_directories(src/)
+include_directories(src/ ${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(jsongssapi SHARED 
                        src/datamodel/GSSDisplayStatus.cpp 
@@ -30,23 +30,44 @@ add_library(jsongssapi SHARED
                        src/datamodel/GSSContext.cpp
                       )
 
-target_link_libraries(jsongssapi gssapi_krb5 jansson crypto)
+GENERATE_EXPORT_HEADER(jsongssapi)
 
 add_executable(json_gssapi main.cpp)
-target_link_libraries(json_gssapi gssapi_krb5 jansson crypto jsongssapi)
 
 find_package (PkgConfig)
 pkg_check_modules (GLIB2   glib-2.0)
-if (GLIB2_FOUND)
-  include_directories(${GLIB2_INCLUDE_DIRS})
-  target_link_libraries(json_gssapi ${GLIB2_LIBRARIES})
-endif(GLIB2_FOUND)
- 
 
+find_package (Jansson)
+if (JANSSON_FOUND)
+else (JANSSON_FOUND)
+  set(JANSSON_LIBRARIES jansson)
+endif (JANSSON_FOUND)
+
+# deal with gssapi / krb5
+if (WIN32)
+set(KRB5_SDK $ENV{PROGRAMW6432}\\MIT\\Kerberos)
+message("KRB5_SDK: ${KRB5_SDK}" )
+set(KRB5_INCLUDE_DIRS ${KRB5_SDK}\\include;${KRB5_SDK}\\include\\gssapi)
+set(KRB5_LIBRARIES ${KRB5_SDK}\\lib\\amd64\\gssapi64.lib)
+else (WIN32)
+set(KRB5_LIBRARIES gssapi_krb5)
+endif (WIN32)
+
+# openssl / crpyto for random
+if (WIN32)
+else (WIN32)
+target_link_libraries(jsongssapi crypto)
+target_link_libraries(json_gssapi crypto)
+add_definitions(-DHAVE_OPENSSL)
+endif (WIN32)
+
+include_directories(${KRB5_INCLUDE_DIRS} ${JANSSON_INCLUDE_DIRS})
+target_link_libraries(jsongssapi ${KRB5_LIBRARIES} ${JANSSON_LIBRARIES})
+target_link_libraries(json_gssapi jsongssapi ${KRB5_LIBRARIES} ${JANSSON_LIBRARIES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
-FIND_PACKAGE(CPPUNIT REQUIRED)
 
+find_package (CPPUNIT)
 install(TARGETS json_gssapi RUNTIME DESTINATION bin)
 
 add_subdirectory(src)
