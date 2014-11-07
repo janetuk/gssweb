@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "utils/base64.h"
+#include "util_base64.h"
 
 typedef OM_uint32 (*init_sec_context)(
     OM_uint32 *,        /* minor_status */
@@ -219,7 +219,7 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
 	  std::string("") == params->get("input_token").string())))
   {
     token = params->get("input_token").string();
-    this->input_token.value = base64_decode(token, &this->input_token.length);
+    input_token.value = base64Decode(token.c_str(), &input_token.length);
   }
 
   /* Cleanup */
@@ -250,8 +250,11 @@ bool GSSInitSecContext::zeroOut(bool initialized)
     if (this->output_token.length > 0)
       gss_release_buffer(&minor, &output_token);
     
-    if (this->input_token.length > 0)
-      gss_release_buffer(&minor, &input_token);
+    if (this->input_token.value) {
+      base64Free(input_token.value);
+      input_token.value = NULL;
+      input_token.length = 0;
+    }
   }
 
   // Now set things to reasonable defaults
@@ -279,8 +282,9 @@ JSONObject *GSSInitSecContext::toJSON()
 {
   /* Variables */
   // MRW -- values should be scoped to the class, so execute can set error values?
-  std::string output_str((char *)output_token.value, output_token.length);
+  std::string output_str;
   JSONObject *values = new JSONObject();
+  base64EncodeStr(output_token.value, output_token.length, output_str);
   
   /* Error checking */
   
@@ -291,9 +295,7 @@ JSONObject *GSSInitSecContext::toJSON()
   values->set("minor_status", this->minor_status);
   values->set("context_handle", this->contextKey.c_str());
   values->set("actual_mech_type", this->getActualMechType().toString().c_str());
-  // MRW -- is output_token.value guaranteed to be null-terminated?
-  //output_str = (char *)output_token.value;
-  values->set("output_token", base64_encode(output_str));
+  values->set("output_token", output_str.c_str());
   values->set("ret_flags", this->ret_flags);
   values->set("time_rec", this->time_rec);
   // MRW -- modify for new error handling

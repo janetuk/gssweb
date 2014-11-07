@@ -16,7 +16,7 @@
 #include <cache/GSSContextCache.h>
 #include <cache/GSSNameCache.h>
 #include <datamodel/GSSContext.h>
-#include <utils/base64.h>
+#include <util_base64.h>
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSCreateSecContextTest );
@@ -360,14 +360,19 @@ void GSSCreateSecContextTest::testJSONMarshal()
 
   
   
-  unsigned int len;
   std::string str = (*result)["output_token"].string();
-  unsigned char *decoded = base64_decode(str, &len);
+  size_t len;
+  void *decoded = base64Decode(str.c_str(), &len);
+  CPPUNIT_ASSERT_MESSAGE(
+    "The decoded token size is incorrect",
+    ( len == InitSecContextMock::output_token.length )
+  );
   CPPUNIT_ASSERT_MESSAGE(
     "The output_token value was reported incorrectly",
-    ( strcmp((const char *)(InitSecContextMock::output_token.value), 
-	     (const char *)decoded ) == 0 )
+    ( memcmp(InitSecContextMock::output_token.value,
+             decoded, len ) == 0 )
   );
+  base64Free(decoded);
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",

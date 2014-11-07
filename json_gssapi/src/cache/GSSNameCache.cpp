@@ -4,14 +4,10 @@
  * For license details, see the LICENSE file in the root of this project.
  *
  */
-
-// #include <glib.h>
 #include <stdexcept>
-#include <openssl/err.h>
-#include <openssl/rand.h>
-
 #include "GSSNameCache.h"
-#include "utils/base64.h"
+#include "util_base64.h"
+#include "util_random.h"
 
 #define KEYLEN 128
 
@@ -77,30 +73,16 @@ std::string GSSNameCache::store ( GSSName& data, std::string inKey )
 bool GSSNameCache::generateKey(std::string &key)
 {
   /* Variables      */
-  int  osslReturn = 0;
   unsigned char theKey[KEYLEN];
-  bool existingErrors = false;
-  
-  /* Error checking */
-  // See if there are any queued OpenSSL errors already.
-  existingErrors = ( 0 == ERR_peek_error() ); 
   
   /* Setup          */
   /* Main           */
   // Generate random byte string
-  osslReturn = RAND_pseudo_bytes(theKey, KEYLEN);
-  
-  // Discard the error message if there weren't any OpenSSL errors to begin with.
-  if (osslReturn == 1 && !existingErrors)
-  {
-    while (0 != ERR_get_error() );
+  if (!randGenPseudoRandom(theKey, KEYLEN))
     return(false);
-  }
 
   // Encode the binary string
-  key = (char *)theKey;
-  key = base64_encode(key);
-  
+  base64EncodeStr(theKey, KEYLEN, key);
   /* Cleanup        */
   /* Return         */
   return(true);

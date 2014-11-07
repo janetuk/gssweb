@@ -22,7 +22,9 @@ add_library(jsongssapi SHARED
                        src/commands/GSSPseudoRandom.cpp
                        src/commands/GSSWrap.cpp  
                        src/commands/GSSUnwrap.cpp
+                       src/util_base64.cpp
                        src/util_json.cpp
+                       src/util_random.cpp
                        src/cache/GSSContextCache.cpp
                        src/cache/GSSNameCache.cpp
                        src/datamodel/GSSContext.cpp
