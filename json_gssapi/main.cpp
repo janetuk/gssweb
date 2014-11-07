@@ -5,7 +5,9 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <util_json.h>
 #include <GSSRequest.h>
 
