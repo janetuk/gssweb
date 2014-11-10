@@ -17,11 +17,6 @@ var GSSWeb = (function () {
     this.serverToken = "";
     this.clientCred = "";
     this.xhr = new XMLHttpRequest();
-    this.xhr.open("POST", this.serverPath, true);
-    this.xhr.setRequestHeader(
-      'Content-Type', 
-      'application/x-www-form-urlencoded'
-    );
     this.xhr.onreadystatechange = this.recvTokenFromServer.bind(this);
 
     this.gss = new navigator.gss_eap({
@@ -144,6 +139,11 @@ var GSSWeb = (function () {
 
     var msg = "nonce=" + this.nonce +
                "&token=" + encodeURIComponent(this.clientToken);
+    this.xhr.open("POST", this.serverPath, true);
+    this.xhr.setRequestHeader(
+      'Content-Type', 
+      'application/x-www-form-urlencoded'
+    );
     this.xhr.send(msg);
   };
 

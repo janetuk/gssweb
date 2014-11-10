@@ -149,7 +149,7 @@
           <label for="authenticate_server_path">Server Path:</label>
           <input name="authenticate_server_path" 
                  id="authenticate_server_path" 
-                 value="/gss" />
+                 value="/gss/" />
         </div>
 
         <button id="authenticate">authenticate</button>
@@ -304,7 +304,7 @@
 
       function doAuthenticate() {
         gssweb = gssweb || new navigator.gssweb({
-          serverPath: "/gss",
+          serverPath: document.getElementById('authenticate_server_path').value,
           appTag:     "Authentication Test",
           error:      function(errMsg) {
                         report(errMsg, '#authenticate_response');
