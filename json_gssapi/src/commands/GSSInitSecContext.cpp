@@ -139,7 +139,6 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   /* Variables */
   std::string key;
   std::string token;
-  size_t len;
   
   /* Error checking */
   if ( params->isNull() )
@@ -220,9 +219,7 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
 	  std::string("") == params->get("input_token").string())))
   {
     token = params->get("input_token").string();
-    token = (char *)base64_decode(token, &len);
-    this->input_token.value = (void *)token.c_str();
-    this->input_token.length = token.length();
+    this->input_token.value = base64_decode(token, &this->input_token.length);
   }
 
   /* Cleanup */
