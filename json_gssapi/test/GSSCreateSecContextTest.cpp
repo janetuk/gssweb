@@ -360,7 +360,7 @@ void GSSCreateSecContextTest::testJSONMarshal()
 
   
   
-  unsigned long len;
+  unsigned int len;
   std::string str = (*result)["output_token"].string();
   unsigned char *decoded = base64_decode(str, &len);
   CPPUNIT_ASSERT_MESSAGE(
