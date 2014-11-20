@@ -116,8 +116,11 @@ void GSSBuffer::setValue(char *str, int len)
   freeBufValue();
   
   /* Main */
-  this->buf->value = new char[len];
-  std::memcpy( (void *)(this->buf->value), (void *)str, len);
+  char *value = new char[len + 1];
+  std::memcpy( (void *)(value), (void *)str, len);
+  value[len] = 0;
+
+  this->buf->value = value;
   this->buf->length = len;
   
   /* Cleanup */
