@@ -16,6 +16,7 @@
 #include <cache/GSSContextCache.h>
 #include <cache/GSSNameCache.h>
 #include <datamodel/GSSContext.h>
+#include <utils/base64.h>
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSCreateSecContextTest );
@@ -163,25 +164,25 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The context_handle values differ.",
-    json["arguments"]["context_handle"].integer(),
+    json["context_handle"].integer(),
     (json_int_t)cmd.getContextHandle()
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The mech_type values differ.",
-    std::string(json["arguments"]["mech_type"].string()), 
+    std::string(json["mech_type"].string()), 
     cmd.getMechType().toString()
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The req_flags differ.",
-    (int)json["arguments"]["req_flags"].integer(),
+    (int)json["req_flags"].integer(),
     (int)cmd.getReqFlags()
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The req_flags differ.",
-    (int)json["arguments"]["time_req"].integer(),
+    (int)json["time_req"].integer(),
     (int)cmd.getTimeReq()
   );
   
@@ -356,11 +357,16 @@ void GSSCreateSecContextTest::testJSONMarshal()
     ( strcmp("{ 1 3 6 1 5 5 13 4 }", 
 	     (*result)["actual_mech_type"].string() ) == 0 )
   );
+
   
+  
+  unsigned long len;
+  std::string str = (*result)["output_token"].string();
+  unsigned char *decoded = base64_decode(str, &len);
   CPPUNIT_ASSERT_MESSAGE(
     "The output_token value was reported incorrectly",
     ( strcmp((const char *)(InitSecContextMock::output_token.value), 
-	     (*result)["output_token"].string() ) == 0 )
+	     (const char *)decoded ) == 0 )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(

@@ -134,9 +134,8 @@ void GSSImportNameTest::testEmptyCall()
 void GSSImportNameTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  const char* input = "{\"method\": \"gss_import_name\", \
-    \"arguments\": {\"input_name\": \"http@localhost\", \
-    \"input_name_type\": \"{ 1 2 840 113554 1 2 1 4 }\"}}";
+  const char* input = "{\"input_name\": \"http@localhost\", \
+    \"input_name_type\": \"{ 1 2 840 113554 1 2 1 4 }\"}";
   json_error_t jsonErr;
   JSONObject json = JSONObject::load(input, 0, &jsonErr);
   
@@ -196,26 +195,20 @@ void GSSImportNameTest::testJSONMarshal()
   
 //   std::cout << "JSON Output:" << std::endl << result->dump(4) << std::endl;
   
-  CPPUNIT_ASSERT_EQUAL_MESSAGE(
-    "The command name is incorrect",
-    std::string("gss_import_name"),
-    std::string( (*result)["command"].string() )
-  );
-  
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The return value was reported incorrectly",
     (int)MockImportName::retVal,
-    (int)( (*result)["return_values"]["major_status"].integer() )
+    (int)( (*result)["major_status"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)MockImportName::minor_status,
-    (int)( (*result)["return_values"]["minor_status"].integer() )
+    (int)( (*result)["minor_status"].integer() )
   );
   
-  key = (*result)["return_values"]["gss_name"].string();
+  key = (*result)["gss_name"].string();
   gssName = GSSNameCache::instance()->retrieve(key);
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
