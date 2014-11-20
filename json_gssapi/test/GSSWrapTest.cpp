@@ -167,15 +167,12 @@ void GSSWrapTest::testConstructorWithJSONObject()
   GSSContext context( (gss_ctx_id_t)rand(), true );
   std::string key = GSSContextCache::instance()->store(context);
   
-  std::string input = "{\"method\": \"gss_wrap\", \
-    \"arguments\": \
-    { \
+  std::string input = "{ \
          \"context_handle\": \"" + key + "\", \
          \"conf_req\": \"TRUE\", \
          \"qop_req\": \"GSS_C_QOP_DEFAULT\", \
          \"input_message\": \"mary had a little lamb\" \
-    }\
-  }";
+    }";
   json_error_t jsonErr;
   JSONObject json = JSONObject::load(input.c_str(), 0, &jsonErr);
   
@@ -248,29 +245,23 @@ void GSSWrapTest::testJSONMarshal()
   result = cmd.toJSON();
 //   std::cout << "\nGSSWrap JSON: \n" << result->dump() << "\n";
   
-  CPPUNIT_ASSERT_EQUAL_MESSAGE(
-    "The command name is incorrect",
-    std::string("gss_wrap"),
-    std::string( (*result)["command"].string() )
-  );
-  
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The return value was reported incorrectly",
     (int)MockWrap::retVal,
-    (int)( (*result)["return_values"]["major_status"].integer() )
+    (int)( (*result)["major_status"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)MockWrap::minor_status,
-    (int)( (*result)["return_values"]["minor_status"].integer() )
+    (int)( (*result)["minor_status"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The output message was reported incorrectly",
     MockWrap::outputMessageBuffer.toString(),
-    std::string( (*result)["return_values"]["output_message"].string() )
+    std::string( (*result)["output_message"].string() )
   );
   
   

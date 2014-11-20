@@ -9,6 +9,7 @@
 #include "GSSAcquireCred.h"
 #include "command_mocks/MockAcquireCred.h"
 #include <datamodel/GSSName.h>
+#include <cache/GSSNameCache.h>
 #include <gssapi.h>
 #include <stdexcept>
 
@@ -77,16 +78,35 @@ void GSSAcquireCredTest::testConstructorWithJSONObject()
   gss_cred_usage_t cred_usage = 2;
   GSSOID mech( (char *)"{ 1 2 840 113554 1 2 1 4 }" );
   std::stringstream input;
+  char *desired_name = (char *)"HTTP@localhost\0";
+  GSSName desired;
+  OM_uint32 major, minor;
+  gss_name_t des;
+  
+  
+  major = gss_import_name(&minor, GSSBuffer(desired_name).toGss(), GSS_C_NT_HOSTBASED_SERVICE, &des);
+  if (GSS_ERROR(major))
+  {
+    OM_uint32 min, context;
+    gss_buffer_desc buf;
+    
+    std::cout << "Error in importing name." << std::endl;
+    gss_display_status(&min, major, GSS_C_GSS_CODE, GSS_C_NT_HOSTBASED_SERVICE, &context, &buf);
+    std::cout << "  message: " << (char *)buf.value << std::endl;
+  }
+  CPPUNIT_ASSERT_MESSAGE(
+    "Could not generate a name to test GSSCreateSecContext JSON parsing.",
+    !GSS_ERROR(major)
+  );
+  desired.setValue(des);
+  std::string key = GSSNameCache::instance()->store(desired);
 
   // The JSON string
   input << 
-  "{\"method\"   : \"gss_acquire_cred\", \
-    \"arguments\": \
-       {\"desired_name\" : \"#################\", \
-        \"time_req\"     : " << time_req << ", \
-        \"cred_usage\"   : " << cred_usage << ", \
-        \"desired_mechs\": [\"" << mech.toString() << "\"] \
-       } \
+  "{\"desired_name\" : \"" << key << "\", \
+    \"time_req\"     : " << time_req << ", \
+    \"cred_usage\"   : " << cred_usage << ", \
+    \"desired_mechs\": [\"" << mech.toString() << "\"] \
    }";
   
   // The JSON itself
@@ -113,7 +133,7 @@ void GSSAcquireCredTest::testConstructorWithJSONObject()
     cmd.getCredUsage()
   );
   
-  json["arguments"].set( "cred_usage", "GSS_C_INITIATE" );
+  json.set( "cred_usage", "GSS_C_INITIATE" );
   cmd.loadParameters(&json);
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "GSSAcquireCred's cred_usage was not loaded correctly",
@@ -122,7 +142,7 @@ void GSSAcquireCredTest::testConstructorWithJSONObject()
   );
   
   // CPPUNIT_ASSERT_THROW(expression, exception);
-  json["arguments"].set( "cred_usage", "GSS_C_INITIATOR" );
+  json.set( "cred_usage", "GSS_C_INITIATOR" );
   CPPUNIT_ASSERT_THROW_MESSAGE(
     "GSSAcquireCred's JSON parsing is admitting invalid strings.", 
     cmd.loadParameters(&json), 
@@ -251,41 +271,35 @@ void GSSAcquireCredTest::testJSONMarshal()
   
 //   std::cout << "\n" << result->dump() << "\n";
   
-  CPPUNIT_ASSERT_EQUAL_MESSAGE(
-    "The command name is incorrect",
-    std::string("gss_acquire_cred"),
-    std::string( (*result)["command"].string() )
-  );
-  
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The return value was reported incorrectly",
     (int)MockAcquireCred::retVal,
-    (int)( (*result)["return_values"]["major_status"].integer() )
+    (int)( (*result)["major_status"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)MockAcquireCred::minor_status,
-    (int)( (*result)["return_values"]["minor_status"].integer() )
+    (int)( (*result)["minor_status"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The gss_name was reported incorrectly",
     std::string("{ 1 2 3 4 }"),
-    std::string( (*result)["return_values"]["actual_mechs"][(size_t)0].string() )
+    std::string( (*result)["actual_mechs"][(size_t)0].string() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The gss_name was reported incorrectly",
     std::string("{ 1 5 6 7 8 }"),
-    std::string( (*result)["return_values"]["actual_mechs"][(size_t)1].string() )
+    std::string( (*result)["actual_mechs"][(size_t)1].string() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)MockAcquireCred::time_rec,
-    (int)( (*result)["return_values"]["time_rec"].integer() )
+    (int)( (*result)["time_rec"].integer() )
   );
   
   
