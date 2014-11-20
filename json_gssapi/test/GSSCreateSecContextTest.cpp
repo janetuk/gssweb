@@ -20,7 +20,7 @@
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSCreateSecContextTest );
 
-
+using std::cout;
 
 static OM_uint32 KRB5_CALLCONV
 mock_init_sec(
@@ -139,12 +139,11 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
   source.setValue(src);
   std::string key = GSSNameCache::instance()->store(source);
 
-  std::string input = "{\"method\": \"gss_create_sec_context\", \
-    \"arguments\": {\"req_flags\": \"1\", \
+  std::string input = "{\"req_flags\": \"1\", \
     \"time_req\": \"2\", \
     \"mech_type\": \"{ 1 2 840 113554 1 2 1 4 }\", \
     \"target_name\": \"";
-  input = input + key + "\"}}";
+  input = input + key + "\"}";
 
   json_error_t jsonErr;
   const char *in = input.c_str();
@@ -340,50 +339,43 @@ void GSSCreateSecContextTest::testJSONMarshal()
 /*  
   std::cout << "create sec context json: " << result->dump() << "\n";*/
   
-  CPPUNIT_ASSERT_MESSAGE(
-    "The command name is incorrect",
-    ( strcmp("gss_init_sec_context", 
-	     (*result)["command"].string() ) == 0 )
-  );
-  
-  
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The return value was reported incorrectly",
     (int)InitSecContextMock::retVal,
-    (int)( (*result)["return_values"]["major_status"].integer() )
+    (int)( (*result)["major_status"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)InitSecContextMock::minor_status,
-    (int)( (*result)["return_values"]["minor_status"].integer() )
+    (int)( (*result)["minor_status"].integer() )
   );
   
   CPPUNIT_ASSERT_MESSAGE(
     "The actual_mech_type value was reported incorrectly",
     ( strcmp("{ 1 3 6 1 5 5 13 4 }", 
-	     (*result)["return_values"]["actual_mech_type"].string() ) == 0 )
+	     (*result)["actual_mech_type"].string() ) == 0 )
   );
   
   CPPUNIT_ASSERT_MESSAGE(
     "The output_token value was reported incorrectly",
     ( strcmp((const char *)(InitSecContextMock::output_token.value), 
-	     (*result)["return_values"]["output_token"].string() ) == 0 )
+	     (*result)["output_token"].string() ) == 0 )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)InitSecContextMock::ret_flags,
-    (int)( (*result)["return_values"]["ret_flags"].integer() )
+    (int)( (*result)["ret_flags"].integer() )
   );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The minor_status value was reported incorrectly",
     (int)InitSecContextMock::time_rec,
-    (int)( (*result)["return_values"]["time_rec"].integer() )
+    (int)( (*result)["time_rec"].integer() )
   );
   
-  context = cache->retrieve( (*result)["return_values"]["context_handle"].string() );
+  context = cache->retrieve( (*result)["context_handle"].string() );
   
   CPPUNIT_ASSERT_EQUAL_MESSAGE(
     "The returned context was reported incorrectly",
