@@ -35,10 +35,8 @@ mock_unwrap(
 {
   /* Error checking */
   /* Variables */
-  std::string buffer;
   
   /* Setup */
-  buffer = MockUnwrap::outputMessageBuffer.toString();
   
   /* Main */
   // Copy our input from the appropriate parameters to MockUnwrap
@@ -50,8 +48,7 @@ mock_unwrap(
   *minor_status = MockUnwrap::minor_status;
   *conf_state = MockUnwrap::conf_state;
   *qop_state = MockUnwrap::qop_state;
-  output_message_buffer->length = buffer.length();
-  output_message_buffer->value  = (void *)buffer.c_str();
+  *output_message_buffer = *MockUnwrap::outputMessageBuffer.toGss();
   
   /* Cleanup */
   /* return */

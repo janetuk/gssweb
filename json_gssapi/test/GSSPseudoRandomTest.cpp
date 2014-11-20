@@ -38,7 +38,6 @@ OM_uint32 mock_gss_pseudo_random(
     gss_buffer_t prf_out)
 {
   /* Variables */
-  std::string buffer;
   /* Error checking */
   /* Setup */
   /* Main */
@@ -47,9 +46,7 @@ OM_uint32 mock_gss_pseudo_random(
   MockPseudoRandom::inputMessageBuffer.setValue(prf_in);
   MockPseudoRandom::desiredOutputLength = desired_output_len;
   
-  buffer = MockPseudoRandom::outputMessageBuffer.toString();
-  prf_out->length = buffer.length();
-  prf_out->value = (void *)buffer.c_str();
+  *prf_out = *MockPseudoRandom::outputMessageBuffer.toGss();
   
   /* Cleanup */
   /* Return */

@@ -33,10 +33,8 @@ mock_wrap(
 {
   /* Error checking */
   /* Variables */
-  std::string buffer;
   
   /* Setup */
-  buffer = MockWrap::outputMessageBuffer.toString();
   
   /* Main */
   // Copy our input from the appropriate parameters to MockWrap
@@ -49,8 +47,7 @@ mock_wrap(
   // copy our output to the appropriate parameters
   *minor_status = MockWrap::minor_status;
   *conf_state = MockWrap::conf_state;
-  output_message_buffer->length = buffer.length();
-  output_message_buffer->value  = (void *)buffer.c_str();
+  *output_message_buffer = *MockWrap::outputMessageBuffer.toGss();
   
   /* Cleanup */
   /* return */

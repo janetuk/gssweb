@@ -31,10 +31,8 @@ mock_get_mic(
 {
   /* Error checking */
   /* Variables */
-  std::string buffer;
   
   /* Setup */
-  buffer = MockGetMic::outputToken.toString();
   
   /* Main */
   // Copy our input from the appropriate parameters to MockGetMic
@@ -45,8 +43,7 @@ mock_get_mic(
   
   // copy our output to the appropriate parameters
   *minor_status = MockGetMic::minor_status;
-  message_token->length = buffer.length();
-  message_token->value  = (void *)buffer.c_str();
+  *message_token = *MockGetMic::outputToken.toGss();
   
   /* Cleanup */
   /* return */
