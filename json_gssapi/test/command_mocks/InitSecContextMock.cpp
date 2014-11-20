@@ -34,13 +34,17 @@ void InitSecContextMock::reset()
   nullify((void **)&claimant_cred_handle);
   nullify((void **)&context_handle);
   nullify((void **)&target_name);
-  nullify((void **)&mech_type);
+  // Our current handling of OIDs means attempting to free one
+  // will often result in a double-free or an attempt to free
+  // a constant OID. For now, it is better to occasionally leak.
+  // We should revisit this -Kevin
+  mech_type = GSS_C_NO_OID;
   req_flags = 0;
   time_req = 0;
   nullify((void **)&input_chan_bindings);
   input_token.length = 0;
   input_token.value = NULL;
-  nullify((void **)&actual_mech_type);
+  actual_mech_type = GSS_C_NO_OID;
   output_token.length = 0;
   output_token.value = 0;
   ret_flags = 0;
