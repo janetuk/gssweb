@@ -5,7 +5,12 @@
 #include <exception>
 #include <iostream>
 #include <string>
-#ifndef WIN32
+#ifdef WIN32
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <share.h>
+#else
 #include <unistd.h>
 #endif
 #include <util_json.h>
@@ -22,14 +27,44 @@ int main(int argc, char **argv) {
   /* Variables */
   string output;
   char *input;
-  int len;
-  ssize_t readTotal, readThisRound, readRemaining;
+  size_t len;
   
   /* Error checking */
   
   /* Setup */
   
   /* Main processing */
+#ifdef WIN32
+  if (argc < 2) {
+      return -1;
+  }
+  int fd;
+  if (_sopen_s(&fd, argv[1], _O_BINARY, _SH_DENYNO, _S_IREAD) != 0)
+  {
+      cout << "error :" << errno << " opening file: " << argv[1] << "\n";
+      return -1;
+  }
+  struct _stat fs;
+  if (_fstat(fd, &fs) != 0) {
+      cout << "error: " << errno << " from _fstat.\n";
+      return -1;
+  }
+
+  FILE *f =_fdopen(fd, "rb");
+  if (f == NULL) {
+      cout << "error: " << errno << " from _fdopen.\n";
+      return -1;
+  }
+  len = fs.st_size;
+  input = new char[len+1];
+  size_t count = fread(input, 1, len, f) ;
+  if (count != len) {
+      cout << "expected " << len << " bytes from fread; got " << count << ".\n";
+      return -1;
+  }
+  fclose(f);
+#else
+  ssize_t readTotal, readThisRound, readRemaining;
   do 
   {
     // Read 32 bit length
@@ -54,8 +89,8 @@ int main(int argc, char **argv) {
         readTotal += readThisRound;
     }
     // ... and null-terminate it
+#endif
     input[len] = '\0';
-    
     
     GSSRequest *req = new GSSRequest(string(input));
     req->execute();
@@ -65,8 +100,8 @@ int main(int argc, char **argv) {
     cout.write((char *)&len, 4);
     cout << output;
     cout.flush();
-    
+#ifndef WIN32
   } while(1);
-  
+#endif
   return 0;
 }
