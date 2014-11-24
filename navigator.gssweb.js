@@ -68,7 +68,7 @@ var GSSWeb = (function () {
 
   GSSWeb.prototype.authGetServerName = function () {
     this.gss.import_name({
-      name: "HTTP@" + window.location.host,
+      name: "HTTP@" + window.location.hostname,
       success: this.authReceiveServerName.bind(this)
     });
   };
@@ -153,11 +153,10 @@ var GSSWeb = (function () {
       return;
     }
 
-    var serverResponse = JSON.parse(this.xhr.responseText);
-    this.serverToken = serverResponse.gssweb.token;
     switch (this.xhr.status) {
       case 200:
         // Finished!
+        var serverResponse = JSON.parse(this.xhr.responseText);
         var decoded = window.atob(serverResponse.application.data);
         this.authenticationState = true;
         this.success(
@@ -168,12 +167,14 @@ var GSSWeb = (function () {
         break;
       case 401:
         // Continue needed
+        var serverResponse = JSON.parse(this.xhr.responseText);
+        this.serverToken = serverResponse.gssweb.token;
         this.authInitSecContext();
         break;
       default:
         // We have some server-reported error
         this.error(
-          window.location.host + 
+          window.location.hostname + 
           " reported an error; aborting",
           this.appTag
         );
