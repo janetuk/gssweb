@@ -50,7 +50,7 @@ typedef OM_uint32 (KRB5_CALLCONV *gss_wrap_type) (
     gss_buffer_t);      /* output_message_buffer */
 
 
-class GSSWrap :  GSSCommand
+class GSSWrap : public GSSCommand
 {
 public:
     GSSWrap( gss_wrap_type fn = &gss_wrap ) : function(fn) {};

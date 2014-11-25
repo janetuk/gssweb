@@ -48,7 +48,7 @@ typedef OM_uint32 (KRB5_CALLCONV *gss_unwrap_type) (
     gss_qop_t *);       /* qop_state */
 
 
-class GSSUnwrap :  GSSCommand
+class GSSUnwrap : public GSSCommand
 {
 public:
     GSSUnwrap( gss_unwrap_type fn = &gss_unwrap ) : function(fn) {};
