@@ -61,6 +61,12 @@ target_link_libraries(json_gssapi crypto)
 add_definitions(-DHAVE_OPENSSL)
 endif (WIN32)
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+endif ()
+
 include_directories(${KRB5_INCLUDE_DIRS} ${JANSSON_INCLUDE_DIRS})
 target_link_libraries(jsongssapi ${KRB5_LIBRARIES} ${JANSSON_LIBRARIES})
 target_link_libraries(json_gssapi jsongssapi ${KRB5_LIBRARIES} ${JANSSON_LIBRARIES})
