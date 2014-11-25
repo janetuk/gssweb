@@ -50,7 +50,9 @@ add_executable(test GSSExceptionTest.cpp
                     datamodel/GSSOIDSetTest.cpp
   )
 
-target_link_libraries(test cppunit gssapi_krb5 jansson crypto ${GLIB2_LIBRARIES})
+find_package (Threads)
+
+target_link_libraries(test cppunit gssapi_krb5 jansson crypto ${GLIB2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 # install(TARGETS test RUNTIME DESTINATION bin)
 endif(WIN32)
 
