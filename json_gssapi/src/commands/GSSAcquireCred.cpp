@@ -57,7 +57,7 @@ GSSAcquireCred::~GSSAcquireCred()
 GSSAcquireCred::GSSAcquireCred ( 
     JSONObject *params, 
     gss_acq_cred_type fn
-) : GSSCommand ( params )
+)
 {
   /* Variables */
   /* Error checking */

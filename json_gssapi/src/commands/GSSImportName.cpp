@@ -105,7 +105,7 @@ GSSImportName::GSSImportName ( gss_imp_name_type fn )
   values = new JSONObject();
 }
 
-GSSImportName::GSSImportName(JSONObject *params, gss_imp_name_type fn) : GSSCommand(params)
+GSSImportName::GSSImportName(JSONObject *params, gss_imp_name_type fn)
 {
   /* Variables */
   /* Error checking */

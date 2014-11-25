@@ -39,7 +39,7 @@
 #include <datamodel/GSSContext.h>
 
 GSSPseudoRandom::GSSPseudoRandom(JSONObject *params, 
-					       gss_pseudo_random_type fn) : GSSCommand(params)
+					       gss_pseudo_random_type fn)
 {
   /* Variables */
   /* Error checking */

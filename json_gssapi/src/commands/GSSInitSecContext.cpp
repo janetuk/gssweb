@@ -308,7 +308,7 @@ JSONObject *GSSInitSecContext::toJSON()
 
 GSSInitSecContext::GSSInitSecContext(
   JSONObject *params, 
-  void *fn) : GSSCommand(params)
+  void *fn)
 {
   zeroOut(false);
   loadParameters(params);
