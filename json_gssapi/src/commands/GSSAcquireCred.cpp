@@ -82,7 +82,7 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
   
   /* Main processing */
   // Easy stuff(*params)
-  this->time_req = (*params)["time_req"].integer();
+  this->time_req = (OM_uint32 )(*params)["time_req"].integer();
 
   /**************
    * cred_usage *

@@ -207,11 +207,11 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   
   // req_flags
   if (!params->get("req_flags").isNull() )
-    this->req_flags = params->get("req_flags").integer();
+    this->req_flags = (OM_uint32 )params->get("req_flags").integer();
 
   // time_req
   if (!params->get("time_req").isNull() )
-    this->time_req = params->get("time_req").integer();
+    this->time_req = (OM_uint32 )params->get("time_req").integer();
 
   // input_token
   if (! (params->get("input_token").isNull() ||

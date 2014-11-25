@@ -77,7 +77,7 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
   if ( ! params->get("prf_key").isNull() )
   {
     if (params->get("prf_key").isInteger())
-      this->key = params->get("prf_key").integer();
+      this->key = (int )params->get("prf_key").integer();
     else
       throw std::invalid_argument( "Unrecognized argument type for prf_key." );
   }  
@@ -89,7 +89,7 @@ bool GSSPseudoRandom::loadParameters ( JSONObject* params )
   if ( ! params->get("desired_output_len").isNull() )
   {
     if (params->get("desired_output_len").isInteger())
-      this->desiredOutputLength = params->get("desired_output_len").integer();
+      this->desiredOutputLength = (int )params->get("desired_output_len").integer();
     else
       throw std::invalid_argument( "Unrecognized argument type for desired_output_len." );
   }  
