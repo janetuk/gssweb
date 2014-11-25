@@ -29,7 +29,7 @@ private:
     string minorMessage;
     string majorMessage;
         
-    GSSDisplayStatus& operator= ( const GSSDisplayStatus& other ) {};
+    GSSDisplayStatus& operator= ( const GSSDisplayStatus& other );
 };
 
 #endif // GSSDISPLAYSTATUS_H

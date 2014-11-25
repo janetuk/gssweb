@@ -64,7 +64,8 @@ int main(int argc, char **argv) {
   }
   fclose(f);
 #else
-  ssize_t readTotal, readThisRound, readRemaining;
+  ssize_t readThisRound;
+  size_t readTotal, readRemaining;
   do 
   {
     // Read 32 bit length

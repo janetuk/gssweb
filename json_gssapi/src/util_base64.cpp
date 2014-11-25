@@ -67,10 +67,10 @@ static char base64_decode[SCHAR_MAX];
 
 static GSSWEB_ONCE_CALLBACK(init_decode_table)
 {
-    int i;
+    size_t i;
     memset(&base64_decode[0], -1, sizeof(base64_decode));
     for (i = 0; i < sizeof(base64_chars) / sizeof(base64_chars[0]); i++)
-        base64_decode[base64_chars[i]] = (char )i;
+        base64_decode[(unsigned int)base64_chars[i]] = (char )i;
     GSSWEB_ONCE_LEAVE;
 }
 
@@ -79,7 +79,7 @@ pos(char c)
 {
     if (c <= 0)
         return -1;
-    return base64_decode[c];
+    return base64_decode[(unsigned int)c];
 }
 
 void
