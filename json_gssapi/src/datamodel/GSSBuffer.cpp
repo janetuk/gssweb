@@ -105,7 +105,7 @@ void GSSBuffer::setValue(char *str)
   setValue(str, std::strlen(str));
 }
 
-void GSSBuffer::setValue(char *str, int len)
+void GSSBuffer::setValue(char *str, size_t len)
 {
   /* Variables */
   /* Error checking */

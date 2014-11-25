@@ -27,7 +27,7 @@ public:
   
   void setValue(std::string str);
   void setValue(char *str);
-  void setValue(char *str, int len);
+  void setValue(char *str, size_t len);
   void setValue(gss_buffer_t gssbuf);
   
   bool operator==(GSSBuffer B) const { return(this->toString() == B.toString()); }
