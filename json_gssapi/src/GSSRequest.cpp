@@ -61,7 +61,7 @@ void GSSRequest::parseJSON()
     response.set("method", request.get("method").string());
   }
   /* bad_alloc is thrown when JSONObject can't parse the input string as JSON */
-  catch ( bad_alloc& e ) 
+  catch ( bad_alloc& ) 
   {
     // Top-level response
     response.set("error_message", "Could not parse the input JSON.");
