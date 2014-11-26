@@ -21,9 +21,13 @@ public:
       
     virtual const char* what(void) const throw() { return reason.c_str(); }
     
+    // Accessors
+    OM_uint32 getMajor() { return(major); }
+    OM_uint32 getMinor() { return(minor); }
     
 private:
     std::string reason;
+    OM_uint32 major, minor;
 };
 
 #endif // GSSEXCEPTION_H

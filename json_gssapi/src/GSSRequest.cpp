@@ -13,6 +13,7 @@
 #include "commands/GSSImportName.h"
 #include "commands/GSSDisplayName.h"
 #include "GSSRequest.h"
+#include "GSSException.h"
 
 using std::bad_alloc;
 
@@ -32,18 +33,29 @@ GSSRequest::GSSRequest ( string jsonString )
 
 void GSSRequest::execute()
 {
-  /* variables */
-  /* Error checking */
-  /* Setup */
-  parseJSON();
-  getCommand();
-  
-  /* Main processing */
-  if (NULL != cmd)
-    cmd->execute();
-  
-  /* Cleanup */
-  /* Return */
+  try {
+    /* variables */
+    /* Error checking */
+    /* Setup */
+    parseJSON();
+    getCommand();
+    
+    /* Main processing */
+    if (NULL != cmd)
+      cmd->execute();
+    
+    /* Cleanup */
+    /* Return */
+  }
+  catch (GSSException e)
+  {
+    delete(cmd);
+    cmd = NULL;
+    JSONObject return_values;
+    return_values.set("major_status", e.getMajor());
+    return_values.set("minor_status", e.getMinor());
+//     response.set("error_message", e.what());
+  }
 }
 
 
@@ -127,4 +139,33 @@ string GSSRequest::getResponse()
   
   /* Return */
   return(gssResponse);
+}
+
+
+
+char *gss_request(char *json_string)
+{
+  /* Variables */
+  char *retVal;
+  string output;
+  GSSRequest *req = new GSSRequest(string(json_string));
+  
+  /* Error checking */
+  // An empty json_string could be an error, but GSSRequest does
+  // a good job of handling it.
+  
+  /* Setup */
+  /* Main processing */
+  req->execute();
+  output = req->getResponse();
+  retVal = new char[ output.length() + 1 ];
+  output.copy(retVal, output.length(), 0);
+  retVal[output.length()] = 0;
+  
+  return(retVal);
+}
+
+void deallocate_reply(char *reply)
+{
+  delete(reply);
 }

@@ -52,6 +52,9 @@ GSSException::GSSException(std::string message,
   /* Setup */
   
   /* Main */
+  this->major = major;
+  this->minor = minor;
+  
   output_stream << message << std::endl;
   output_stream << "GSS Error message:" << std::endl;
   output_stream << "  Major status:" << std::endl;

@@ -15,6 +15,14 @@
 
 using std::string;
 
+/* An exportable function to be called by firefox
+ * to process a JSON string
+ */
+extern "C" {
+  char *gss_request(char *json_string);
+  void deallocate_reply(char *reply);
+}
+
 class GSSRequest
 {
 public:
