@@ -12,6 +12,7 @@
 #include <share.h>
 #else
 #include <unistd.h>
+#include <string.h>
 #endif
 #include <util_json.h>
 #include <GSSRequest.h>
@@ -93,13 +94,12 @@ int main(int argc, char **argv) {
 #endif
     input[len] = '\0';
     
-    GSSRequest *req = new GSSRequest(string(input));
-    req->execute();
-    output = req->getResponse();
-    len = output.length();
+    char *out = gss_request(input);
+    len = strlen(out);
     
     cout.write((char *)&len, 4);
-    cout << output;
+    cout << out;
+    deallocate_reply(out);
     cout.flush();
 #ifndef WIN32
   } while(1);
