@@ -183,7 +183,8 @@ void GSSPseudoRandomTest::testEmptyCall()
 void GSSPseudoRandomTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  GSSContext context( (gss_ctx_id_t)rand(), true );
+  GSSContext context( (gss_ctx_id_t)( (long)0 | rand() ),
+                     true );
   std::string key = GSSContextCache::instance()->store(context);
   
   std::string input = "{ \

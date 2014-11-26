@@ -85,7 +85,7 @@ void GSSWrapTest::testEmptyCall()
   GSSBuffer input((char *)"Input message");
   gss_qop_t desiredQop = rand();
   int desiredConf = rand();
-  gss_ctx_id_t desiredContext = (gss_ctx_id_t)rand();
+  gss_ctx_id_t desiredContext = (gss_ctx_id_t)( (long)0 | rand() );
   
   /* Error checking */
   /* Setup */
@@ -161,7 +161,8 @@ void GSSWrapTest::testEmptyCall()
 void GSSWrapTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  GSSContext context( (gss_ctx_id_t)rand(), true );
+  GSSContext context( (gss_ctx_id_t)( (long)0 | rand()),
+		      true );
   std::string key = GSSContextCache::instance()->store(context);
   
   std::string input = "{ \

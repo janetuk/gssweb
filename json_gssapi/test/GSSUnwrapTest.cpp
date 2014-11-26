@@ -84,7 +84,7 @@ void GSSUnwrapTest::testEmptyCall()
   /* Variables */
   GSSUnwrap cmd = GSSUnwrap(&mock_unwrap);
   GSSBuffer input((char *)"Input message");
-  gss_ctx_id_t desiredContext = (gss_ctx_id_t)rand();
+  gss_ctx_id_t desiredContext = (gss_ctx_id_t)( (long)0 | rand());
   
   /* Error checking */
   /* Setup */
@@ -140,7 +140,8 @@ void GSSUnwrapTest::testEmptyCall()
 void GSSUnwrapTest::testConstructorWithJSONObject()
 {
   /* Variables */
-  GSSContext context((gss_ctx_id_t)rand(), true);
+  GSSContext context((gss_ctx_id_t)( (long)0 | rand()),
+		     true);
   std::string key = GSSContextCache::instance()->store(context);
   std::string input = "{ \
          \"context_handle\": \"" + key + "\", \
