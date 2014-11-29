@@ -146,8 +146,6 @@ string GSSRequest::getResponse()
 char *gss_request(char *json_string)
 {
   /* Variables */
-  char *retVal;
-  string output;
   GSSRequest *req = new GSSRequest(string(json_string));
   
   /* Error checking */
@@ -157,12 +155,7 @@ char *gss_request(char *json_string)
   /* Setup */
   /* Main processing */
   req->execute();
-  output = req->getResponse();
-  retVal = new char[ output.length() + 1 ];
-  output.copy(retVal, output.length(), 0);
-  retVal[output.length()] = 0;
-  
-  return(retVal);
+  return strdup(req->getResponse().c_str());
 }
 
 void deallocate_reply(char *reply)

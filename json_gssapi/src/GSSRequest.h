@@ -19,18 +19,18 @@ using std::string;
  * to process a JSON string
  */
 extern "C" {
-  char *gss_request(char *json_string);
-  void deallocate_reply(char *reply);
+  JSONGSSAPI_EXPORT char *gss_request(char *json_string);
+  JSONGSSAPI_EXPORT void deallocate_reply(char *reply);
 }
 
 class GSSRequest
 {
 public:
-  JSONGSSAPI_EXPORT GSSRequest(string jsonString);
-  JSONGSSAPI_EXPORT ~GSSRequest();
+  GSSRequest(string jsonString);
+  ~GSSRequest();
   
-  JSONGSSAPI_EXPORT void execute();
-  JSONGSSAPI_EXPORT string getResponse();
+  void execute();
+  string getResponse();
   
 private:
   string      requestString;
