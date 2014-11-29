@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <stdexcept>
+#include <string.h>
 
 #include "commands/GSSAcquireCred.h"
 #include "commands/GSSInitSecContext.h"
