@@ -47,5 +47,6 @@ var pageMod = require("sdk/page-mod");
 
 pageMod.PageMod({
   include: "*",
-  contentScriptFile: data.url("navigator.gss.js")
+  contentScriptFile: [data.url("navigator.gss.js")],
+  contentScriptWhen: "ready"
 });
