@@ -67,7 +67,7 @@ var GSSEap = (function ()
         /* This message is destined for us only if all the following apply:
         * - The data.method_name is one of the methods implemented by this
         *   object
-        * - data.return_values exists
+        * - data.return_values exists or data.error_mssage exists
         * - data.cookies exists
         * - One of my callbacks matches the nonce in
         *   data.cookies.navigator_gss_tag
@@ -78,7 +78,8 @@ var GSSEap = (function ()
         method = event.data.method;
         if (
              ( -1 == this.implemented_methods.indexOf(method) ) ||
-             ("undefined" == typeof (event.data.return_values)) ||
+             (  ("undefined" == typeof (event.data.return_values) ) &&
+                ("undefined" == typeof (event.data.error_message) ) ) ||
              ("undefined" == typeof (event.data.cookies)))
         {
             return;
@@ -96,7 +97,11 @@ var GSSEap = (function ()
         app_tag = event.data.cookies.app_tag;
         error = this.errors[nonce] || this.default_error;
 
-        if (this.gss_error(event.data.return_values.major_status))
+        if ("undefined" != typeof(event.data.error_message) )
+        {
+            error(-1, -1, "Error parsing message: " + event.data.error_message, app_tag);
+        }
+        else if (this.gss_error(event.data.return_values.major_status))
         {
             var errMsg = "Error during " + method + ": " + 
               "Major status message: " + 
