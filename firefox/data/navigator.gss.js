@@ -15,4 +15,18 @@ self.port.on('alert', function(message) {
 });
 
 
+var msg = {
+  'method': 'gss_import_name',
+  'arguments': {
+    'input_name': 'HTTP@localhost',
+    'input_name_type': "{1 2 840 113554 1 2 1 4 }"
+  },
+  'cookies': {
+      'app_tag': 'Test request'
+  }
+};
 
+self.port.on('gss_response', function(message) {
+  console.log("Content script received a reply from gss_import_name: " + JSON.stringify(message) );
+});
+self.port.emit("gss_request", msg);
