@@ -41,7 +41,7 @@ reply = call_gss("{\"method\":\"gss_import_name\",\"arguments\":{\"input_name\":
 console.log("  ... Reply: " + reply.readString());
 
 
-
+var self = require("sdk/self");
 var data = require("sdk/self").data;
 var pageMod = require("sdk/page-mod");
 
@@ -50,3 +50,23 @@ pageMod.PageMod({
   contentScriptFile: [data.url("navigator.gss.js")],
   contentScriptWhen: "ready"
 });
+
+tabs.on("ready", function(tab) {
+  worker = tab.attach({ contentScriptFile: data.url("navigator.gss.js") });
+  worker.port.on("gss_request", function(message) {
+    console.log("main.js received message: " + message);
+  });
+  worker.port.emit("alert", "Message from the add-on");
+});
+
+
+/*var gssweb = {
+  myListener: function(evt) {
+    alert("Received from web page: " +
+          evt.target.getAttribute("attribute1") + "/" + 
+          evt.target.getAttribute("attribute2"));
+  }
+}*/
+//document.addEventListener("GsswebEvent", function(e) { gssweb.myListener(e); }, false, true);
+// The last value is a Mozilla-specific value to indicate untrusted content is allowed to trigger the event.
+

@@ -9,4 +9,10 @@ function addScript(url) {
 
 addScript('chrome://gssweb/content/nav.gss.js');
 
+self.port.on('alert', function(message) {
+  console.log("Content script received message: " + message);
+  self.port.emit("gss_request", "Message back from the content script");
+});
+
+
 

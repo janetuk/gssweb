@@ -1,4 +1,3 @@
-console.log('Loading nav.gss.js - #1');
 /*
  * Copyright (c) 2014, JANET(UK)
  * All rights reserved.
@@ -33,7 +32,7 @@ console.log('Loading nav.gss.js - #1');
  *
  */
 
-console.log('Loading navigator.gss.js - #1');
+console.log('Loading navigator.gssEap.js - #1');
 
 navigator.generateNonce = function() {
   // TODO: Make sure that we don't have a collision!
@@ -309,4 +308,4 @@ var GSSEap = (function ()
 })();
 
 
-navigator.gss_eap = GSSEap;
+navigator.gssEap = GSSEap;
