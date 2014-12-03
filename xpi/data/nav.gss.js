@@ -34,13 +34,11 @@
 
 console.log('Loading navigator.gss.js - #9');
 
-/* 
 navigator.generateNonce = function() {
   // TODO: Make sure that we don't have a collision!
   // Random integer in the range [0..(2^32-1)]
   return Math.floor(Math.random() * ( 4294967295 )) ;
 }
-*/
 
 
 
@@ -309,33 +307,4 @@ var GSSEap = (function ()
     return GSSEap;
 })();
 
-function newGSSEap(config)
-{
-  return new GSSEap(config);
-}
 
-//var nav = createObjectIn(unsafeWindow, {defineAs: "navigator"});
-var bob = createObjectIn(unsafeWindow, {defineAs: "bob"});
-var gss_eap = createObjectIn(bob, {defineAs: "gss_eap"});
-var gss_eap_proto = createObjectIn(gss_eap, {defineAs: "prototype"});
-
-exportFunction(GSSEap.prototype.constructor, gss_eap_proto, {allowCallbacks: true, :defineAs: 'constructor'});
-
-/*
-exportFunction(, gss_eap, {allowCallbacks: true});
-exportFunction(, gss_eap, {allowCallbacks: true});
-exportFunction(, gss_eap, {allowCallbacks: true});
-exportFunction(, gss_eap, {allowCallbacks: true});
-exportFunction(, gss_eap, {allowCallbacks: true});
-*/
-
-/* exportFunction(GSSEap, nav, {defineAs: "gss_eap"});
-exportFunction(GSSEap, unsafeWindow.navigator, {defineAs: "gss_eap_2"})
-exportFunction(newGSSEap, nav, {defineAs: "gss_eap_3"})
-*/
-
-/*
-exportFunction(newGSSEap, bob, {defineAs: 'newbob'});
-
-exportFunction(doHello, bob, {defineAs: 'doHello'});
-*/

@@ -1,2 +1,2 @@
-content       xtnd      chrome/content/
-
+content       gssweb      chrome/content/ contentaccessible=yes
+resource      gsseap	  chrome/resource/

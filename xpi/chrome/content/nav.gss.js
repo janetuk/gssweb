@@ -1,3 +1,4 @@
+console.log('Loading nav.gss.js - #1');
 /*
  * Copyright (c) 2014, JANET(UK)
  * All rights reserved.
@@ -32,7 +33,15 @@
  *
  */
 
-console.log('Loading navigator.gss.js - #9');
+console.log('Loading navigator.gss.js - #1');
+
+navigator.generateNonce = function() {
+  // TODO: Make sure that we don't have a collision!
+  // Random integer in the range [0..(2^32-1)]
+  return Math.floor(Math.random() * ( 4294967295 )) ;
+}
+
+
 
 /* This file gets injected into the web page verbatim */
 
@@ -298,5 +307,6 @@ var GSSEap = (function ()
     };
     return GSSEap;
 })();
+
 
 navigator.gss_eap = GSSEap;
