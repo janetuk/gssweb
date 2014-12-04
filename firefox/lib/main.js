@@ -36,7 +36,7 @@ var pageMod = require("sdk/page-mod");
 
 pageMod.PageMod({
   include: "*",
-  contentScriptFile: [data.url("navigator.gss.js")],
+  contentScriptFile: [data.url("gssweb.contentscript.js")],
   contentScriptWhen: "ready"
 });
 
@@ -69,7 +69,7 @@ function invokeNativeGSS(msg)
 }
 
 tabs.on("ready", function(tab) {
-  app = tab.attach({ contentScriptFile: data.url("navigator.gss.js") });
+  app = tab.attach({ contentScriptFile: data.url("gssweb.contentscript.js") });
   app.port.on("gss_request", function(message) {
     var response = invokeNativeGSS(message);
     app.port.emit("gss_response", response);
