@@ -179,7 +179,7 @@
       }
 
       function doImportName() {
-        gss = gss || new navigator.gss_eap({
+        gss = gss || new navigator.gssEap({
           appTag: "TestApp"
         });
         gss.error = function(major, minor, errMsg, appTag) 
@@ -204,7 +204,7 @@
       } // doImportName
 
       function doDisplayName() {
-        gss = gss || new navigator.gss_eap({
+        gss = gss || new navigator.gssEap({
           appTag: "TestApp"
         });
         gss.error = function(major, minor, errMsg, appTag) 
@@ -236,7 +236,7 @@
 
 
       function doAcquireCred() {
-        gss = gss || new navigator.gss_eap({
+        gss = gss || new navigator.gssEap({
           appTag: "TestApp"
         });
         gss.error = function(major, minor, errMsg, appTag) 
@@ -268,7 +268,7 @@
        *  Call the init_sec_context routine
        ********************************************************/
       function doInitSecContext() {
-        gss = gss || new navigator.gss_eap({
+        gss = gss || new navigator.gssEap({
           appTag: "TestApp",
         });
         gss.error = function(major, minor, errMsg, appTag) 

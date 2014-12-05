@@ -17,9 +17,8 @@ var GSSWeb = (function () {
     this.serverToken = "";
     this.clientCred = "";
     this.xhr = new XMLHttpRequest();
-    this.xhr.onreadystatechange = this.recvTokenFromServer.bind(this);
 
-    this.gss = new navigator.gss_eap({
+    this.gss = new navigator.gssEap({
       appTag: this.appTag,
       error: this.handleGSSError.bind(this)
     });
@@ -144,6 +143,7 @@ var GSSWeb = (function () {
       'Content-Type', 
       'application/x-www-form-urlencoded'
     );
+    this.xhr.onreadystatechange = this.recvTokenFromServer.bind(this);
     this.xhr.send(msg);
   };
 
