@@ -1,4 +1,4 @@
-console.log("Loading navigator.gssweb.js - #2");
+console.log("Loading navigator.gssweb.js - #4");
 
 
 var GSSWeb = (function () {
@@ -138,13 +138,19 @@ var GSSWeb = (function () {
 
     var msg = "nonce=" + this.nonce +
                "&token=" + encodeURIComponent(this.clientToken);
+
     this.xhr.open("POST", this.serverPath, true);
+
     this.xhr.setRequestHeader(
       'Content-Type', 
       'application/x-www-form-urlencoded'
     );
     this.xhr.onreadystatechange = this.recvTokenFromServer.bind(this);
+
     this.xhr.send(msg);
+    if (this.xhr.readyStatus <= 2)
+        console.log("Error sending POST, readyStatus =" + this.xhr.readyStatus
+		   + ", msg = '" + msg + "'");
   };
 
   GSSWeb.prototype.recvTokenFromServer = function () {
