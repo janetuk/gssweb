@@ -74,7 +74,9 @@ target_link_libraries(json_gssapi jsongssapi ${KRB5_LIBRARIES} ${JANSSON_LIBRARI
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
 find_package (CPPUNIT)
-install(TARGETS json_gssapi RUNTIME DESTINATION bin)
+install(TARGETS json_gssapi jsongssapi
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib)
 
 add_subdirectory(src)
 
