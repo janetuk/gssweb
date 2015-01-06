@@ -1,15 +1,20 @@
 //
 #include <iostream>
+#include <string.h>
 #ifdef WIN32
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
 #else
 #include <unistd.h>
-#include <string.h>
 #endif
 #include <GSSRequest.h>
 
+#ifdef WIN32
+#define gssweb_read _read
+#else
+#define gssweb_read read
+#endif
 
 using std::cin;
 using std::cout;
@@ -38,7 +43,7 @@ int main(int argc, char **argv) {
     readThisRound = readTotal = 0;
     while(4 != readTotal)
     {
-      readThisRound = _read(0, ((&len) + readTotal), 4 - readTotal);
+      readThisRound = gssweb_read(0, ((&len) + readTotal), 4 - readTotal);
       readTotal += readThisRound;
     }
     
@@ -48,7 +53,7 @@ int main(int argc, char **argv) {
     while (readTotal < len)
     {
       readRemaining = len - readTotal;
-      readThisRound = _read( 0, &(input[readTotal]), readRemaining);
+      readThisRound = gssweb_read( 0, &(input[readTotal]), readRemaining);
       if (-1 == readThisRound)
         break;
       else
