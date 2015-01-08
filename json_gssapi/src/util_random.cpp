@@ -22,7 +22,7 @@ bool randGenPseudoRandom(unsigned char *buffer, size_t len)
   std::random_device rd;   // slow; use to seed only!
   std::mt19937 gen(rd());  // seed mersenne twister.
   std::uniform_int_distribution<> dist(0,UCHAR_MAX);
-  for (int i=0; i<len; i++)
+  for (size_t i=0; i<len; i++)
     buffer[i] = dist(gen);
   return true;
 #elif defined(HAVE_OPENSSL)
