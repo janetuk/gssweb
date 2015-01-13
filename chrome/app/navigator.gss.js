@@ -299,4 +299,4 @@ var GSSEap = (function ()
     return GSSEap;
 })();
 
-navigator.gss_eap = GSSEap;
+navigator.gssEap = GSSEap;
