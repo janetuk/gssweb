@@ -291,14 +291,14 @@ JSONObject *GSSInitSecContext::toJSON()
 
 GSSInitSecContext::GSSInitSecContext(
   JSONObject *params, 
-  pfn_init_sec_context fn)
+  init_sec_context_type fn)
 {
   zeroOut(false);
   loadParameters(params);
   function = fn;
 }
 
-GSSInitSecContext::GSSInitSecContext(pfn_init_sec_context fn)
+GSSInitSecContext::GSSInitSecContext(init_sec_context_type fn)
 {
   zeroOut(false);
   function = fn;
