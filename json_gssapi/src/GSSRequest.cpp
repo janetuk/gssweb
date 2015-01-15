@@ -55,7 +55,8 @@ void GSSRequest::execute()
     JSONObject return_values;
     return_values.set("major_status", e.getMajor());
     return_values.set("minor_status", e.getMinor());
-//     response.set("error_message", e.what());
+    return_values.set("what", e.what());
+    response.set("return_values", return_values);
   }
 }
 
