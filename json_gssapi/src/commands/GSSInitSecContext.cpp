@@ -45,27 +45,10 @@
 
 #include "util_base64.h"
 
-typedef OM_uint32 (*init_sec_context)(
-    OM_uint32 *,        /* minor_status */
-    gss_cred_id_t,      /* claimant_cred_handle */
-    gss_ctx_id_t *,     /* context_handle */
-    gss_name_t,         /* target_name */
-    gss_OID,            /* mech_type (used to be const) */
-    OM_uint32,          /* req_flags */
-    OM_uint32,          /* time_req */
-    gss_channel_bindings_t,     /* input_chan_bindings */
-    gss_buffer_t,       /* input_token */
-    gss_OID *,          /* actual_mech_type */
-    gss_buffer_t,       /* output_token */
-    OM_uint32 *,        /* ret_flags */
-    OM_uint32 *         /* time_req */
-);
-
 void
 GSSInitSecContext::execute()
 {
   /* Variables */
-  init_sec_context fn = (init_sec_context)function;
   gss_OID actual_mech_type;
   
   /* Error checking */
@@ -76,7 +59,7 @@ GSSInitSecContext::execute()
 
   /* Main */
   // MRW -- fix so that this uses all of the vars from the object 
-  retVal = fn(
+  retVal = function(
     &minor_status,
     GSS_C_NO_CREDENTIAL,
     &context_handle,
@@ -308,14 +291,14 @@ JSONObject *GSSInitSecContext::toJSON()
 
 GSSInitSecContext::GSSInitSecContext(
   JSONObject *params, 
-  void *fn)
+  pfn_init_sec_context fn)
 {
   zeroOut(false);
   loadParameters(params);
   function = fn;
 }
 
-GSSInitSecContext::GSSInitSecContext(void *fn)
+GSSInitSecContext::GSSInitSecContext(pfn_init_sec_context fn)
 {
   zeroOut(false);
   function = fn;
