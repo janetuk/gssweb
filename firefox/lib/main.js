@@ -12,7 +12,7 @@ try {
 }
 catch (e) {
     try {
-        json_gssapi = ctypes.open("libjsongssapi.dll");
+        json_gssapi = ctypes.open("jsongssapi.dll");
     }
     catch (e) {
         console.log("Error loading the JSON GSS-API library: " + e);
