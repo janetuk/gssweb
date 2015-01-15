@@ -86,11 +86,11 @@ void
 GSSCreateSecContextTest::testConstructor()
 {
   GSSInitSecContext cmd = GSSInitSecContext();
-  void *cmdFn;
-  void *GSSFn;
+  init_sec_context_type cmdFn;
+  init_sec_context_type GSSFn;
   
   cmdFn = cmd.getGSSFunction();
-  GSSFn = (void *)&gss_init_sec_context;
+  GSSFn = &gss_init_sec_context;
   CPPUNIT_ASSERT_MESSAGE(
     "The default constructor for GSSCreateSecContextCommand should assign the function gss_init_sec_context", 
     cmdFn == GSSFn);
@@ -152,7 +152,7 @@ void GSSCreateSecContextTest::testConstructorWithJSONObject()
   
   GSSInitSecContext cmd = GSSInitSecContext(
     &json, 
-    (void *)&mock_init_sec
+    &mock_init_sec
   );
 
   const char *from_cmd = cmd.getTargetDisplayName();
@@ -193,7 +193,7 @@ GSSCreateSecContextTest::testEmptyCall()
 {
   gss_ctx_id_t expectedResult, expectedArgument;
   
-  GSSInitSecContext cmd ((void *)&mock_init_sec);
+  GSSInitSecContext cmd (&mock_init_sec);
   
   /* Set expectations on what the GSS function will be called with */
   cmd.time_req = rand() % 1024;
@@ -309,7 +309,7 @@ GSSCreateSecContextTest::testEmptyCall()
 void GSSCreateSecContextTest::testJSONMarshal()
 {
   /* Variables */
-  GSSInitSecContext cmd ((void *)&mock_init_sec);
+  GSSInitSecContext cmd (&mock_init_sec);
   JSONObject *result;
   GSSContextCache *cache = GSSContextCache::instance();
   GSSContext context;
