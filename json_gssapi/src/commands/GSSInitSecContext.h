@@ -41,6 +41,22 @@
 #include <datamodel/GSSOID.h>
 #include <gssapi.h>
 
+typedef OM_uint32 (KRB5_CALLCONV *init_sec_context_type)(
+    OM_uint32 *,        /* minor_status */
+    gss_cred_id_t,      /* claimant_cred_handle */
+    gss_ctx_id_t *,     /* context_handle */
+    gss_name_t,         /* target_name */
+    gss_OID,            /* mech_type (used to be const) */
+    OM_uint32,          /* req_flags */
+    OM_uint32,          /* time_req */
+    gss_channel_bindings_t,     /* input_chan_bindings */
+    gss_buffer_t,       /* input_token */
+    gss_OID *,          /* actual_mech_type */
+    gss_buffer_t,       /* output_token */
+    OM_uint32 *,        /* ret_flags */
+    OM_uint32 *         /* time_req */
+);
+
 class GSSInitSecContext : public GSSCommand
 {
 public:
@@ -59,8 +75,8 @@ public:
   
     void execute();
     JSONObject *toJSON();
-    GSSInitSecContext(void *fn = (void *)&gss_init_sec_context);
-    GSSInitSecContext(JSONObject *params, void *fn = (void *)&gss_init_sec_context);
+    GSSInitSecContext(init_sec_context_type fn = &gss_init_sec_context);
+    GSSInitSecContext(JSONObject *params,  init_sec_context_type fn = &gss_init_sec_context);
     
     bool loadParameters(JSONObject *params);
     bool zeroOut(bool initialized = true);
@@ -70,7 +86,7 @@ public:
     OM_uint32 getReqFlags() { return req_flags; }
     OM_uint32 getTimeReq() { return time_req; }
     gss_ctx_id_t getContextHandle() { return context_handle; }
-    void *getGSSFunction() { return function; }
+    init_sec_context_type getGSSFunction() { return function; }
     GSSOID getMechType() { return mechType; };
     GSSOID getActualMechType() { return actualMechType; };
     
@@ -78,7 +94,7 @@ public:
     const char * getTargetDisplayName();
     
 private:
-    void *function;
+    init_sec_context_type function;
     GSSContext context;
     GSSOID mechType;
     GSSOID actualMechType;
