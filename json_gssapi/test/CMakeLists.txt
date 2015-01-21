@@ -1,5 +1,5 @@
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_SOURCE_DIR}/src/commands)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src/commands)
 
 find_package (PkgConfig)
 pkg_check_modules (GLIB2   glib-2.0)

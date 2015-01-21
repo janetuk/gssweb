@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 include(GenerateExportHeader)
 project(json_gssapi)
 
-include_directories(src/ ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/ ${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(jsongssapi SHARED 
                        src/datamodel/GSSDisplayStatus.cpp 
