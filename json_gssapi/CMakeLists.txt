@@ -29,6 +29,9 @@ add_library(jsongssapi SHARED
                        src/cache/GSSNameCache.cpp
                        src/datamodel/GSSContext.cpp
                       )
+set_target_properties( jsongssapi
+  	PROPERTIES SOVERSION 1)
+
 
 GENERATE_EXPORT_HEADER(jsongssapi)
 
@@ -83,7 +86,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 find_package (CPPUNIT)
 install(TARGETS json_gssapi jsongssapi
 	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib)
+	LIBRARY DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE}
+	)
 
 add_subdirectory(src)
 
