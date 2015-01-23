@@ -33,17 +33,13 @@ public:
   static bool                   visited;
   static bool                   invalidContextHandle;
   
-  static void nullify(void **ptr)
+  template <class t>
+    static void nullify(t *&ptr)
   {
-    if (!ptr)
+    if (ptr)
     {
-      std::cout << std::endl << "Nullify called with a void ** that is NULL at the top level" << std::endl;
-      return;
-    }
-    if (*ptr)
-    {
-      free(*ptr);
-      *ptr = NULL;
+      free(ptr);
+      ptr = NULL;
     }
   }
 
