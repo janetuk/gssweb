@@ -1,0 +1,6 @@
+tmp
+json-gssapi
+libjsongssapi1
+*.debhelper
+*.substvars
+*.debhelper.log

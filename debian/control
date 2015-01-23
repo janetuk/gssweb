@@ -1,0 +1,35 @@
+Source: gssweb
+Section: net
+Priority: optional
+Maintainer: Sam Hartman <hartmans@debian.org>
+Build-Depends: debhelper (>= 9), cmake, libkrb5-dev, libjansson-dev, libcppunit-dev, libssl-dev
+Standards-Version: 3.9.5
+Homepage: https://launchpad.net/gssweb/
+Vcs-Git: git://git.project-moonshot.org/gssweb.git
+#Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/gssweb.git;a=summary
+
+Package: json-gssapi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: foreign
+Description: JSON Interface to GSSAPI
+ Gssweb provides an implementation of the Generic Security Services
+ API for Javascript and the web.
+ .
+ This package includes the native client implementation of GSS-API
+ needed by Chromium.
+
+
+Package: libjsongssapi1
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Pre-Depends: ${misc:Pre-Depends}
+Architecture: any
+Multi-Arch: same
+Description: JSON GSSAPI Libraries
+ Gssweb provides an implementation of the Generic Security Services
+ API for Javascript and the web.
+ .
+ This package include shared libraries that encapsulate GSS-API calls
+ in Javascript messages.  These shared libraries can be linked into an
+ application or used directly as a plugin.
