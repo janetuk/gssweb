@@ -6,13 +6,13 @@
    },
    "background": {
        "scripts": [
-           "gssweb_background.js"
+           "background.js"
        ]
    },
    "content_scripts": [
        {
 	   "matches": ["*://*/*"],
-	   "js": ["gssweb.contentscript.js"]
+	   "js": ["contentscript.js"]
        }
    ],
    "description": "Chrome plugin to supply GSSAPI calls.",
