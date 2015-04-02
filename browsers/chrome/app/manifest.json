@@ -22,6 +22,6 @@
    "permissions": [ "nativeMessaging" ],
    "version": "1.0",
    "web_accessible_resources": [
-      "navigator.gssEap.js",
+      "navigator.gssEap.js"
    ]
 }
