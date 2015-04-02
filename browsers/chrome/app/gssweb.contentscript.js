@@ -1,6 +1,5 @@
 console.log("Loading content script #6...");
 
-
 function addScript(url) {
   var elt = document.createElement("script");
   elt.setAttribute("src", 
@@ -8,8 +7,7 @@ function addScript(url) {
   document.head.appendChild(elt);
 }
 
-addScript( chrome.extension.getURL('gssweb_utils.js') );
-addScript( chrome.extension.getURL('navigator.gss.js') );
+addScript( chrome.extension.getURL('navigator.gssEap.js') );
 
 var port = chrome.runtime.connect({name: "com.painlesssecurity.gssweb"});
 
