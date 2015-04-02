@@ -148,9 +148,6 @@ var GSSWeb = (function () {
     this.xhr.onreadystatechange = this.recvTokenFromServer.bind(this);
 
     this.xhr.send(msg);
-    if (this.xhr.readyStatus <= 2)
-        console.log("Error sending POST, readyStatus =" + this.xhr.readyStatus
-		   + ", msg = '" + msg + "'");
   };
 
   GSSWeb.prototype.recvTokenFromServer = function () {
