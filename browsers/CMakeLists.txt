@@ -1,6 +1,3 @@
 cmake_minimum_required(VERSION 2.8)
-if (WIN32)
-else (WIN32)
 add_subdirectory(chrome)
 add_subdirectory(firefox)
-endif (WIN32)
