@@ -8,7 +8,7 @@
 #ifndef GSSCREDENTIAL_H
 #define GSSCREDENTIAL_H
 
-#include "../util_json.h"
+#include "utils/util_json.h"
 #include <gssapi/gssapi.h>
 #include <string>
 

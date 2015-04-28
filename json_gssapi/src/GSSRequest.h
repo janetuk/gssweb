@@ -11,7 +11,7 @@
 #include <string>
 #include "jsongssapi_export.h"
 #include "commands/GSSCommand.h"
-#include "util_json.h"
+#include "utils/util_json.h"
 
 using std::string;
 

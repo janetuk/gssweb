@@ -35,7 +35,7 @@
 #ifndef GSSCOMMAND_H
 #define GSSCOMMAND_H
 
-#include "util_json.h"
+#include "utils/util_json.h"
 #include <iostream>
 
 class GSSCommand

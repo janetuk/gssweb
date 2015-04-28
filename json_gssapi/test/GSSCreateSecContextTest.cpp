@@ -12,11 +12,11 @@
 #include <iostream>
 #include <string.h>
 #include <exception>
-#include "util_json.h"
+#include "utils/util_json.h"
 #include <cache/GSSContextCache.h>
 #include <cache/GSSNameCache.h>
 #include <datamodel/GSSContext.h>
-#include <util_base64.h>
+#include <utils/util_base64.h>
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( GSSCreateSecContextTest );

@@ -7,7 +7,7 @@
 
 #include <string>
 #include "gssapi.h"
-#include "../util_json.h"
+#include "utils/util_json.h"
 
 #include "GSSBuffer.h"
 
