@@ -6,8 +6,8 @@
  */
 #include <stdexcept>
 #include "GSSNameCache.h"
-#include "util_base64.h"
-#include "util_random.h"
+#include "utils/util_base64.h"
+#include "utils/util_random.h"
 
 #define KEYLEN 128
 

@@ -27,9 +27,9 @@ add_executable(test GSSExceptionTest.cpp
                     command_mocks/MockImportName.cpp
                     test_run.cpp 
                     ../src/commands/GSSInitSecContext.cpp 
-                    ../src/util_base64.cpp
-                    ../src/util_json.cpp 
-                    ../src/util_random.cpp
+                    ../src/utils/util_base64.cpp
+                    ../src/utils/util_json.cpp 
+                    ../src/utils/util_random.cpp
                     ../src/commands/GSSImportName.cpp
                     ../src/GSSException.cpp
                     ../src/commands/GSSGetMic.cpp

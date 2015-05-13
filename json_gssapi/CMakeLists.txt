@@ -22,9 +22,9 @@ add_library(jsongssapi SHARED
                        src/commands/GSSPseudoRandom.cpp
                        src/commands/GSSWrap.cpp  
                        src/commands/GSSUnwrap.cpp
-                       src/util_base64.cpp
-                       src/util_json.cpp
-                       src/util_random.cpp
+                       src/utils/util_base64.cpp
+                       src/utils/util_json.cpp
+                       src/utils/util_random.cpp
                        src/cache/GSSContextCache.cpp
                        src/cache/GSSNameCache.cpp
                        src/datamodel/GSSContext.cpp
@@ -35,7 +35,7 @@ set_target_properties( jsongssapi
 
 GENERATE_EXPORT_HEADER(jsongssapi)
 
-add_executable(json_gssapi main.cpp)
+add_executable(json_gssapi src/main.cpp)
 
 find_package (PkgConfig)
 pkg_check_modules (GLIB2   glib-2.0)

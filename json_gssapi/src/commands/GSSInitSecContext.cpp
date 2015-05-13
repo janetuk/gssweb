@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util_base64.h"
+#include "utils/util_base64.h"
 
 void
 GSSInitSecContext::execute()

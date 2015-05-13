@@ -49,24 +49,16 @@ void GSSImportName::execute()
 
   /* Main */
   retVal = function(&minor_status, inputName.toGss(), inputNameType.toGss(), &name);
-//   if ( GSS_ERROR(this->retVal) )
-//   {
-    JSONObject errors;
-    GSSDisplayStatus ds(retVal, minor_status, inputNameType.toGss());
-    errors.set("major_status_message", ds.getMajorMessage().c_str());
-    errors.set("minor_status_message", ds.getMinorMessage().c_str());
-    values->set("errors", errors);
-//   }
-  
-  
-  
+  JSONObject errors;
+  GSSDisplayStatus ds(retVal, minor_status, inputNameType.toGss());
+  errors.set("major_status_message", ds.getMajorMessage().c_str());
+  errors.set("minor_status_message", ds.getMinorMessage().c_str());
+  values->set("errors", errors);
   this->outputName.setValue(name);
   key = GSSNameCache::instance()->store(this->outputName);
-//   std::cout << "Storing key: " << key << std::endl;
   this->outputName.setKey(key);
   /* Cleanup */
   /* Return */
-  
 }
 
 /* Example output:
@@ -125,7 +117,7 @@ bool GSSImportName::loadParameters(JSONObject *params)
   
   /* Error checking */
   /* Setup */
-  // Should I zeroOut?
+  // Should I zeroOut?  MRW -- do initialize here for null inputs
   
   /* Main processing */
   // Easy stuff(*params)
@@ -154,13 +146,3 @@ bool GSSImportName::loadParameters(JSONObject *params)
   /* Return */
   return true;
 }
-
-
-
-
-/* Variables */
-/* Error checking */
-/* Setup */
-/* Main */
-/* Cleanup */
-/* Return */
