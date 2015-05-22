@@ -1,4 +1,13 @@
-%include %{_rpmconfigdir}/macros.mozilla
+%global _firefox_app_id \{ec8030f7-c20a-464f-9b0e-13a3a9e97384\}
+
+# common macros, yet to be defined. see:
+# https://fedoraproject.org/wiki/User:Kalev/MozillaExtensionsDraft
+%global _moz_extensions %{_datadir}/mozilla/extensions
+%global _firefox_extdir %{_moz_extensions}/%{_firefox_app_id}
+
+# needed for this package
+%global extension_id gssweb@painless-security.com
+%global _our_extdir %{_firefox_extdir}/%{extension_id}
 Name:		gssweb
 Version:	0.1
 Release:	1%{?dist}
@@ -11,7 +20,7 @@ Source0:	gssweb-%{version}.tar.gz
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:	 openssl-devel, cppunit-devel, jansson-devel, krb5-devel, glib-devel
-BuildRequires:  mozilla-build
+BuildRequires:  unzip
 Requires:	moonshot-ui
 
 
@@ -21,7 +30,10 @@ This includes the json GSSAPI executables and libraries.
 
 %package -n firefox-gssweb
 Summary: Firefox Support for GssWeb
-Arch: noarch
+Requires: mozilla-filesystem, gssweb
+
+%description -n firefox-gssweb
+An extension to support gssweb for Firefox web browser.
 
 
 %prep
@@ -36,8 +48,9 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
-%xpi_unpack -f browsers/firefox/gssweb.xpi
-%xpi_symlink -a %{firefox_app_id}
+     install -d $RPM_BUILD_ROOT/%{_our_extdir}
+xpi=`pwd`/browsers/firefox/gssweb.xpi&&(cd $RPM_BUILD_ROOT/%{_our_extdir}&&unzip $xpi)
+
 
 
 %clean
@@ -51,8 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/json_gssapi
 %files -n firefox-gssweb
 %defattr(-,root,root,-)
-%{_firefox_extdir}/
-%{_mozilla_common_extdir}/%{name}/
+%{_our_extdir}
 
 
 
