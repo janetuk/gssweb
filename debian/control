@@ -2,8 +2,8 @@ Source: gssweb
 Section: net
 Priority: optional
 Maintainer: Sam Hartman <hartmans@debian.org>
-Build-Depends: debhelper (>= 9), cmake, libkrb5-dev, libjansson-dev, libcppunit-dev, libssl-dev
-Standards-Version: 3.9.5
+Build-Depends: debhelper (>= 9), cmake, libkrb5-dev, libjansson-dev, libcppunit-dev, libssl-dev, libglib2.0-dev, mozilla-devscripts
+Standards-Version: 3.9.6
 Homepage: https://launchpad.net/gssweb/
 Vcs-Git: git://git.project-moonshot.org/gssweb.git
 #Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/gssweb.git;a=summary
@@ -33,3 +33,14 @@ Description: JSON GSSAPI Libraries
  This package include shared libraries that encapsulate GSS-API calls
  in Javascript messages.  These shared libraries can be linked into an
  application or used directly as a plugin.
+
+Package: xul-ext-gssweb
+Provides: firefox-gssweb, iceweasel-gssweb
+Architecture: all
+Depends: json-gssapi
+Description: GSSWeb Extensions for Firefox and Iceweasel
+ Gssweb provides an implementation of the Generic Security Services
+ API for Javascript and the web.
+ .
+ This package adds support for GSS-API and Moonshot-based
+ authentication to Firefox and Iceweasel.
