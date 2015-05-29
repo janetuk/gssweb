@@ -1,7 +1,7 @@
 {
   "name": "com.painlesssecurity.jsongss",
   "description": "GSSAPI Extension",
-  "path": "/home/mark/projects/gssweb.git/json_gssapi/debug/json_gssapi",
+  "path": "/home/margaret/moonshot/gssweb/json_gssapi/build/json_gssapi",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://bhaockekcfjjdmbalaanalballokgedd/"
