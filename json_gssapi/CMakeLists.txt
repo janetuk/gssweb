@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 include(GenerateExportHeader)
+include(GNUInstallDirs)
 project(json_gssapi)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/ ${CMAKE_CURRENT_BINARY_DIR})
@@ -85,8 +86,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
 find_package (CPPUNIT)
 install(TARGETS json_gssapi jsongssapi
-	RUNTIME DESTINATION bin
-	LIBRARY DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE}
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	)
 
 add_subdirectory(src)
