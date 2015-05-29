@@ -32,7 +32,7 @@
  *
  */
 
-console.log('Loading navigator.gssEap.js - #1');
+console.log('Loading navigator.gss.js - #1');
 
 navigator.generateNonce = function() {
   // TODO: Make sure that we don't have a collision!
@@ -308,4 +308,4 @@ var GSSEap = (function ()
 })();
 
 
-navigator.gssEap = GSSEap;
+navigator.gss = GSSEap;

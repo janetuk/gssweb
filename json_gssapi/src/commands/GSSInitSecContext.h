@@ -81,7 +81,7 @@ public:
     bool loadParameters(JSONObject *params);
     bool zeroOut(bool initialized = true);
     
-    // MRW -- make more accessors, make vars w/accessors private
+    // MRW -- make more accessors, make vars w/accessors private, or get rid of them?
     // accessors
     OM_uint32 getReqFlags() { return req_flags; }
     OM_uint32 getTimeReq() { return time_req; }

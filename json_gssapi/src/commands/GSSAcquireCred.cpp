@@ -41,7 +41,8 @@
 GSSAcquireCred::GSSAcquireCred(gss_acq_cred_type fn) : function(fn)
 {
   desired_name = GSS_C_NO_NAME;
-  desiredMechs.addOID( GSSOID((char *)"{ 1 3 6 1 5 5 15 1 1 18 }") );
+  // Use OID for eap-aes128 by default
+  desiredMechs.addOID( GSSOID((char *)"{ 1 3 6 1 5 5 15 1 1 17 }") );
 }
 
 GSSAcquireCred::GSSAcquireCred ( const GSSAcquireCred& other )

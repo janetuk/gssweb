@@ -49,12 +49,12 @@ if ("undefined" != typeof(chrome) &&
 {
   // Running in chrome
   browser = "Chrome"; 
-  gss_script_name = chrome.extension.getURL('navigator.gssEap.js');
+  gss_script_name = chrome.extension.getURL('navigator.gss.js');
   port = chrome.runtime.connect({name: "com.painlesssecurity.gssweb"});
 } else {
   // Firefox
   browser = "Firefox";
-  gss_script_name = 'chrome://gssweb/content/navigator.gssEap.js';
+  gss_script_name = 'chrome://gssweb/content/navigator.gss.js';
 }
 
 addScript( gss_script_name );
