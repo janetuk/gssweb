@@ -32,6 +32,9 @@
  *
  */
 
+/*
+ * GSSImportNameTest.h - Test the GSSImportName object.
+ * Tests include:
  *   testConstructor - 
  *       Testing basic object creation
  *   testConstructorWithJSONObject - 

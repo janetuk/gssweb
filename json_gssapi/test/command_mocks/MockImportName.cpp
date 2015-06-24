@@ -32,9 +32,11 @@
  *
  */
 
+/*
+ * MockImportName - Mock out the parameters for calling the
+ * GSSImportName object's function
  * 
  */
-
 #include "MockImportName.h"
 #include <string>
 
