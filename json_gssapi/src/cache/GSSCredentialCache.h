@@ -32,46 +32,36 @@
  *
  */
 
-#ifndef GSSCREDENTIAL_H
-#define GSSCREDENTIAL_H
+#ifndef GSSCREDENTIALCACHE_H
+#define GSSCREDENTIALCACHE_H
 
-#include "utils/util_json.h"
-#include <gssapi/gssapi.h>
+#include <map>
 #include <string>
 
-typedef OM_uint32 (KRB5_CALLCONV *gss_acq_cred_type)(
-    OM_uint32 *,        /* minor_status */
-    gss_name_t,         /* desired_name */
-    OM_uint32,          /* time_req */
-    gss_OID_set,        /* desired_mechs */
-    gss_cred_usage_t,   /* cred_usage */
-    gss_cred_id_t *,    /* output_cred_handle */
-    gss_OID_set *,      /* actual_mechs */
-    OM_uint32 *);       /* time_rec */
+#include "datamodel/GSSCredential.h"
 
+typedef std::map<std::string, GSSCredential*> CredentialMap;
 
-
-class GSSCredential
+class GSSCredentialCache
 {
 public:
-    GSSCredential();
-    GSSCredential(const GSSCredential &other);
-    GSSCredential(gss_cred_id_t cred) : credential(cred) {};
-    ~GSSCredential();
+    static GSSCredentialCache* instance();
+    ~GSSCredentialCache();
+    GSSCredentialCache& operator= ( const GSSCredentialCache& other );
     
-    GSSCredential& operator= (const GSSCredential &gsscred);
-    
-    gss_cred_id_t toGss() const { return(credential); }
-    
-    void setValue(gss_cred_id_t cred) { this->credential = cred; }
-    JSONObject *toJSONValue() { return( new JSONObject("not now") ); }
-    void setKey(std::string key) { this->hashKey = key; }
-    std::string getKey() const { return this->hashKey; }
-    
+    std::string store(GSSCredential &data, const std::string key = "");
+    GSSCredential &retrieve(std::string key);
+    CredentialMap getCredentials() { return(credentials); };
+
+protected:
+    GSSCredentialCache();
+    GSSCredentialCache ( const GSSCredentialCache& other );
+
 private:
-    gss_cred_id_t credential;
-    std::string hashKey;
+    CredentialMap credentials;
     
+    bool generateKey(std::string &key);
+    static GSSCredentialCache* _instance;
 };
 
-#endif // GSSCREDENTIAL_H
+#endif // GSSCREDENTIALCACHE_H

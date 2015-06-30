@@ -43,11 +43,13 @@ GSSCredential::GSSCredential()
 GSSCredential::GSSCredential ( const GSSCredential& other )
 {
   this->credential = other.credential;
+  this->hashKey = other.hashKey;
 }
 
 GSSCredential& GSSCredential::operator= ( const GSSCredential& gsscred )
 {
   this->credential = gsscred.credential;
+  this->hashKey = "";
   return(*this);
 }
 

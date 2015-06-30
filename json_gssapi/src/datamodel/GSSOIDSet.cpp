@@ -91,10 +91,13 @@ GSSOIDSet& GSSOIDSet::operator= ( const gss_OID_set other )
   /* Main */
   this->releaseOIDSet();
   this->init();
-  for(i = 0; i < other->count; i++)
+  if (NULL != other)
   {
-    element = other->elements + i;
-    this->addOID(element);
+    for(i = 0; i < other->count; i++)
+    {
+      element = other->elements + i;
+      this->addOID(element);
+    }
   }
   
   /* Cleanup */

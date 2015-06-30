@@ -34,15 +34,15 @@
 
 #include "GSSAcquireCred.h"
 #include "GSSException.h"
+#include <cache/GSSCredentialCache.h>
 #include <cache/GSSNameCache.h>
+#include <datamodel/GSSDisplayStatus.h>
 
 #include <stdexcept>
 
 GSSAcquireCred::GSSAcquireCred(gss_acq_cred_type fn) : function(fn)
 {
   desired_name = GSS_C_NO_NAME;
-  // Use OID for eap-aes128 by default
-  desiredMechs.addOID( GSSOID((char *)"{ 1 3 6 1 5 5 15 1 1 17 }") );
 }
 
 GSSAcquireCred::GSSAcquireCred ( const GSSAcquireCred& other )
@@ -66,6 +66,8 @@ GSSAcquireCred::GSSAcquireCred (
   /* Main */
   loadParameters(params);
   function = fn;
+  values = new JSONObject();
+
   /* Cleanup */
   /* Return */
 }
@@ -123,6 +125,9 @@ bool GSSAcquireCred::loadParameters(JSONObject *params)
       }
     } else
       throw std::invalid_argument("Unrecognized desired_mechs array.");
+  } else {
+    // Use OID for eap-aes128 by default
+    desiredMechs.addOID( GSSOID((char *)"{ 1 3 6 1 5 5 15 1 1 17 }") );
   }
 
   /****************
@@ -147,6 +152,8 @@ void GSSAcquireCred::execute()
   /* Variables */
   gss_cred_id_t output_cred_handle;
   gss_OID_set   actual_mechs;
+  JSONObject    errors;
+  std::string   key;
   
   /* Error checking */
   /* Setup */
@@ -161,16 +168,15 @@ void GSSAcquireCred::execute()
     &actual_mechs,
     &this->time_rec
   );
-  
-  if (GSS_ERROR(this->retVal) )
-  {
-    std::string err("Error acquiring credential for user '");
-    err += desired_name.toString();
-    err += "'.";
-    throw GSSException(err, this->retVal, this->minor_status);
-  }
+
+  GSSDisplayStatus ds(retVal, minor_status, NULL);
+  errors.set("major_status_message", ds.getMajorMessage().c_str());
+  errors.set("minor_status_message", ds.getMinorMessage().c_str());
+  values->set("errors", errors);
   
   this->cred.setValue(output_cred_handle);
+  key = GSSCredentialCache::instance()->store(this->cred);
+  this->cred.setKey(key);
   this->actualMechs = actual_mechs;
   
   /* Cleanup */
@@ -193,7 +199,6 @@ void GSSAcquireCred::execute()
 JSONObject *GSSAcquireCred::toJSON()
 {
   /* Variables */
-  JSONObject *values = new JSONObject();
   JSONObject *temp;
   
   /* Error checking */
@@ -207,10 +212,9 @@ JSONObject *GSSAcquireCred::toJSON()
   values->set("minor_status", this->minor_status);
   values->set("time_rec", (int)this->time_rec );
   
-  // Objects that generate their own JSONObject
-  temp = this->cred.toJSONValue();
-  values->set("output_cred_handle", *temp );
+  values->set("output_cred_handle", this->cred.getKey().c_str() );
   
+  // Objects that generate their own JSONObject
   temp = this->actualMechs.toJSONValue();
   values->set("actual_mechs", *temp);
   

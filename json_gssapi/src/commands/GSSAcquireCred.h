@@ -84,6 +84,8 @@ private:
     OM_uint32        retVal, minor_status;
     
     gss_acq_cred_type function;
+    
+    JSONObject *values;
 
 };
 

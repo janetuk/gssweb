@@ -76,6 +76,7 @@ add_executable(test GSSExceptionTest.cpp
                     ../src/datamodel/GSSOIDSet.cpp
                     ../src/datamodel/GSSContext.cpp
                     ../src/cache/GSSContextCache.cpp
+                    ../src/cache/GSSCredentialCache.cpp
                     ../src/cache/GSSNameCache.cpp
                     datamodel/GSSBufferTest.cpp
                     datamodel/GSSOIDSetTest.cpp

@@ -58,6 +58,7 @@ add_library(jsongssapi SHARED
                        src/utils/util_json.cpp
                        src/utils/util_random.cpp
                        src/cache/GSSContextCache.cpp
+                       src/cache/GSSCredentialCache.cpp
                        src/cache/GSSNameCache.cpp
                        src/datamodel/GSSContext.cpp
                       )
