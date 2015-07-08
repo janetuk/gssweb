@@ -31,12 +31,13 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-// MRW -- Add proper copyright boilerplate to all files
 
 #include "GSSInitSecContext.h"
 #include "GSSException.h"
 #include <cache/GSSContextCache.h>
+#include <cache/GSSCredentialCache.h>
 #include <cache/GSSNameCache.h>
+#include <datamodel/GSSDisplayStatus.h>
 #include <datamodel/GSSName.h>
 #include <gssapi.h>
 #include <stdexcept>
@@ -50,6 +51,7 @@ GSSInitSecContext::execute()
 {
   /* Variables */
   gss_OID actual_mech_type;
+  JSONObject errors;
   
   /* Error checking */
   
@@ -58,10 +60,9 @@ GSSInitSecContext::execute()
     retVal = gss_release_buffer(&minor_status, &output_token);
 
   /* Main */
-  // MRW -- fix so that this uses all of the vars from the object 
   retVal = function(
     &minor_status,
-    GSS_C_NO_CREDENTIAL,
+    claimantCred.toGss(),
     &context_handle,
     targetName.toGss(),
     mechType.toGss(),
@@ -73,22 +74,20 @@ GSSInitSecContext::execute()
     &output_token,
     &ret_flags,
     &time_rec);
-  
-  if ( GSS_ERROR(this->retVal) )
-  {
-    // MRW -- steal code from import name
-    std::string errMsg;
-    errMsg += "Cannot init_sec_context: ";
-    throw GSSException(errMsg.c_str(), this->retVal, this->minor_status, mechType.toGss());
-  }
-  
+
   actualMechType.setValue(actual_mech_type);
-  
   context.setContext(context_handle, true);
   contextKey = GSSContextCache::instance()->store(context);
   
   /* Cleanup */
   
+  // Handle errors
+  GSSDisplayStatus ds(retVal, minor_status, mechType.toGss());
+  errors.set("major_status_message", ds.getMajorMessage().c_str());
+  errors.set("minor_status_message", ds.getMinorMessage().c_str());
+  values->set("errors", errors);
+
+
   /* Return */
 }
 
@@ -130,8 +129,14 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
   /* Setup */
   
   /* Main processing */
-  // MRW -- finish parsing all of the variables
   // claimant_cred_handle
+  if (!(params->get("claimant_cred_handle").isNull() ||
+	(params->get("claimant_cred_handle").isString() &&
+	 std::string("") == params->get("claimant_cred_handle").string())))
+  {
+    std::string key = params->get("claimant_cred_handle").string();
+    this->claimantCred = GSSCredentialCache::instance()->retrieve(key);
+  }
 
   // context_handle
   if (!(params->get("context_handle").isNull() ||
@@ -248,6 +253,7 @@ bool GSSInitSecContext::zeroOut(bool initialized)
   this->ret_flags = 0;
   this->time_rec = 0;
 
+  this->claimantCred = GSS_C_NO_CREDENTIAL;
   this->context_handle = GSS_C_NO_CONTEXT;
   this->target_name = GSS_C_NO_NAME;
   this->mechType.setValue( (char *)"{ 1 3 6 1 5 5 15 1 1 18 }" );
@@ -264,24 +270,25 @@ bool GSSInitSecContext::zeroOut(bool initialized)
 JSONObject *GSSInitSecContext::toJSON()
 {
   /* Variables */
-  // MRW -- values should be scoped to the class, so execute can set error values?
   std::string output_str;
-  JSONObject *values = new JSONObject();
-  base64EncodeStr(output_token.value, output_token.length, output_str);
   
   /* Error checking */
   
   /* Setup */
+  base64EncodeStr(output_token.value, output_token.length, output_str);
   
   /* Main */
   values->set("major_status", this->retVal);
   values->set("minor_status", this->minor_status);
-  values->set("context_handle", this->contextKey.c_str());
-  values->set("actual_mech_type", this->getActualMechType().toString().c_str());
-  values->set("output_token", output_str.c_str());
-  values->set("ret_flags", this->ret_flags);
-  values->set("time_rec", this->time_rec);
-  // MRW -- modify for new error handling
+
+  if ( !GSS_ERROR(this->retVal) )
+  {
+    values->set("context_handle", this->contextKey.c_str());
+    values->set("actual_mech_type", this->getActualMechType().toString().c_str());
+    values->set("output_token", output_str.c_str());
+    values->set("ret_flags", this->ret_flags);
+    values->set("time_rec", this->time_rec);
+  }
 
   /* Cleanup */
   
@@ -296,6 +303,8 @@ GSSInitSecContext::GSSInitSecContext(
   zeroOut(false);
   loadParameters(params);
   function = fn;
+
+  values = new JSONObject();
 }
 
 GSSInitSecContext::GSSInitSecContext(init_sec_context_type fn)

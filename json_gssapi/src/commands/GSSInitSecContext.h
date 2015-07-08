@@ -37,6 +37,7 @@
 
 #include "GSSCommand.h"
 #include <datamodel/GSSContext.h>
+#include <datamodel/GSSCredential.h>
 #include <datamodel/GSSName.h>
 #include <datamodel/GSSOID.h>
 #include <gssapi.h>
@@ -100,6 +101,9 @@ private:
     GSSOID actualMechType;
     GSSName targetName;
     std::string contextKey;
+    GSSCredential claimantCred;
+
+    JSONObject *values;
 };
 
 #endif // GSSINITSECCONTEXT_H
