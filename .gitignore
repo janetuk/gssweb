@@ -87,7 +87,7 @@ json_gssapi/manual
 # Build process
 #################
 build
-
+debug/
 
 #
 # Emacs
