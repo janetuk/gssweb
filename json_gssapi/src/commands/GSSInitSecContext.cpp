@@ -256,7 +256,7 @@ bool GSSInitSecContext::zeroOut(bool initialized)
   this->claimantCred = GSS_C_NO_CREDENTIAL;
   this->context_handle = GSS_C_NO_CONTEXT;
   this->target_name = GSS_C_NO_NAME;
-  this->mechType.setValue( (char *)"{ 1 3 6 1 5 5 15 1 1 18 }" );
+  this->mechType.setValue( (char *)"{ 1 3 6 1 5 5 15 1 1 17 }" );
   this->input_token.length = 0;
   this->input_token.value = NULL;
   this->output_token.length = 0;
