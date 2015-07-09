@@ -44,9 +44,9 @@ navigator.generateNonce = function() {
 
 /* This file gets injected into the web page verbatim */
 
-var GSSEap = (function () 
+var GSS = (function () 
   {
-    function GSSEap(config)
+    function GSS(config)
     {
         // Public attributes
         this.version = "0.0.1";
@@ -64,7 +64,7 @@ var GSSEap = (function ()
             this.dispatch_responses.bind(this)
         );
     }
-    GSSEap.prototype.dispatch_responses = function (event) 
+    GSS.prototype.dispatch_responses = function (event) 
     {
         var method;
         var nonce;
@@ -127,7 +127,7 @@ var GSSEap = (function ()
     };
 
 
-    GSSEap.prototype.init_sec_context = function (params) 
+    GSS.prototype.init_sec_context = function (params) 
     {
         /* variables */
         // internal variables
@@ -192,7 +192,7 @@ var GSSEap = (function ()
         
     };
 
-    GSSEap.prototype.display_name = function(params)
+    GSS.prototype.display_name = function(params)
     {
         /* Variables */
         // required parameters
@@ -236,7 +236,7 @@ var GSSEap = (function ()
         
     }
 
-    GSSEap.prototype.import_name = function (params) 
+    GSS.prototype.import_name = function (params) 
     {
         /* variables */
         // internal variables
@@ -292,7 +292,7 @@ var GSSEap = (function ()
         
     };
 
-    GSSEap.prototype.gss_error = function (major) 
+    GSS.prototype.gss_error = function (major) 
     {
         var callingMask;
         var routineMask;
@@ -304,8 +304,8 @@ var GSSEap = (function ()
 
         return (0 != (major & mask));
     };
-    return GSSEap;
+    return GSS;
 })();
 
 
-navigator.gss = GSSEap;
+navigator.gss = GSS;
