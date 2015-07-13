@@ -32,6 +32,8 @@
  *
  */
 
+#include <string.h>
+
 #include "GSSOID.h"
 #include "../GSSException.h"
 
@@ -151,3 +153,43 @@ bool GSSOID::setValue ( gss_OID gssOID )
   this->gssInternal = true;
   return true;
 }
+
+bool GSSOID::matchesBaseOID ( const gss_OID_desc &base_oid )
+{
+  /* Variables */
+  unsigned char *elements = reinterpret_cast <unsigned char*>(oid->elements);
+  
+  /* Error checking */
+  /* Setup */
+  /* Main processing */
+  // We can't match the prefex if we're not longer than the prefix.
+  if (oid->length <= base_oid.length)
+    return(false);
+
+  // Match the prefix itself.
+  if (memcmp(oid->elements, base_oid.elements, base_oid.length) != 0)
+    return(false);
+
+  // Constrain the suffix to a single OID segment.
+  // The break between segments is signified whenever an octet has 0 in
+  // its high-order bit.  Check that no octet between the prefix and the
+  // last octet has 0 in its high-order bit
+  for (size_t i = base_oid.length;
+       oid->length - 1 > i;
+       i++)
+  {
+    if( !(elements[i] & 0x80) )
+      return(false);
+  }
+
+  // Add a sanity check that the last octet has 0 in its high-order bit.
+  if( elements[oid->length - 1] & 0x80 )
+    return(false);
+  
+  /* Cleanup */
+  // No memory allocated, just typecast - nothing to clean up
+  
+  /* Return */
+  return(true);
+}
+

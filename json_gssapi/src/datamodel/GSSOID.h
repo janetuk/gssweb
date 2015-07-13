@@ -41,6 +41,11 @@
 #ifndef GSSOID_H
 #define GSSOID_H
 
+static  const gss_OID_desc eap_mech_oid = {
+  /* 1.3.6.1.5.5.15.1.1  */
+  8, (void *) "\x2B\x06\x01\x05\x05\x0f\x01\x01" };
+
+
 class GSSOID { 
 public:
   GSSOID() { oid = GSS_C_NO_OID; gssInternal = true; };
@@ -58,6 +63,10 @@ public:
   bool setValue(gss_OID   gssOID);
 
   JSONObject *toJSONValue() const;
+  
+  bool matchesBaseOID ( const gss_OID_desc &base_oid );
+  bool isGssEapMech() { return( matchesBaseOID( eap_mech_oid ) ); }
+  
 private:
   gss_OID oid;
   bool gssInternal;
