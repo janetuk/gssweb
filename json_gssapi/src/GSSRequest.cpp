@@ -74,6 +74,13 @@ void GSSRequest::execute()
   }
   catch (GSSException e)
   {
+    /* Cleanup */
+    if ( NULL != cmd )
+    {
+      delete(cmd);
+      cmd = NULL;
+    }
+
     JSONObject return_values;
     return_values.set("major_status", e.getMajor());
     return_values.set("minor_status", e.getMinor());
@@ -82,6 +89,13 @@ void GSSRequest::execute()
   }
   catch (std::invalid_argument e)
   {
+    /* Cleanup */
+    if ( NULL != cmd )
+    {
+      delete(cmd);
+      cmd = NULL;
+    }
+
     JSONObject return_values, errors;
     errors.set("major_status_message", "An error occurred in parsing the JSON arguments.\0");
     errors.set("minor_status_message", e.what());
@@ -89,13 +103,6 @@ void GSSRequest::execute()
     return_values.set("major_status", -1);
     return_values.set("minor_status", -1);
     response.set("return_values", return_values);
-  }
-
-  /* Cleanup */
-  if ( NULL != cmd )
-  {
-    delete(cmd);
-    cmd = NULL;
   }
 
   /* return */
