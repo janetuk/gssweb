@@ -46,15 +46,19 @@ public:
     GSSException(std::string msg, OM_uint32 major = 0, OM_uint32 minor = 0 , gss_OID mech = GSS_C_NO_OID);
     ~GSSException(void) throw() {  }
       
-    virtual const char* what(void) const throw() { return reason.c_str(); }
+    const char* what(void) const throw();
     
     // Accessors
     OM_uint32 getMajor() { return(major); }
     OM_uint32 getMinor() { return(minor); }
+
+    std::string major_status_message() const throw() {return(major_msg);};
+    std::string minor_status_message() const throw() {return(minor_msg);};
     
 private:
-    std::string reason;
+    std::string reason, message, major_msg, minor_msg;
     OM_uint32 major, minor;
+    gss_OID mech;
 };
 
 #endif // GSSEXCEPTION_H

@@ -33,14 +33,18 @@
  */
 
 #include "GSSException.h"
+#include "datamodel/GSSBuffer.h"
 #include <sstream>
-#include <ios>
-#include <iostream>
+#include <string>
 
-static void disp_status(OM_uint32 status, int status_type, gss_OID mech, std::ostream &output_stream)
+static std::string disp_status(OM_uint32 status, int status_type, gss_OID mech)
 {
+  /* Error checking */
+  /* Variables */
+  GSSBuffer disp_buf;
+  std::string disp_status;
+  
   OM_uint32 disp_major, disp_minor, disp_context;
-  gss_buffer_desc disp_buf;
 
   disp_context = 0;
   do
@@ -50,21 +54,14 @@ static void disp_status(OM_uint32 status, int status_type, gss_OID mech, std::os
 			            status_type,
 				    mech, 
 				    &disp_context, 
-				    &disp_buf);
+				    disp_buf.toGss() );
     if (GSS_ERROR(disp_major))
-    {
-      disp_context = 0; // Get out of this loop.
-      output_stream << "    An error occurred, and then another error" << std::endl <<
-         "    occurred in creating a message to describe the first one. " << std::endl <<
-         "    How embarrassing. It's time to quit before it gets any worse." <<  std::endl <<
-         "    For now, the error code itself was 0x" << std::hex << status << std::dec;
-      std::cout << "\n     -------------------------\n    Something wonky happened in displaying status:\n";
-      std::cout << "     gss_display_status(&disp_minor, " << status << ", " << (int)status_type << ", " << (long int)mech << ", " << disp_context << ", &buf);\n";
-      disp_status(disp_major, GSS_C_GSS_CODE, mech, std::cout);
-      disp_status(disp_minor, GSS_C_MECH_CODE, mech, std::cout);
-    } else
-      output_stream << "    " << (char *)disp_buf.value << std::endl;
+      throw GSSException("An error occurred while dealing with another error.", disp_major, disp_minor, mech);
+    else
+      disp_status += disp_buf.toString();
   } while (disp_context != 0);
+
+  return(disp_status);
 }
 
 GSSException::GSSException(std::string message, 
@@ -75,23 +72,24 @@ GSSException::GSSException(std::string message,
   /* Error checking */
   
   /* Variables */
-  std::stringstream output_stream;
   /* Setup */
   
   /* Main */
   this->major = major;
   this->minor = minor;
-  
-  output_stream << message << std::endl;
-  output_stream << "GSS Error message:" << std::endl;
-  output_stream << "  Major status:" << std::endl;
-  disp_status(major, GSS_C_GSS_CODE, mech, output_stream);
-  output_stream << std::endl;
-  output_stream << "  Minor status details: " << std::endl;
-  disp_status(minor, GSS_C_MECH_CODE, mech, output_stream);
-  reason = output_stream.str();
-  
+  this->mech = mech;
+  this->message = message;
+
+  this->major_msg = disp_status(major, GSS_C_GSS_CODE, mech);
+  this->minor_msg = disp_status(minor, GSS_C_MECH_CODE, mech);
   
   /* Cleanup */
   /* Return */
 }
+
+const char* GSSException::what(void) const throw()
+{
+  /* Variables */
+  return(this->message.c_str());
+}
+

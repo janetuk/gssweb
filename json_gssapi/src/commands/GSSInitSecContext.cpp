@@ -192,8 +192,7 @@ bool GSSInitSecContext::loadParameters(JSONObject *params)
     if (GSS_C_NO_OID == this->mechType.toGss() )
       throw std::invalid_argument( std::string() + "Could not create a mech_type OID from '" + key + "'");
     if ( !(this->mechType.isGssEapMech()) )
-      throw std::invalid_argument( std::string() +
-				   "'" + key + "' must be 1.3.6.1.5.5.15.1.1.*");
+      throw GSSException(string("'") + params->get("mech_type").string() + "' must be in 1.3.6.1.5.5.15.1.1.*", 65536, 0, this->mechType.toGss());
   }
   
   // req_flags

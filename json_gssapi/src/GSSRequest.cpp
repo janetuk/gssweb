@@ -81,10 +81,13 @@ void GSSRequest::execute()
       cmd = NULL;
     }
 
-    JSONObject return_values;
+    JSONObject return_values, errors;
+    errors.set("major_status_message", e.major_status_message().c_str());
+    errors.set("minor_status_message", e.minor_status_message().c_str());
+    errors.set("what", e.what());
+    return_values.set("errors", errors);
     return_values.set("major_status", e.getMajor());
     return_values.set("minor_status", e.getMinor());
-    return_values.set("what", e.what());
     response.set("return_values", return_values);
   }
   catch (std::invalid_argument e)
