@@ -40,7 +40,7 @@ var GSSWeb = (function () {
     this.clientCred = "";
     this.xhr = new XMLHttpRequest();
 
-    this.gss = new navigator.gssEap({
+    this.gss = new navigator.gss({
       appTag: this.appTag,
       error: this.handleGSSError.bind(this)
     });

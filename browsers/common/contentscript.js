@@ -38,6 +38,13 @@ function addScript(url) {
   document.head.appendChild(elt);
 }
 
+navigator.generateNonce = function() {
+  // TODO: Make sure that we don't have a collision!
+  // Random integer in the range [0..(2^32-1)]
+  return Math.floor(Math.random() * ( 4294967295 )) ;
+}
+
+
 var port;
 var browser;
 var gssHostNames = {};
@@ -143,7 +150,7 @@ window.addEventListener("message", function(event) {
           'minor_status_message': 'init_sec_context requires a target ' +
 	                          'that matches your page origin.'
         },
-        'cookies': event.data.cookies;
+        'cookies': event.data.cookies
       });
       return;
     }
